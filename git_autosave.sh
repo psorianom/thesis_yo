@@ -1,0 +1,1 @@
+git commit -am "autosave `date "+%Y/%m/%d %T"`"

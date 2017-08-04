@@ -1,0 +1,118 @@
+\chapter{Hypergraph Linguistic Model}
+\label{chap:ling_net}
+\begin{abstractchap}
+We present in this chapter our model proposition to stock linguistic data. This structure, based on the concept of hypergraphs, holds heterogeneous textual features, improving on the limitations of common solutions of the state of the art. At the same time, our network allows for fast access to words and their properties from different points of view. Finally, we also discuss our motivations and the scope and limitations of the network. 
+\end{abstractchap}
+\minitoc
+
+
+Building upon previous linguistic representations \cite{2007.Klapaftis.UOY,2011.Haishan.AHypergraphbased,2014.Tao.Qian.LexicalChainHypergraphWSI}, our model is also based on the use of a hypergraph.
+% As stated before, hypergraphs have been employed in the literature to model complex systems. 
+Their single most important difference with regular graphs, being able to relate more than two vertices at the same type, allows for a better characterization of interactions within a set of individual elements (in our case, words) \cite{heintz2014beyond}. Indeed, our hypergraph modelization initially integrates four types of relations between tokens: sentence co-occurrence, part-of-speech tags, words' constituents data and dependency relations in a single linguistic structure. These relationships were chosen because its is relatively easy to obtain them for high-resource languages. These features can be seen as building blocks for NLP models. Extracting deeper language features would implicate relying even more on general domain systems. In any case, our goal is to arrive to more complex annotations (e.g., named entities) from the selected features and relations.
+ 
+ %
+ %Formally, a hypergraph is a generalization of a graph defined as a tuple $G=(V,E)$, where the vertices $V = \{v_1, v_2, ..., v_n\}$ represent the set of nodes and  $E = \{e_1, e_2, ...,e_m\}$  the set of hyperedges which contains links between two or more vertices 
+\section{Characteristics of our proposition}
+In our model we group words together according to these features, into a  hypergraph schema. Formally, a hypergraph \cite{Berge1985} is a graph generalization  that allows more than two vertices to be linked by a single edge. Let $V$ denote a finite set of objects, and let $E$  (the hyperarcs
+or hyperedges) be a
+group of subsets  of $V$ such that $V = \cup_{e_j \in E}e_j$. We call $\mathcal{H}=(V,E)$ a {hypergraph}
+with the {vertex} set $V$ and the hyperedge set $E$. A
+hyperedge containing just two nodes is a simple graph edge.
+%A \emph{weighted hypergraph} is a hypergraph that has a positive number $w(e)$ associated with each hyperedge, called the \emph{weight} of the hyperedge $e$. A \emph{weigted hypergraph} is then denoted by $\mathcal{H}=(V,E,w)$.
+%
+A hyperedge $e$ is said to be \emph{incident} with a vertex $v$ when
+$v \in e$.
+% As one can see, as in graph theory, the adjacency is referred to the elements of the same kind (vertices vs vertices, or edges vs edges), while the incidence is referred to the elements of different kind (vertices vs edges).
+
+
+In our case, the set of tokens in the corpus are the set of nodes  $V$, and the set of hyperedges  $E$ represent the relations between nodes according to different linguistic aspects.
+%
+Each hyperedge may be one of three types: noun phrase\footnote{In this work we consider only noun phrases (NPs). Still, we can easily add other type of phrase chunks.}   constituents (\textit{CONST}), dependency relations (\textit{DEPENDENCY}), or sentence context (\textit{SENTENCE}). We consider that a token $v$ belongs to a hyperedge $e_j$ of type {NP} or {SENTENCE} if the token appears in the same noun phrase or in the same sentence. A token $v$ belongs to a hyperedge of type {DEPENDENCY} if it is the dependent of a certain dependency relation coupled with its corresponding head (or governor).	The hypergraph can be represented as a $n \times m$ incidence $H$ matrix with entries $h(i,j) = N(v_i, e_j)$ where $N(v_i, e_j)$ is the number of times $v_i \in e_j$ occurs in the corpus.
+
+
+We illustrate our hypergraph incidence matrix with the following example  phrase: \textit{The report contains copies of the minutes of these meetings}. We tokenize the phrase, keeping all the words, and we lemmatize and parse it to obtain both constituency and dependency trees.
+
+ The constituency tree of the example phrase is shown in Figure \ref{fig:tree}. The sentence, as well as each noun phrase (NP) node is identified by a number. We can observe that this phrase is composed by five noun phrases (NP) and one verb phrase. Meanwhile, some of the NPs are formed by other kind of phrases, depending on the grammar production rule used to build each one of them. As is usual in this kind of structures, there is a one to one relation between the number of tokens in the sentence  and the number of leaves in the tree.
+ 
+ \forestset{
+     sn edges/.style={for tree={parent anchor=south, child anchor=north}},
+     blue text/.style={for tree={text=blue!70}}}
+ 
+ \begin{figure}[t]
+ \centering
+ \resizebox{.8\linewidth}{!}{%
+ \begin{forest} 
+ [S$_1$
+     [NP$_1$ [DT [The, blue text]] [NN [report, blue text]]]
+     [VP [VBZ [contains, blue text]]
+       [NP$_2$
+         [NP$_3$ [NNS [copies, blue text]] ]
+         [PP [IN [of, blue text]]
+           [NP$_4$ [DT [the, blue text]] [NNS [minutes, blue text]]]]
+           [PP [IN [of, blue text]]
+ 	          [NP$_5$ [DT [these, blue text]] [NNS [meetings, blue text]]
+           ]]]]]
+ %	\node [draw,fill = blue!20,text width=25em] at (1.5,-7.8) (sparse) {\textbf{nsubj}(contains, report), \textbf{dobj}(contains, copies)};
+ \end{forest}
+ }
+ \caption{Constituency-based tree of the phrase \textit{The report contains copies of the minutes of these meetings.}
+ % On the bottom, we can see the bottom-up path stored for the words \textit{brigand} and \textit{Nation}.
+ }
+ \label{fig:tree}
+ \end{figure}
+ 
+ The dependencies of the example phrase are shown in Table \ref{tab:depends}.  They indicate the syntactic relation between the	  governor of a phrase and  dependent. In these relations' examples, the head is the first token to appear  followed by the dependent word.
+ 
+ \begin{table}[]
+ \centering
+ \caption{Dependency relations of the example phrase.}
+ \label{tab:depends}
+ \begin{tabular}{l|l}
+ \textbf{root}(root, contains)    & \textbf{det}(minutes, the)       \\
+ \textbf{det}(report, The)        & \textbf{nmod}(copies, minutes)   \\
+ \textbf{nsubj}(contains, report) & \textbf{case}(meetings, of)      \\
+ \textbf{dobj}(contains, copies)  & \textbf{det}(meetings, these)    \\
+ \textbf{case}(minutes, of)       & \textbf{nmod}(minutes, meetings)
+ \end{tabular}
+ \end{table}
+ 
+  From both of these types of information we can build a hypergraph representation as stated before. The incidence matrix is illustrated in Table \ref{tab:incidence}.  For brevity, we  only show nouns as well as only the first three noun phrases and the nominal subject (\textit{nsubj}) and direct object (\textit{dobj}) dependency relations. 
+%
+Looking at the table, we can   infer that the word \textit{copies} appears  in two hyperedges of type CONSTITUENT: first in NP$_2$, which is built from a NP  and two prepositional phrases (PP). Secondly, we see that it is part of NP$_3$, which  indicates a plural noun (NNS).
+
+Regarding the syntactic dependency hyperedges, the word \textit{copies} appear in the \textit{dobj} \textit{contains} column which indicates that \textit{copies} was the direct object of the verb \textit{contains}.
+ 
+For the sentence hyperedges, we see that the token \textit{copies} appeared in the same sentence S$_1$ as the other four noun words.
+
+With this short example we show the intuitive way in which we store three different kinds of relations: lexical co-occurrence, dependency co-occurrence and sentence (at chunk level) co-occurrence.
+% We can thus build systems that allow us to interpret a word from different perspectives according to said relations.
+
+
+%In order to apply the proposed linguistic network to an input corpus we first need to parse it and thus obtain the required information from it to populate the hypergraph. In the following, we describe the method used to extract and store linguistic information from the English Wikipedia. %The procedure begins by extracting the text from an English Wikipedia dump and concludes by saving into disk the Wikipedia corpus in the format of our proposed language network (represented as a hypergraph incidence matrix with its complementary metadata information about the meaning of each vertex and hyperedge). 
+
+In the following section we set to solve a natural language processing task using the model described above. Specifically, we address the word sense induction and disambiguation challenges. Both tasks are located on the computational semantics sub-domain of NLP. By making use of the network we want to test the effectiveness of using different types of linguistic features. 
+
+% Please add the following required packages to your document preamble:
+% \usepackage{multirow}
+\begin{table}[]
+\centering
+\caption{Incidence matrix of the example phrase hypergraph modelization.}
+\label{tab:incidence}
+\begin{tabular}{clcccccc}
+\hline
+\multicolumn{1}{l}{} &                      & \multicolumn{3}{c}{\textbf{CONSTITUENT}}                                                                                                                                                                                                            & \multicolumn{2}{c}{\textbf{DEPENDENCY}}          & \textbf{SENTENCE}                \\ \hline
+\multicolumn{1}{l}{} & \multicolumn{1}{c}{} & \multicolumn{1}{l}{\begin{tabular}[c]{@{}c@{}}$\textnormal{NP}_1$\\ DT:NN\end{tabular}} & \begin{tabular}[c]{@{}c@{}}$\textnormal{NP}_2$\\ NP:PP:PP\end{tabular} & \begin{tabular}[c]{@{}c@{}}$\textnormal{NP}_3$\\ NNS\end{tabular} & \begin{tabular}[c]{@{}c@{}}{nsubj}\\ contains\end{tabular}  & \begin{tabular}[c]{@{}c@{}}{dobj}\\ contains\end{tabular} & $\textnormal{S}_1$ \\ \hline
+\multirow{5}{*}{\textbf{NN}}  & report               & 1                                                                                       &                                                                        &                                                                   & 1               &                & 1                  \\
+                     & contains             &                                                                                         &                                                                        &                                                                   &                 &                & 1                  \\
+                     & copies               &                                                                                         & 1                                                                      & 1                                                                 &                 & 1              & 1                  \\
+                     & minutes              &                                                                                         & 1                                                                      &                                                                   &                 &                & 1                  \\
+                     & meetings             &                                                                                         & 1                                                                      &                                                                   &                 &                & 1                  \\ \hline
+\end{tabular}
+\end{table}
+
+
+%In the next section we present a proof of concept which demonstrates the potential of our hypergraph model.
+
+
+
+

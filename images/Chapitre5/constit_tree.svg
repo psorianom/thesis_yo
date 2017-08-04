@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="449" height="296" version="1.1" xmlns="http://www.w3.org/2000/svg">
+<text style="fill: blue; font-size: 12px;" x="217" y="22">S97</text>
+<text style="fill: blue; font-size: 12px;" x="71" y="66">NP22</text>
+<line style="stroke:rgb(0,0,0);stroke-width:1;" x1="81" y1="49" x2="224" y2="27"/>
+<text style="fill: blue; font-size: 12px;" x="291" y="66">VP44</text>
+<line style="stroke:rgb(0,0,0);stroke-width:1;" x1="300" y1="49" x2="224" y2="27"/>
+<text style="fill: blue; font-size: 12px;" x="15" y="110">DT</text>
+<line style="stroke:rgb(0,0,0);stroke-width:1;" x1="20" y1="93" x2="81" y2="71"/>
+<text style="fill: blue; font-size: 12px;" x="59" y="110">JJ</text>
+<line style="stroke:rgb(0,0,0);stroke-width:1;" x1="61" y1="93" x2="81" y2="71"/>
+<text style="fill: blue; font-size: 12px;" x="116" y="110">NN</text>
+<line style="stroke:rgb(0,0,0);stroke-width:1;" x1="122" y1="93" x2="81" y2="71"/>
+<text style="fill: blue; font-size: 12px;" x="189" y="110">VBZ</text>
+<line style="stroke:rgb(0,0,0);stroke-width:1;" x1="197" y1="93" x2="300" y2="71"/>
+<text style="fill: blue; font-size: 12px;" x="330" y="110">NP20</text>
+<line style="stroke:rgb(0,0,0);stroke-width:1;" x1="340" y1="93" x2="300" y2="71"/>
+<text style="fill: red; font-size: 12px;" x="17" y="154">A</text>
+<line style="stroke:rgb(0,0,0);stroke-width:1;" x1="20" y1="137" x2="20" y2="115"/>
+<text style="fill: red; font-size: 12px;" x="51" y="154">great</text>
+<line style="stroke:rgb(0,0,0);stroke-width:1;" x1="61" y1="137" x2="61" y2="115"/>
+<text style="fill: red; font-size: 12px;" x="108" y="154">brigand</text>
+<line style="stroke:rgb(0,0,0);stroke-width:1;" x1="122" y1="137" x2="122" y2="115"/>
+<text style="fill: red; font-size: 12px;" x="180" y="154">becomes</text>
+<line style="stroke:rgb(0,0,0);stroke-width:1;" x1="197" y1="137" x2="197" y2="115"/>
+<text style="fill: red; font-size: 12px;" x="242" y="154"/>
+<line style="stroke:rgb(0,0,0);stroke-width:1;" x1="242" y1="137" x2="340" y2="115"/>
+<text style="fill: blue; font-size: 12px;" x="276" y="154">NP18</text>
+<line style="stroke:rgb(0,0,0);stroke-width:1;" x1="286" y1="137" x2="340" y2="115"/>
+<text style="fill: blue; font-size: 12px;" x="376" y="154">PP57</text>
+<line style="stroke:rgb(0,0,0);stroke-width:1;" x1="385" y1="137" x2="340" y2="115"/>
+<text style="fill: blue; font-size: 12px;" x="257" y="198">DT</text>
+<line style="stroke:rgb(0,0,0);stroke-width:1;" x1="262" y1="181" x2="286" y2="159"/>
+<text style="fill: blue; font-size: 12px;" x="296" y="198">NN</text>
+<line style="stroke:rgb(0,0,0);stroke-width:1;" x1="302" y1="181" x2="286" y2="159"/>
+<text style="fill: blue; font-size: 12px;" x="336" y="198">IN</text>
+<line style="stroke:rgb(0,0,0);stroke-width:1;" x1="339" y1="181" x2="385" y2="159"/>
+<text style="fill: blue; font-size: 12px;" x="388" y="198">NP18</text>
+<line style="stroke:rgb(0,0,0);stroke-width:1;" x1="398" y1="181" x2="385" y2="159"/>
+<text style="fill: red; font-size: 12px;" x="260" y="242">a</text>
+<line style="stroke:rgb(0,0,0);stroke-width:1;" x1="262" y1="225" x2="262" y2="203"/>
+<text style="fill: red; font-size: 12px;" x="293" y="242">ruler</text>
+<line style="stroke:rgb(0,0,0);stroke-width:1;" x1="302" y1="225" x2="302" y2="203"/>
+<text style="fill: red; font-size: 12px;" x="335" y="242">of</text>
+<line style="stroke:rgb(0,0,0);stroke-width:1;" x1="339" y1="225" x2="339" y2="203"/>
+<text style="fill: blue; font-size: 12px;" x="363" y="242">DT</text>
+<line style="stroke:rgb(0,0,0);stroke-width:1;" x1="368" y1="225" x2="398" y2="203"/>
+<text style="fill: blue; font-size: 12px;" x="408" y="242">NN</text>
+<line style="stroke:rgb(0,0,0);stroke-width:1;" x1="414" y1="225" x2="398" y2="203"/>
+<text style="fill: red; font-size: 12px;" x="366" y="286">a</text>
+<line style="stroke:rgb(0,0,0);stroke-width:1;" x1="368" y1="269" x2="368" y2="247"/>
+<text style="fill: red; font-size: 12px;" x="402" y="286">Nation</text>
+<line style="stroke:rgb(0,0,0);stroke-width:1;" x1="414" y1="269" x2="414" y2="247"/>
+</svg>

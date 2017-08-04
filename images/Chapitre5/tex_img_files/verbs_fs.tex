@@ -1,0 +1,38 @@
+\documentclass[tikz,border=3pt]{standalone}
+\usepackage{pgfplots}
+\usepackage{pgfplotstable}
+\usepackage{filecontents}
+
+
+\makeatletter
+\pgfplotsset{
+    /pgfplots/flexible xticklabels from table/.code n args={3}{%
+        \pgfplotstableread[#3]{#1}\coordinate@table
+        \pgfplotstablegetcolumn{#2}\of{\coordinate@table}\to\pgfplots@xticklabels
+        \let\pgfplots@xticklabel=\pgfplots@user@ticklabel@list@x
+    }
+}
+%\pgfplotsset{every tick label/.append style={font=\tiny}}
+
+\makeatother
+\begin{document}
+\pgfplotsset{height=0.5\columnwidth, width=\columnwidth}
+\begin{tikzpicture}
+%\pgfplotsset{compat=1.8 }
+\begin{axis}[
+ybar, %ymin=0,
+%xmin=0,
+%xlabel=Xstuff,
+ylabel=FScore,
+flexible xticklabels from table={../../data/depsVerbs.tsv}{word}{col sep=tab},
+x tick label style={rotate=90,text height=.5ex, xshift=.8ex, font=\tiny}, % To make sure the text labels are nicely aligned
+xtick=data,
+%nodes near coords,
+nodes near coords align={vertical}]
+\addplot+[bar width=.2] table[x expr=\coordindex,y=Fscore]{../../data/depsVerbs.tsv};
+\addplot+[bar width=.2] table[x expr=\coordindex,y=Fscore]{../../data/senVerbs.tsv};
+\legend{DEP,LEX}
+\end{axis}
+
+\end{tikzpicture}
+\end{document}

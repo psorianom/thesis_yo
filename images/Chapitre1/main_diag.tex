@@ -1,0 +1,90 @@
+% System Combination
+% Harish K Krishnamurthy <www.ece.neu.edu/~hkashyap/>
+\documentclass[tikz, pstricks, border=12pt]{standalone}
+
+\usepackage{tikz}
+\usetikzlibrary{shapes,shadows}
+\usetikzlibrary{arrows.meta}
+\usepackage{amsmath,bm,times}
+
+\begin{document}
+
+% Define block styles used later
+\tikzset{ >={Latex[width=2mm,length=2mm]}}
+\tikzstyle{sensor}=[draw, fill=blue!20, text width=5em, 
+    text centered, minimum height=2.5em,]
+\tikzstyle{ann} = [above, text width=20em, text centered]
+\tikzstyle{wa} = [sensor, text width=20em, fill=red!20, 
+    minimum height=10em, rounded corners, ]
+\tikzstyle{was} = [sensor, text width=20em, fill=red!20, 
+    minimum height=6em, rounded corners, ]
+\tikzstyle{sc} = [sensor, text width=13em, fill=red!20, 
+    minimum height=10em, rounded corners, ]
+\tikzset{overlaid/.style={double copy shadow={shadow xshift=-1ex,shadow yshift=1.5ex},fill=red!20,draw=black,thick,minimum height = 10em,text width = 15em, align=center}}
+
+\tikzset{database/.style={cylinder, cylinder uses custom fill, cylinder body fill=red!20,
+      cylinder end fill=red!20, shape border rotate=90, aspect=0.8,draw }}
+\begin{tikzpicture}
+[font=\fontsize{20}{22.4}\selectfont]
+    \node (wa) [overlaid]  {Benchmark Text Data (Training and Testing Datasets)};
+    
+    \path (wa.east)+(+5.2,3) node (stdfeats) [was] {Standard Features};
+    \path (wa.east)+(+5.2,0) node (synfeats) [was] {Syntactic Features};
+    \path (wa.east)+(+5.2,-3) node (lexfeats) [was] {Lexical Features};
+	% hypergraph db
+    \path (synfeats.east)+(+5.2, 0) node (hyperdb) [database] {Hypergraph};
+    % X-based techniques
+    \path (hyperdb.east)+(+5.2, 2.25) node (networktechs) [wa] {Network-Based Techniques};
+    \path (hyperdb.east)+(+5.2, -6) node (fusiontechs) [wa] {Fusion Techniques};
+	% Fusion
+    \path (fusiontechs.east)+(+5.2, 3) node (enrichwsd) [wa] {Enrich Hypergraph for WSI/WSD};
+    \path (fusiontechs.east)+(+5.2, -3) node (enrichner) [wa] {Enrich Hypergraph for NER};
+    \path (enrichwsd.east)+(+5.2, -3) node (machinelearn) [wa] {Machine Learning};    
+
+% Paths Del data a feats
+    \path [draw, ->] (wa.east) -- node [above] {} 
+        (stdfeats.west);
+    \path [draw, ->] (wa.east) -- node [above] {} 
+        (synfeats.west);
+    \path [draw, ->] (wa.east) -- node [above] {} 
+        (lexfeats.west);
+% Paths de feats a hyperdb
+    \path [draw, ->] (lexfeats.east) -- node [above] {} 
+        (hyperdb.west);
+    \path [draw, ->] (synfeats.east) -- node [above] {} 
+        (hyperdb.west);
+    \path [draw, ->] (stdfeats.east) -- node [above] {} 
+        (hyperdb.west);
+        
+% Path Hypergraph a fusion techniques         
+    \path [draw, ->] (hyperdb.east) -- node [above] {} 
+        (fusiontechs.west);        
+        
+% Path Hypergraph a network based techs        
+    \path [draw, ->] (hyperdb.east) -- node [above] {} 
+        (networktechs.west);        
+
+% Paths de fusion a WSD, NER
+    \path [draw, ->] (fusiontechs.east) -- node [above] {} 
+        (enrichwsd.west);
+    \path [draw, ->] (fusiontechs.east) -- node [above] {} 
+        (enrichner.west);
+% Path de fusion wsd, ner a machinelearning
+	\path [draw, ->] (enrichwsd.east) -- node [above] {} 
+        (machinelearn.west); 
+	\path [draw, ->] (enrichner.east) -- node [above] {} 
+        (machinelearn.west);   
+        
+% Path de benchmark data a machine learning
+\draw[dotted, ->] (wa.south) -- ++(0,-10) -- ++(44.2,0) -- ++(0,3.8) node [] {} (machinelearn.south);
+
+% Boxing
+\draw [dotted, color=gray,thick](-4.5,-5) rectangle (22,4.5);
+\node at (-4.5,4.5) [above=5mm, right=0mm] {\textsc{First sub-module of our process}};
+%second boxing
+\draw [dotted, color=blue,thick](48.5,-12.5) rectangle (22.5,4.5);
+\node at (22.5, 4.5) [above=5mm, right=0mm] {\textsc{Second sub-module of our process}};
+
+\end{tikzpicture}
+
+\end{document}

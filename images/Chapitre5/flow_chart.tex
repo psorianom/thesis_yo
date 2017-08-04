@@ -1,0 +1,108 @@
+\documentclass{article}
+
+\usepackage[latin1]{inputenc}
+\usepackage{tikz}
+\usetikzlibrary{shapes,arrows, shadows}
+
+%%%<
+\usepackage{verbatim}
+\usepackage[active,tightpage]{preview}
+\PreviewEnvironment{tikzpicture}
+\setlength\PreviewBorder{5pt}%
+%%%>
+\tikzset{%
+  cascaded/.style = {%
+    general shadow = {%
+      shadow scale = 1,
+      shadow xshift = -1ex,
+      shadow yshift = 1ex,
+      draw,
+      thick,
+      fill = blue!20},
+    general shadow = {%
+      shadow scale = 1,
+      shadow xshift = -.5ex,
+      shadow yshift = .5ex,
+      draw,
+      thick,
+      fill = blue!20},
+    fill = blue!20, 
+    text width=4.5em,
+	text badly centered,
+    draw,
+    thick,
+    minimum width = 1.5cm,
+    minimum height = 2cm}}
+    
+\tikzset{    
+  multidocument/.style={
+    shape=tape,
+    text width=4.5em,
+    node distance=3cm,
+    text badly centered,
+    draw,
+    fill=blue!20,
+    tape bend top=none,
+    double copy shadow}
+}
+
+
+\begin{comment}
+:Title: Simple flow chart
+:Tags: Diagrams
+
+With PGF/TikZ you can draw flow charts with relative ease. This flow chart from [1]_
+outlines an algorithm for identifying the parameters of an autonomous underwater vehicle model. 
+
+Note that relative node
+placement has been used to avoid placing nodes explicitly. This feature was
+introduced in PGF/TikZ >= 1.09.
+
+.. [1] Bossley, K.; Brown, M. & Harris, C. Neurofuzzy identification of an autonomous underwater vehicle `International Journal of Systems Science`, 1999, 30, 901-913 
+
+
+\end{comment}
+
+
+\begin{document}
+\pagestyle{empty}
+
+
+% Define block styles
+\tikzstyle{decisiono} = [diamond, draw, fill=blue!20, 
+    text width=4.5em, text badly centered, node distance=3cm, inner sep=0pt]
+\tikzstyle{block} = [rectangle, draw, fill=blue!20, 
+    text width=5em, text centered, rounded corners, minimum height=4em]
+\tikzstyle{line} = [draw, -latex']
+\tikzstyle{cloud} = [draw, ellipse,fill=red!20, node distance=3cm,
+    minimum height=2em]
+    
+\begin{tikzpicture}[node distance = 2cm, auto]
+    % Place nodes	
+    \node [block] (remove) {Clean Wikipedia};
+    \node [multidocument, left of=remove](dump) {Wikipedia Dump};
+
+    \node [block, below of=remove] (parse) {Parse Wikipedia};
+    \node [draw, right of=parse, node distance=3cm] at (0,-1) (token) {Identify Tokens};
+    \node [draw, right of=parse, node distance=3cm] at (-.5,-2) (pos) {PoS tags};
+	\node [draw, right of=parse, node distance=3cm] at (0,-3) (sparse) {Syntactic Parse};
+    \node [block, below of=parse] (output) {{Store Wikipedia Parse}};
+	\node [cascaded, below of=output, node distance=2.5cm](pdump) {YAWPD};
+
+    % Draw edges
+    \path [line] (remove) -- (parse);
+    \path [line,dashed] (parse) --  (token.west);
+    \path [line,dashed] (parse) --  (pos);
+    \path [line,dashed] (parse) --  (sparse.west);
+    \path [line] (parse) -- (output);
+    \path [line,shorten >=4pt] (output) -- (pdump.north);
+   % \path [line] (evaluate) -- (decide);
+ %   \path [line] (decide) -| node [near start] {yes} (update);
+%    \path [line] (update) |- (identify);
+    %\path [line] (decide) -- node {no}(stop);
+    \path [line,shorten <=4pt] (dump) -- (remove);
+
+\end{tikzpicture}
+
+
+\end{document}
