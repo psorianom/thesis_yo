@@ -34,7 +34,7 @@
 *.fdb_latexmk
 *.synctex
 *.synctex(busy)
-*.synctex.gz
+*.synctex.gz*
 *.synctex.gz(busy)
 *.pdfsync
 
@@ -218,3 +218,6 @@ TSWLatexianTemp*
 
 # expex forward references with \gathertags
 *-tags.tex
+
+# Owncloud stuff
+*conflict* 
