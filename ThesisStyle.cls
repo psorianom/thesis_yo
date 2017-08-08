@@ -357,8 +357,8 @@
               \if@tempswa
                 \twocolumn
               \fi}
-%\newcommand\chapter{\if@openright\cleardoublepage\else\clearpage\fi
-\newcommand\chapter{\if@openright\clearpage\else\clearpage\fi
+\newcommand\chapter{\if@openright\cleardoublepage\else\clearpage\fi
+%\newcommand\chapter{\if@openright\clearpage\else\clearpage\fi
                     \thispagestyle{plain}%
                     \global\@topnum\z@
                     \@afterindentfalse
