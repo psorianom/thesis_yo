@@ -66,42 +66,22 @@ There are several research challenges that arise from the choices taken in each 
 \end{itemize}
 
 
-In this sense, the contributions that we propose in this work are the following:
+The contributions that we propose in this work are the following:
 \begin{itemize}
-\item a structural network-based model to hold heterogeneous linguistic data extracted from text.
+\item a structural network-based model to hold heterogeneous linguistic data as well as a tool to extract said data from unstructured text.
 \item a network-based algorithm to discover similarity relations between linked words
 \item a method to combine heterogeneous representations while at the same time alleviating the sparsity problem common while dealing with text features.
 \end{itemize}
-These contributions are tested and evaluated using two different NLP semantic tasks: Word Sense Induction and Disambiguation and Named Entity Recognition. We chose these two tasks as they are directly benefited by methods  that are able to determine the relatedness among words, which is the case of the techniques we propose. Not less important, we attack these tasks as they are central building blocks of more intricate text analysis systems.  Figure \ref{fig:challenges_contribs} synthesizes the concerned NLP process-flow stages, their existing challenges and their related contributions, and the tasks used to validate our contributions. We briefly introduce our contributions and their context in the following subsection.
+These contributions are tested and evaluated using two different NLP semantic tasks: Word Sense Induction and Disambiguation and Named Entity Recognition. We chose these two tasks as they are semantic problems directly benefited by methods  that are able to determine the relatedness among words, which is the case of the techniques we propose. Not less important, we attack these tasks as they are central building blocks of more intricate text analysis systems. Our propositions are built using open source tools and trained/tested using freely accessible corpora. We aim to make our software implementations are  to multi-threaded CPU computers when applicable.
 
-\begin{figure*}
-\centering
-\includegraphics[width=1\linewidth]{./images/Chapitre1/challenges_contribs.pdf}
-\caption{}
-\label{fig:challenges_contribs}
-\end{figure*}
 
 \subsection{Modeling linguistic features}
 \paragraph{Challenge}
-In an ordinary NLP system, to analyze textual data, we need to represent textual units, e.g., words, by means of features that describe them.  Moreover, text may be represented from different points of view. We may simply characterize words according to its presence or absence of neighboring words, to the syntactical relations they appear in, or to their role in the structure of a phrase, and so on. 
-
-The  large amount of text data plus the need to represent it as globally as possible poses non-trivial challenges for comprehensive textual analysis. Firstly, we need an efficient and straight-forward model to store heterogeneous textual information and the links within it
-
-In the literature, language representation models are generally based on two types: the vector space model and the network (or graph) model. The former represents textual units through their features in a vector space. The latter represents the interactions between textual units in a graph-based by means of nodes and edges. In the end though, both representations are intertwined as we can represent a graph as an object-feature matrix through its incidence or adjacency matrices.
-
-
-Language (or linguistic in this thesis) networks  have been studied profoundly. Its theory draws heavily from several research fields (complex networks, graph theory, linguistics, natural language processing). Using the division proposed by \cite{Choudhury09}, in the related literature, works follow one of two directions: they analyze the nature of the network from a structural point of view (citations here); or they leverage the network to solve NLP tasks (citations here). The second direction can be further divided into two sub-classes: those that contain homogeneous textual features; and those that comprise heterogeneous descriptors (citations here). In the majority of these works, we note two main shortcomings:
-\begin{enumerate}
-\item the majority of related works that deal with the application of language networks do not take into consideration different types of feature representations. Having a global insight into textual data allows for deeper structural and application analysis.
-\item the works that do implement heterogeneous solutions, do not aim to explicitly profit from the complementarity of the features diversity. Finding relatedness between textual units at different levels of representation can be useful to improve the results of NLP applications.
-%\item There is not an explicit use of background data, that is,  open sources of textual data are notleverage
-
-\end{enumerate}
- 
-Using the information extracted in the previous step, we propose a heterogeneous language network that takes into account lexical and syntactical linguistic information. The proposed model aims to take advantage of the information stocked within our dump and to overcome the limitations of current language networks. We propose a novel hypergraph model able to link together words according to different characteristics. 
+Representing unstructured text within a model that describes textual units and their corresponding features is a critical step within a NLP process. Textual units -- either words, sentences, paragraphs, documents, etc -- need to be represented by some kind of model that will allow for numerical analyses to be applied. Usually, textual units are represented in a vectorial space, where each dimension represents a feature; or in a graph-like structure, where features link units together. Concerning the features themselves, their selection is often an empirical process determined  by the final goal of the NLP process at hand. Nonetheless,  we have access to several types of linguistic features, each one representing the text from different points of view.  Furthermore, texts usually containing large vocabularies involves the need of an efficient way of storing a corpus and its features. These possibilities entail the following research questions: what type of model can we employ to represent a corpus through a set of heterogeneous features, extracted from itself, while keeping record of the relationships between textual units? How can we organize and store this model as simply and efficiently possible? These questions allow us to properly constitute a linguistic resource adapted to solve NLP tasks while having an heterogeneous description of the textual units\footnote{In this work we focus on words. As such, the rest of this dissertation deals with the representation of words.}
 
 
 \paragraph{Contribution}
+Determining which kind of structure will hold textual features as well as 
 An annotated parsed dump of the English Wikipedia. In this parse we focus  onto the syntactical characteristics of words: aside from the classical Part-of-Speech (PoS) tags and dependency parsing relations, we provide the full constituent parse branch for each word in a succinct way.  
 
 
@@ -140,7 +120,14 @@ An algorithm that leverages  the structure of the network in order to solve word
 %\section{Contributions}
 %Having cited the disadvantages of current language representations and applications, we set out to fill the gaps with our own propositions. First, in order to have a dataset to test and work with, we parsed and stored the English Wikipedia taking into account largely-ignored syntactic information. Secondly, we fitted our linguistic network to a sample of the parsed Wikipedia corpus. Thirdly, we proposed an algorithm to solve word sense induction and disambiguation by leveraging the network's structure. Finally, we present a method that combines textual features to solve both named entity recognition and again word sense induction and disambiguation. More concisely, we make the following contributions in this dissertation:
 
+Figure \ref{fig:challenges_contribs} synthesizes the concerned NLP process-flow stages, their existing challenges and their related contributions, and the tasks used to validate our contributions. We briefly introduce our contributions and their context in the following subsection.
 
+\begin{figure*}
+\centering
+\includegraphics[width=1\linewidth]{./images/Chapitre1/challenges_contribs.pdf}
+\caption{}
+\label{fig:challenges_contribs}
+\end{figure*}
 \section{Structure of the Dissertation}
 The remainder of this thesis is structured as follows:
 \paragraph{Chapter \ref{chap:backgnd}} This chapter has a detailed overview about the first four axes of this thesis: how we can represent words from a lexical, syntactic and semantic point of view, then, how we find relatedness among words based on  the distributional hypothesis, and how we link both words and features together in a language network to discover their structure and to extract useful knowledge. 
