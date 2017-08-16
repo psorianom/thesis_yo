@@ -20,9 +20,9 @@ Making sense of texts plays a vital role on the evolution of general artificial 
 \label{fig:google_nlp}
 \end{figure}
 %
-Indeed, making computers learn,  via theories, algorithms and applications, is the general objective of artificial intelligence research \cite{Sugiyama2015}. Coming from this multi-disciplinary area, Natural Language Processing\footnote{And its more applied branch, text mining or text analysis. While it is sometimes argued that text mining deals with the structured data information extracted from text, I believe both terms considerably overlap nowadays. For ease of readability, in this dissertation we use both terms interchangeably, while preferring Natural Language Processing.} (NLP) is the domain that aims to make machines understand our language\cite{JurafskyM09}. Specifically, speech and text, the latter being the focus of this work.
+Indeed, making computers learn,  via theories, algorithms and applications, is the general objective of artificial intelligence research \cite{Sugiyama2015}. Coming from this multi-disciplinary area, Natural Language Processing\footnote{And its more applied branch, text mining or text analysis. While it is sometimes argued that text mining deals with the structured data information extracted from text, I believe both terms considerably overlap nowadays. For ease of readability, in this dissertation we use both terms interchangeably, while preferring Natural Language Processing.} (NLP) is the domain that aims to make machines understand our language \cite{JurafskyM09} and thus making it possible to communicate with them in our own language. Specifically, speech and text, the latter being the focus of this work.
 
-NLP has developed rapidly \cite{ClarkBook2010} during the last two decades mainly due to the combination of three factors: 
+Although a challenging task, primarily given the ambiguity and dynamics of human language, NLP has developed rapidly \cite{ClarkBook2010} during the last two decades mainly due to the combination of three factors: 
 \begin{itemize}
 \item The  availability of \textbf{large quantities of freely-accessible textual data}: primarily enabled by the current Web technologies, we are today able to download with a single click the entire content of the English (or other languages) Wikipedia. In the same sense, we can also download thousands of gigabytes of Web crawled data. This information is used to derive knowledge about the text itself, as we will see in the rest of this dissertation. 
 \item The \textbf{computational power} at our disposition: from consumer-based computers able to perform parallel computations with considerably large datasets; to on-demand distributed cloud platforms with high performance computing nodes. The latter may be from private providers, e.g., AWS Cloud Service\footnote{\url{https://aws.amazon.com/}}, Microsoft Azure\footnote{\url{https://azure.microsoft.com/en-us/}}, etc; or furnished by public organizations, such as France's Lyon 1 University\footnote{\url{https://p2chpd.univ-lyon1.fr/}} or the National Institute of Nuclear Physics computing centers\footnote{\url{https://cc.in2p3.fr/}}.
@@ -51,24 +51,25 @@ More complex tasks that generally employ one or more of the aforementioned techn
 
 \section{Challenges and Contributions}
 There are several research challenges that arise from the choices taken in each one of the steps comprising the NLP system's flow (Figure \ref{fig:nlpflow}).
- In this thesis, we particularly focus on three challenges arising in both the Feature Representation and Knowledge Discovery phases:
-\begin{itemize}
- \item \textbf{Feature Representation:}
-	 \begin{enumerate}
-	 \item  Modeling, extracting, and storing different types of linguistic features from raw text. 
-	 \item Dealing with the sparsity inherent to text data while successfully combining the different available text features.
-	
-	 \end{enumerate}
- \item \textbf{Knowledge Discovery:}
- 	\begin{enumerate}
- 	\item[3.] Finding relations  between words and then leveraging them in order to discover their latent relatedness and be able to solve NLP tasks.
-  	\end{enumerate}
-\end{itemize}
+ In this thesis, we particularly focus on three challenges arising in both the Feature Representation and Knowledge Discovery phases. These challenges are: (1) modeling, extracting, and storing different types of linguistic features from raw text, (2) dealing with the sparsity inherent to text data features and also successfully combining them to get better representations, and (3)  finding	 relations  between words and then leveraging them in order to discover their latent relatedness and be able to solve NLP tasks.
+
+%\begin{itemize}
+% \item \textbf{Feature Representation:}
+%	 \begin{enumerate}
+%	 \item Modeling, extracting, and storing different types of linguistic features from raw text. 
+%	 \item Dealing with the sparsity inherent to text data while successfully combining the different available text features.
+%	
+%	 \end{enumerate}
+% \item \textbf{Knowledge Discovery:}
+% 	\begin{enumerate}
+% 	\item[3.] Finding relations  between words and then leveraging them in order to discover their latent relatedness and be able to solve NLP tasks.
+%  	\end{enumerate}
+%\end{itemize}
 
 
-The contributions that we propose in this work are the following:
+We propose three contributions, one in terms of theoretical modelisation and two in terms of NLP applications. Specifically, the contributions that we propose in this work are the following:
 \begin{itemize}
-\item a structural network-based model to hold heterogeneous linguistic data as well as a tool to extract said data from unstructured text.
+\item a hypergraph network-based model to hold and combine heterogeneous linguistic data %as well as a tool to extract said data from unstructured text.
 \item a network-based algorithm to discover similarity relations between linked words
 \item a method to combine heterogeneous representations while at the same time alleviating the sparsity problem common while dealing with text features.
 \end{itemize}
@@ -81,11 +82,31 @@ Representing unstructured text within a model that describes textual units and t
 
 
 \paragraph{Contribution}
-Determining which kind of structure will hold textual features as well as 
-An annotated parsed dump of the English Wikipedia. In this parse we focus  onto the syntactical characteristics of words: aside from the classical Part-of-Speech (PoS) tags and dependency parsing relations, we provide the full constituent parse branch for each word in a succinct way.  
+We propose a linguistic resource in the form of an heterogeneous language network to be used as a first essential data model to solve Natural Language Processing tasks. 
+During the last decade, graphs have been used to model textual data given its ability to naturally represent the dynamics and structured of text.
+
+The originality of our work consists in taking into account different types of features, e.g., lexical, syntactical, and orthographic information; and unifying them under a single hypergraph structure. An hypergraph differs from a graph in that its edges may link several nodes together at the same time. This flexibility allows for simple and efficient access to the stored elements, either specific types of words or specific features. (revoir: advantages of hyperedges]
+%
+We use the proposed model as the starting point of our other two contributions: solving Word Sense Disambiguation and Induction and Named Entity Recognition. 
+
+Lastly, as a proof of concept and in order to test the implementation practicality of our model, we process the English Wikipedia corpus and store its heterogeneous features under the form of the proposed model. We particularly focus onto the lexical and syntactical characteristics of words.
+
+\subsection{Leveraging the network to find semantic relatedness}
+\paragraph{Challenge}
+De
+The first practical contribution, built upon the previous model, address the complex task of Word Sense Induction and Disambiguation (WSI and WSD).
+WSD consists in assigning a sense to a word according to its context (usually the paragraph it appears in). The set of senses is usually fixed, and given in advance. We use WSD in NLP because usually word senses are more beneficial than simple word forms for a variety of NLP tasks. Nonetheless, in recent works, it is common that before applying WSD, we first try to automatically find the set of senses for each word with a word sense induction system. These senses are ad-hoc to the treated corpus and thus can give us more flexibility in terms of domain adaptation and thus provide better meanings to chose from to a WSD system. Our contribution addresses both tasks.
+
+Based on the hypergraph model proposed before, we need to define 
+
+%The main disadvantage of pure WSD is the use of a fixed set of senses. Constraining the possible senses in this way may  be counterproductive when dealing with specific in-domain text, as senses are dependent of the domain a text is discussing. Furthermore, word senses are dynamic and ever changing.
+
+WSI is usually solved using vectorial representations for each word. However, since the goal of this application (and that of our third contribution) is to validate in 
 
 
 
+\paragraph{Contribution}
+An algorithm that leverages  the structure of the network in order to solve word sense induction and disambiguation. Our proposed method takes into consideration the "real-world" characteristics of the graph to group similar senses and then assign them to target words. We  improve the overall performance compared to other similar graph-based techniques.
 \subsection{Combining features and dealing with sparsity}
 \paragraph{Challenge}
 
@@ -94,12 +115,8 @@ An annotated parsed dump of the English Wikipedia. In this parse we focus  onto 
 
 
 \paragraph{Contribution}
-\newpage
-\subsection{Leveraging the network to find semantic relatedness}
-\paragraph{Challenge}
-An algorithm that leverages  the structure of the network in order to solve word sense induction and disambiguation. Our proposed method takes into consideration the "real-world" characteristics of the graph to group similar senses and then assign them to target words. We  improve the overall performance compared to other similar graph-based techniques.
+%\newpage
 
-\paragraph{Contribution}
 
 
 
