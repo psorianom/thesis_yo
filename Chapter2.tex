@@ -2,6 +2,11 @@
 \label{chap:backgnd}
 The main topic of this dissertation is language representation through a heterogeneous linguistic network and its applications on NLP. Our objective is twofold: first, to conceive a model able to handle multiple textual-data features extracted from. Second, to use this model to solve NLP tasks efficiently and making explicit use of the features diversity. Furthermore, we aim to leverage open-source corpus to complement in-domain datasets.  To achieve our goals, we base our model, and proposed applications, on five main concepts: linguistic representations, the distributional hypothesis, network analysis (and related methods),  multimedia fusion techniques, and lastly,  machine learning methods, namely supervised and unsupervised approaches. these techniques are used as the tools to fit learning models over our data. Indeed, to accomplish the second goal,  we propose solutions to two well-known natural language processing tasks: word sense induction and disambiguation and named entity recognition. 
 
+%The main disadvantage of pure WSD is the use of a fixed set of senses. Constraining the possible senses in this way may  be counterproductive when dealing with specific in-domain text, as senses are dependent of the domain a text is discussing. Furthermore, word senses are dynamic and ever changing.
+
+WSI is usually solved using vectorial representations for each word. However, since the goal of this application (and that of our third contribution) is to validate in 
+
+
 \paragraph {Preprocessing}  According to the final application of the system, we deal with "irregularities" present within the text, so that we can extract more informative features from it. Conventional techniques include conflating (or blend) words according to their stems (stemming), conflating words with respect to their lemmas (lemmatization), removing functional words (articles, determinants, etc.), case normalization, replacing numeric tokens with strings, among others.
 
 \paragraph {Feature Representation} In data analysis we often hear the saying "Garbage In, Garbage Out". Indeed, knowledge discovery (i.e., machine learning methods)  can only do so much with the input data they are given.  This step is then crucial for any NLP or data mining system.   During this step we transform each textual unit from the input corpus into a numerical representation (i.e., a matrix) that is compatible with the machine learning methods used in the following step.
@@ -44,7 +49,7 @@ The distributional hypothesis is popularly exploited in the NLP/Text mining doma
 %++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 \section{Related Work}
-\label{chap:related_wk}
+
 
 
 In this chapter, we present an overview of linguistic network's related work. We first categorize them by their objectives and then by the data contained within. Next, we discuss what and how different methods are used with language networks to extract knowledge from their structural properties. Finally, we discuss the limitations of the current propositions and the advantages of the model we introduce in the following chapter.
