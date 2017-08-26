@@ -1,4 +1,4 @@
-\chapter{Hypergraph Linguistic Model}
+\chapter{Hypergraph Linguistic Model: Structure and Fusion}
 \label{chap:ling_net}
 \begin{abstractchap}
 We present in this chapter our model proposition to stock linguistic data. This structure, based on the concept of hypergraphs, holds heterogeneous textual features, improving on the limitations of common solutions of the state of the art. At the same time, our network allows for fast access to words and their properties from different points of view. Finally, we also discuss our motivations and the scope and limitations of the network. 
@@ -12,6 +12,182 @@ We present in this chapter our model proposition to stock linguistic data. This 
 \label{fig:maindiag}
 \end{figure}
 
+\section{Linguistic Networks}
+
+
+
+In this chapter, we present an overview of linguistic network's related work. We first categorize them by their objectives and then by the data contained within. Next, we discuss what and how different methods are used with language networks to extract knowledge from their structural properties. Finally, we discuss the limitations of the current propositions and the advantages of the model we introduce in the following chapter.
+%\minitoc
+\subsection{Types of Linguistic Networks}
+
+According to their objectives, we can consider two types of contributions in the linguistic-network literature: on the one hand, there are those approaches that investigate the nature of language via its graph representation, and on the other hand, we find those that propose a practical solution to a given NLP problem  \cite{Choudhury2009}. In particular, we pay attention to two aspects of a given network-based technique: (1) the  characteristics of the linguistic data within the network, and (2), the  algorithms used to extract knowledge from it.
+
+
+In the following paragraphs we introduce the general categories of LNs according to their type of content and relations. We will introduce these categories as well as the  approaches that make use of them.
+
+\cite{Mihalcea2011} defines four types of Language Networks (LN): co-occurrence network, syntactic-dependency network, semantic network and similarity network. Meanwhile, from a deeper linguistic point of view, \cite{Choudhury2009} defines broader categories, each having several sub-types. The main difference (in our context) between both definitions lies in the separation of categories. In \cite{Choudhury2009}, they conflate syntactic-dependency and co-occurrence networks into the same  category: word co-occurrence networks. Similarly, they join semantic and similarity networks together and place them inside a broader category of lexical networks. The third  family  defined concerns phonological networks which is out of the scope of this work. In this work we will explore four categories of linguistic networks: semantic, lexical co-occurrence, syntactic co-occurrence and heterogeneous networks. The following sections will elucidate what each kind of network represent, we will mention works that employ this kind of networks and also list the main methodology differences that  variate from one approach to another. 
+%These difference will be developed in subsection \ref{} and \ref{} where we discuss the nature of the language network graph as well as the algorithms used to obtain a practical solution to a NLP task.
+
+\paragraph{Semantic Networks}
+A Semantic Network (SN) relates words, or concepts, according to their meaning. The classical example of a SN is the renowned knowledge base Wordnet. This network, which serves also as an ontology, contains sets of synonyms (called synsets) as vertices and semantic relations as their edges. Typical semantic relationships include synonymmy-antnonimy, hypernym-hyponym, holonym-meronym. However, other semantic similarities can be defined. The edges are usually not weighted, although in some cases certain graph similarity measures may be used.
+
+Word sense induction is indeed a task usually solved using semantic networks, specially Wordnet (and to a lesser extent, BabelNet) \cite{2004.Mihalcea.SemanticNetworkPageRank,2007.Sinha.Mihalcea.Unsupervised,2007.Tsatsaronis.WSDwithSpreading,2007.Navigli.GraphConnectivity,2008.Agirre.Multilingual,2008.Klapaftis.WSIUsingCollocations,2009.Agirre.PersonalizedPageRankWSD,2010.Klapaftis.WSD.WSD.HierarchicalGraphs,2010.Siberer.GraphCooccurrenceWSD,2014.Moro.Navigli.EntityLinking_WSD}. Given an input text with a set of ambiguous target words to process, these approaches follow a two-step algorithm:
+\begin{enumerate}
+\item Link target words (usually nouns, skipping stop-words and functional words) with their corresponding  sense (or synset in the case of WordNet-like dictionaries) and extract their vertices and edges into a new, smaller, SN. 
+\item Apply a node ranking technique, usually a random-walk-based method, and select, for each ambiguous word in the input text,  its top ranking synset node as the correct sense.
+\end{enumerate}
+
+The amount of edges a SN has grows depending of the size of the version of Wordnet used or the level of polysemy of a given word. In order to avoid redundancy or contradiction between  linking nodes, \cite{2004.Mihalcea.SemanticNetworkPageRank,2007.Navigli.GraphConnectivity} applied pruning techniques to avoid \textit{contamination} while calculating ranking metrics in order to define a pertinent sense. Regarding edge similarity measures,  in  \cite{2007.Sinha.Mihalcea.Unsupervised, 2007.Tsatsaronis.WSDwithSpreading} they test some metrics individually and also combined. They found that the best results are indeed obtained when several metrics are used at the same time.
+
+Other semantic tasks can also be solved using a SN. For example, Entity linking \cite{2014.Moro.Navigli.EntityLinking_WSD}. In their work, they leverage the BabelNet LKB to jointly disambiguate and link polysemous words to Wikipedia articles. 
+
+Concerning the measure of semantic affinity between two terms, in \cite{2009.Yeh.Wikiwalk} they quantify word similarity by means of projecting them into a Wikipedia space. First, they represent each word by a vector representing its most pertinent pages,  and then they calculate a vectorial similarity measure between them.
+
+In \cite{2013.Matuschek.Gurevych.Dijsktra.WSA} they propose a technique that aligns SNs, i.e., they link senses from two different networks. This task is called word sense alignment. Several SNs are used (Wordnet, Wikipedia, Wiktionary, etc.) thus nodes can represent synsets, articles, or concepts. The links may depict semantic relations or may be links joining two concepts or pages together. Their approach aims to find the shortest path between nodes of any two given SNs while leveraging already existing links between  equal concepts found in both SNs.
+
+
+
+Finally, extracting entities from text can also benefit from the use of SNs. The work proposed by  \cite{2013.Kivimaki.AGraph-BasedApproach} aims to extract technical skills from a document. Again, using Wikipedia as SN, they first represent each article and the input document in a token vector space model.  Next, they find the document top 200 similar pages by calculating the cosine similarity between the document and each page. This serves to extract a Wikipedia subgraph which is used to calculate the most relevant pages for the entry document. Finally, the top pages are filtered by means of selecting those articles that actually represent a skill using a fixed list of skill-related tokens. Once again, the nodes represent Wikipedia articles and the edges the hyperlinks that join them.
+
+
+The cited methods vary in how they make use of their SN, not so much in the network per se. These differences boil down to three aspects:
+\begin{bulletList}
+\item Type of relationship implied by the edges linking the nodes of the network, 
+\item The algorithm used to rank the nodes after the semantic network is built, and
+\item The weight assigned to each edge.
+\end{bulletList}
+
+
+\paragraph{Lexical Co-occurrence Networks}
+Most co-occurrence based intuitions in NLP have their origin in the distributional hypothesis. An effective way to  represent word co-occurrences is by means of a graph structure. Indeed, this kind of graphs are the central column of a Lexical Co-occurrence Network (LCN). In these structures, nodes represent words and edges indicate co-occurrence between them, i.e., two words appear together in the same context. A context can vary from a couple of words (before or after a given word) to a full document, although it is usually defined at sentence level. The edges' weight  represent the strength of a link and is generally a frequency based metric that takes into account the  number of apparitions of each word independently and together.
+
+To solve a task in a truly unsupervised way, researchers generally use this kind of networks instead of LKBs. It is then natural that word sense disambiguation approaches leverage lexical co-occurrence networks, and in return, the distributional hypothesis, to automatically discover senses for a given target word. That is why WSI methods \cite{2004.Veronis,2007.Klapaftis.UOY,2010.Navigli.InducingWordSenses.Triangles,2008.Klapaftis.WSIUsingCollocations,2011.DiMarco.Navigli.ClusteringWebSearch,2011.Jurgens.WSICommunityDetection} are tightly related to LCNs. 
+The cited works use a LCN as described before while other works such as \cite{2007.Navigli.GraphConnectivity,2014.Tao.Qian.LexicalChainHypergraphWSI} represent the co-occurrence by means of a hypergraph scheme. In short, a hypergraph structure is a graph generalization where an edge (called hyperedge) can link more than two vertices per edge and thus it is able to provide a more complete description of the interaction between several nodes \cite{estrada2005}.
+
+In their paper, given an input document with several contexts for each target word, they first group together the contexts via a topic-modeling technique. Thus, each context is assigned a particular group (in this case, a topic). Secondly, a hypergraph is built where the vertices represent contexts and the hyperedges link two nodes together if they share the same topic. Thirdly, the hypergraph is clustered and the words of each context (of each node) are used to build vectorial representations
+
+WSI systems generally perform four steps. Given an input text with a set of target words and their contexts (target words must have several instances throughout the document to cluster them), the steps are the following:
+
+\begin{enumerate}
+\item Build a LCN, assigning tokens as nodes and  establishing edges between them if they co-occur in a given context (usually if they both appear in the same sentence),
+\item Determine the weights for each edge according to a frequency metric,
+\item Apply a graph clustering algorithm. Each cluster found will represent a sense of the polysemous word, and
+\item Match  target word instances with the clusters found by leveraging each target word context. Specifically, assign a cluster (a sense) to each instance by looking at the tokens in the context.
+\end{enumerate}
+
+As with semantic networks, not only WSD or WSI can be solved with LCNs. Finding semantic associated terms in a corpus is a critical step in several NLP systems. This task is solved in the system proposed by \cite{2011.Haishan.AHypergraphbased}. They also use a LCN although instead of a co-occurrence graph, they also employ a co-occurrence hypergraph, where nodes represent words and edges describe co-occurrence at the paragraph level.  In this work, they use such structure to find related terms in a given corpus. In order to do it, they mine the hypergraph as in a frequent itemsets problem, where the items are the words from a text. The method consists in first finding similar itemsets by means of measuring similarity between nodes. Once the 2-itemsets are found, they induce a graph from the original hypergraph by drawing edges between nodes that have a similarity superior to an arbitrary threshold. Lastly, in order to find $k$-itemsets ($k > 2$), the find either complete or connected components in the induced graph. 
+
+
+
+As with WSD, while the LCNs used are mostly the same among approaches, there are certain moving parts that make up the difference between WSI approaches. The most common differences that can arise are:
+
+\begin{itemize}
+\item The clustering algorithm to find senses in the LCN graph.
+\item The technique used to match context words to clusters.
+\item The weight used in the graph edges.
+\end{itemize}
+
+
+
+\paragraph{Syntactic Co-occurrence Networks}
+A Syntactic Co-occurrence Network (SCN) is very similar to a LCN  in the sense that both exploit the distributional hypothesis. Nonetheless, SCNs go further by leveraging  syntactic information extracted from the text. There are two main types of syntactic information both represented as tree structures: constituency-based parse trees and dependency-based parse trees. Briefly, the former structure splits a phrase into several sub-phrases. In this way we can get a glimpse of the role of each word inside a phrase. The latter tells us about the relationships existing between words in the phrase. SCNs employ, most of the time, dependency trees to create a graph that relates words according to their syntactic relations. In the case of \cite{2013.Hope.GradedWSI}, a graph is built using syntactic dependencies. It is used to perform WSI using a very similar approach as those systems using LCNs. 
+
+A network representation that is on the border line between being a LCN and a SCN is that of \cite{2013.Bronselaer.TextAnalysisWithGraphs}. They  propose a graph document modelization. In their network, nodes represent words and edges their co-occurrence, as any LCN. Still, their graph resembles a SCN because the edges may represent one of three types of words: either prepositions, conjunctions or verbs. As a result,  they need to first extract syntactic information from a document, namely the part-of-speech tags of each word. They find the most relevant words of a given text by ranking the nodes of the graph. The words that best represent a document can be used to summarize it, as they show in their work.
+
+Approaches based on SCN are rarely used in WSD or WSI systems, and therefore they are an interesting reserch avenue to explore.
+
+
+\paragraph{Heterogeneous Networks}
+Until now we have described different types of networks with single types of nodes and relations. Lately, heterogeneous networks have been defined in order to model multi-typed information in a single structure \cite{Jiawei2009}. 
+
+Even though this kind of structure seems to open new avenues of research in the semantic analysis domain, only few explicitly take advantage of them, as is the case of \cite{2013.Saluja.Graph-BasedUnsupervisedLearning}. In their approach, they build a graph that links together features with words, and discover similarity measures that leverage the multi-typed nature of their network.
+
+ 
+ 
+\subsection{Algorithms used in Linguistic Networks}
+
+We have discussed until now the different types of networks from a content point of view. In this subsection, we address the details of the algorithms used to solve practical NLP tasks. In this section we will cover the details of four different types of graph algorithms.
+
+%\paragraph{Notation}
+%In this section we will be referring to a connected undirected graph, which we denote by $G = (V,E,W)$. The graph $G$ has vertex set $V$, edge set $E$ where $|V|=n$, $|E|=m$, and the matrix $W\in\mathbb{R}^{n\times n}$, with $w_{u,v} \geq 0$, defines any kind of weights in the graph.
+
+
+\paragraph{Edge Weights}
+
+We begin by describing the metrics used to determine similarity between nodes, usually stored as edge weights. As stated in the previous sections, most of the metrics are frequency based, specially when dealing with LCNs. The main idea of these measures is to assign a weight that decreases as the association frequency of the words increases. Among these measures, the most popular are the Dice  coefficient \cite{2010.Navigli.InducingWordSenses.Triangles,2011.DiMarco.Navigli.ClusteringWebSearch,2013.DiMarco.Navigli.ClusteringGraph-BasedWSI}, normalized pointwise mutual information \cite{2013.Hope.GradedWSI}, and a graph-adapted tf-idf variant \cite{2007.Tsatsaronis.WSDwithSpreading} which aims to give importance to frequent edges while also favoring those that are rare.
+
+Edge weights can also be calculated when the vertices of a network do not represent words. Such is the case of \cite{2010.Klapaftis.WSD.WSD.HierarchicalGraphs}, where nodes represents a target word context (set of tokens around an ambiguous word). This time the Jaccard index is used to quantify similarity between them while considering how many words are shared between a pair of context nodes.
+
+%When the nodes represent synsets (or concepts), certain approaches leverage only the intrinsic nature of the network connections, leveraged by random walk algorithms, without explicitly using  weighted edges \cite{2004.Mihalcea.SemanticNetworkPageRank}. 
+% On the other hand, there are techniques that assign a frequency-based weight to represent the importance of a semantic relation, particularly those found in the reviews  by \cite{2007.Sinha.Mihalcea.Unsupervised,2007.Navigli.GraphConnectivity}, where several weights are tested.
+
+A  more sophisticated approach to edge weighting is proposed in \cite{2013.Saluja.Graph-BasedUnsupervisedLearning} where they employ  custom-defined functions in order to learn the most appropriate edges' weights for a given set of seed vertices inside a network. The main idea  is to enforce \textit{smoothness} (keeping two nodes close if they have related edges) across the network.
+
+As a way to rank edges according to their importance, the ratio of triangles (cycles of length 3), squares (cycles of length 4), and diamonds (graphs with 4 vertices and 5 edges, forming a square with a diagonal) in which an edge participates are calculated \cite{2010.Navigli.InducingWordSenses.Triangles,2013.DiMarco.Navigli.ClusteringGraph-BasedWSI}. Once the top edges are found, they create a subgraph containing only these edges (and its corresponding vertices).
+
+Finally, instead of applying weights to edges, a case where  nodes are weighted can be found in \cite{2013.Kivimaki.AGraph-BasedApproach}. They measure and remove popular nodes in order to avoid their bias during the application of their random walk approach.
+
+
+
+
+ 
+
+\paragraph{Graph Search}
+Usually, in a WSD approach, the first step to follow is to build a graph from a LKB. The goal is to explore the semantic network and find all the senses linked to  those found in the context of an ambiguous word. Aside from custom search heuristics applied by certain works \cite{2006.Agirre.TwoGraph-basedAlgorithms,2007.Sinha.Mihalcea.Unsupervised,2009.Agirre.PersonalizedPageRankWSD}, researchers also use well-known graph techniques such as depth-first search \cite{2007.Navigli.GraphConnectivity}, breadth-first search \cite{2008.Agirre.Multilingual} and even the Dijsktra  algorithm to find the group of closest senses in the network \cite{2013.Matuschek.Gurevych.Dijsktra.WSA}.
+
+
+\paragraph{Node Connectivity Measures}\label{sec:connectivity_measures}
+A Connectivity Measure (CM) determines the importance of a node in a graph according to its association with other nodes. In most cases its value ranges from zero to one, where the 0 indicates that the node is of minor importance while 1 suggests a relatively high significance. Nowadays, the most widely used  measures are those based on random walks.
+
+A Random Walk (RW) can be simply defined as the traversal of a graph beginning from a given node and randomly jumping to another in the next time step.
+% It is similar to a Markov chain process, the difference being that in a Markov chain the next step node is chosen to according to a certain distribution.  
+
+PageRank \cite{Brin1998}, the popular random walk based algorithm is used commonly in WSD. The recursive intuition of PageRank is to give importance to a node according to the PageRank value of the nodes that are connected to it. %Formally, the vector PageRank holding values for each node in $v \in V$ is calculated as: $PR(v) = \alpha\sum_{u,v\in E}{\frac{PR(u)}{outdegree(u}} + \mathbf{v}(1-\alpha)$, where $ \alpha  $ is a dumping factor to control the jumps a random walker will make; and $ \mathbf{v} $ is the relevance vector for each node has in $G$. In classical PageRank, the values of  $\mathbf{v}$ are uniformly set to $\frac{1}{n}$ for all nodes in $|V|$. 
+Nonetheless, as a regular random-walk algorithm, in PageRank the probability distribution to change from a node to another is uniform. In such case, the jumps a random walker performs depend solely on the nature of the graph studied. Among the approaches surveyed, those that use the most PageRank are those that solve word sense disambiguation \cite{2004.Mihalcea.SemanticNetworkPageRank,2006.Agirre.TwoGraph-basedAlgorithms,2007.Navigli.GraphConnectivity,2010.Siberer.GraphCooccurrenceWSD}. 
+%
+These approaches make a conventional use of PageRank: they apply it and rank nodes to select the most appropriate senses for ambiguous words. Still, there are some improvements over the classical use of PageRank in WSD. Some techniques employ a different version of PageRank called Personalized PageRank (or PageRank with restart \cite{Murphy2012} or PPR) were a random walker may return to a specific starting node with certain probability rather than jumping to a random node. This formulation allows researchers to assign more weight to certain nodes. For example, in \cite{2009.Agirre.PersonalizedPageRankWSD} they are able to use the complete Wordnet graph as their SN. They do this by directly adding context words of a polysemous token into Wordnet and then giving a uniform initial distribution to only these nodes. In this way, they force PageRank to give more importance to the context words without the need of extracting a subgraph from the SN. In \cite{2014.Moro.Navigli.EntityLinking_WSD} they apply the same technique to obtain a \textit{semantic signature} of a given sense vertex. After applying PPR, they obtain a frequency distribution over all the  nodes in the graph. The so-called semantic signature consists in those nodes that were visited more than an arbitrary threshold and that best represent an input sense node.
+
+There are other methods which share the properties of random walk approaches. In  \cite{2007.Tsatsaronis.WSDwithSpreading,2013.Kivimaki.AGraph-BasedApproach} they apply a method known as spreading activation. This algorithm aims to iteratively diffuse the initial weights of a set of seed nodes across the network. Specifically, once a weighted semantic network is built, they \textit{activate}  the nodes representing the context senses, assigning a value of 1, while \textit{disactivating} the rest by setting them to 0. They determine the most pertinent senses to the input nodes by storing, for each of them, the last active sense node with the highest activation value. 
+
+Beyond WSD and into the task of determining word similarities, we found the work of \cite{2009.Yeh.Wikiwalk}, where they calculate a semantic similarity between a pair of words while leveraging a Wikipedia SN. For each word, they  apply PPR to find the articles that best represent a word. 
+%They set the initial distribution in such a way that the articles that best represent each word have a higher probability than the rest of nodes. 
+In \cite{2013.Saluja.Graph-BasedUnsupervisedLearning}, they also employ PPR to find synonym words given a word-similarity matrix and a new unknown word (also known as out-of-vocabulary word). They link the new word to its corresponding feature nodes and they normalize the similarity matrix to use the weights as probabilities and thus bias the random walk. In \cite{2013.Kivimaki.AGraph-BasedApproach} they use centrality measures to determine the most relevant nodes in a SN and then, in contrast with most approaches, remove them from the graph in order to not bias their graph algorithms.
+%
+
+With regard to other CMs, there are  more elementary alternatives to determine the importance of a node. For example, the approaches of  \cite{2004.Veronis,2007.Klapaftis.UOY,2011.Haishan.AHypergraphbased,2013.Bronselaer.TextAnalysisWithGraphs,2014.Moro.Navigli.EntityLinking_WSD} successfully use the degree of a node, or other metric, to determine its importance in a network.
+
+
+
+
+
+
+\paragraph{Graph Clustering/Partitioning}
+
+Graph clustering is defined as the task of grouping the vertices of a graph into clusters while taking into consideration its edge structure \cite{Schaeffer2007}. As previously mentioned, graph-based word sense induction relies most importantly in the graph clustering step where the actual senses of a word are inferred. 
+
+In this subsection we also consider  subgraph extracting techniques which are exploited to find separated groups of words and thus induce senses. In this context we found the approaches of \cite{2004.Veronis,2010.Siberer.GraphCooccurrenceWSD}. These systems make use of both the Minimum and Maximum Spanning Trees algorithms (MinST and MaxST, respectively) as a final step to  disambiguate a target word given its context.  Meanwhile, both \cite{2011.Haishan.AHypergraphbased,2014.Tao.Qian.LexicalChainHypergraphWSI}  use the Hypergraph Normalized Cut (HCT) approach, a hypergraph clustering method based on minimum cuts, to induce senses.
+
+Most of the reviewed approaches employ state of the art techniques \cite{2008.Klapaftis.WSIUsingCollocations,2010.Klapaftis.WSD.WSD.HierarchicalGraphs,2011.Jurgens.WSICommunityDetection,2013.Hope.GradedWSI}. Specifically, they utilize Chinese Whispers (CW) \cite{biemann2006chinese}, Hierarchical Random Graphs (HRG) \cite{clauset2008hierarchical}, Link Clustering (LC) \cite{ahn2010link}, and MaxMax (MM) \cite{hope2013maxmax} respectively. 
+
+Briefly, CW is a randomized graph-clustering method  which is time-linear with respect to the number of edges and does not need a fixed number of clusters as input. It only requires a maximum amount of iterations to perform. HRG, being a hierarchical clustering algorithm, groups words into a binary tree representation, which allows to have more in-detail information about the similarity among words when compared to flat clustering algorithms. Regarding LC, instead of clustering nodes, this procedure groups edges. Thus it can identify contexts related to certain senses, instead of finding groups of words as most approaches do. Finally, MM, is able to assemble words into a fixed cluster (hard clustering) or allow them to be in several groups at the same time (soft clustering). It shares certain characteristics with CW:  they are both methods that exploit similarity within the local neighborhood of nodes and both are time-linear. Nonetheless, a key difference is that CW is not deterministic, while MM is, thus MM will find always the same clustering result for the same input graph.
+
+\input{network_soa_table.tex}
+
+\subsection{State of the Art Discussion}\label{sec:soa_disc}
+We have covered the network attributes of several approaches on semantic related NLP tasks. A summary of these strategies is shown in Table \ref{tab:survey_sum}.
+In this section we will shortly discuss the reviewed articles from a  modelization perspective as well as looking at the evolution of the approaches used to solve the word sense disambiguation and induction tasks.
+
+
+Regarding WSD approaches, we see that the use of a lexical knowledge base, such as Wordnet, is pervasive in this task. Indeed, new resources, such as BabelNet, solves to some extent the fixed (no new senses are included automatically) nature of this type of resources by leveraging the always evolving knowledge of Wikipedia. Indeed, in the recent years, entity linking has emerged as a related task to WSD. It takes even more advantage from bases that combine both Wordnet and Wikipedia, such as BabelNet. On the other hand, WSI, while being a more flexible approach (language and word-usage independent, does not require human-made bases)  for solving WSD, its results are tightly linked to the quality of the clustering algorithm used. 
+% 
+%We refer to  linguistic-network modelization as the type of linguistic information and the means in which it is stored within a language network.
+ With respect to the networks' modelization, we find that few approaches deal with syntactic attributes. We believe that finding semantic similarities can be improved by adding syntactic information not only  while using dependency relations but also by leveraging the constituency tree of each word. Moreover, using syntactic data along with semantic and/or lexical co-occurrences takes us into the heterogeneous network domain which has not been addressed in most of the approaches covered. Being able to design new similarity metrics that deal with different types of information opens new avenues of research in the semantic similarity domain. Finally, concerning the algorithms employed, few approaches make direct use of the graph Laplacian representation. New similarities could be defined using the Laplacian as a starting point. 
+
+
+Taking into account the described opportunities of research, in the following section we propose a  hypergraph modelization of a linguistic network that aims to cover some of the limitations stated above. 
+%Finally, we note that the use of open and collaborative data allows us to create better approaches and obtain superior results.
+
+
 
 Building upon previous linguistic representations \cite{2007.Klapaftis.UOY,2011.Haishan.AHypergraphbased,2014.Tao.Qian.LexicalChainHypergraphWSI}, our model is also based on the use of a hypergraph.
 % As stated before, hypergraphs have been employed in the literature to model complex systems. 
@@ -19,7 +195,7 @@ Their single most important difference with regular graphs, being able to relate
  
  %
  %Formally, a hypergraph is a generalization of a graph defined as a tuple $G=(V,E)$, where the vertices $V = \{v_1, v_2, ..., v_n\}$ represent the set of nodes and  $E = \{e_1, e_2, ...,e_m\}$  the set of hyperedges which contains links between two or more vertices 
-\section{Characteristics of our proposition}
+\section{Hypergraph Linguistic Network}
 In our model we group words together according to these features, into a  hypergraph schema. Formally, a hypergraph \cite{Berge1985} is a graph generalization  that allows more than two vertices to be linked by a single edge. Let $V$ denote a finite set of objects, and let $E$  (the hyperarcs
 or hyperedges) be a
 group of subsets  of $V$ such that $V = \cup_{e_j \in E}e_j$. We call $\mathcal{H}=(V,E)$ a {hypergraph}
@@ -39,7 +215,7 @@ Each hyperedge may be one of three types: noun phrase\footnote{In this work we c
 
 We illustrate our hypergraph incidence matrix with the following example  phrase: \textit{The report contains copies of the minutes of these meetings}. We tokenize the phrase, keeping all the words, and we lemmatize and parse it to obtain both constituency and dependency trees.
 
- The constituency tree of the example phrase is shown in Figure \ref{fig:tree}. The sentence, as well as each noun phrase (NP) node is identified by a number. We can observe that this phrase is composed by five noun phrases (NP) and one verb phrase. Meanwhile, some of the NPs are formed by other kind of phrases, depending on the grammar production rule used to build each one of them. As is usual in this kind of structures, there is a one to one relation between the number of tokens in the sentence  and the number of leaves in the tree.
+ The constituency tree of the example phrase is shown in Figure \ref{fig:tree}. The sentence, as well as each noun phrase (NP) node is identified by a number. We can observe that this phrase is composed by five noun phrases (NP) and one verb phrase. Meanwhile, some NPs are formed by other kind of phrases, depending on the grammar production rule used to build each one of them. As is usual in this kind of structures, there is a one to one relation between the number of tokens in the sentence  and the number of leaves in the tree.
  
  \forestset{
      sn edges/.style={for tree={parent anchor=south, child anchor=north}},
