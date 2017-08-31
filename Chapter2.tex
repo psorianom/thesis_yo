@@ -126,7 +126,7 @@ While  a parse tree represent the units existing within a sentence. As a complem
 
 To illustrate dependency trees, we can observe in Figure \ref{fig:exo1_dependences} the dependency parse of the same first used in the previous examples. In this particular case, the relation tags used are the "enhanced" universal dependencies by \cite{schuster2016enhanced}. The difference is that relations are made more explicit by collapsing them (reducing two relation edges into a single one)  and including the modifier  (or adjunct) directly into the label. Consequently, they can be more useful to determine the relatedness between words.
 
-The context that can be extracted from dependency relations varies. Still, the usual consensus is to treat the relation as the triple it is: $(head, relation, dependent)$ and based on that extract a certain type of context. In the example of Figure \ref{fig:exo1_dependences}, a context of the word  \textit{chip}, according to \cite{Lin1997} would be: $(conj:and,coil,head)$. This indicates that \textit{chip} is connected to \textit{coil} by the conjunction \textit{and}. More recent context definitions, such as those of \cite{baroni2010distributional,LevyG14,Panchenko2017} also include the inverse relation a word participates in, i.e., if the target word is a dependent, its dependency relation is also included but indicated as "inverse".  Again, using the previous example with the  word \textit{chip}, the  contexts now would then be: interaction/nmod:between$^{-1}$;coil/conj:and . These contexts and other example can be seen in Table \ref{tab:exo_deps_contxt}.
+The context that can be extracted from dependency relations varies. Still, the usual consensus is to treat the relation as the triple it is: $(head, relation, dependent)$ and based on that extract a certain type of context. In the example of Figure \ref{fig:exo1_dependences}, a context of the word  \textit{chip}, according to \cite{Lin1997} would be: $(conj:and,coil,head)$. This indicates that \textit{chip} is connected to \textit{coil} by the conjunction \textit{and}. More recent context definitions, such as those of \cite{baroni2010distributional,LevyG14,Panchenko2017} also include the inverse relation a word participates in, i.e., if the target word is a dependent, its dependency relation is also included but indicated as "inverse".  Again, using the previous example with the  word \textit{chip}, the  contexts now would then be: interaction/nmod:between$^{-1}$; coil/conj:and . These contexts and other example can be seen in Table \ref{tab:exo_deps_contxt}.
 
 \begin{figure}[!t]
  \begin{minipage}{\textwidth}
@@ -153,7 +153,7 @@ The context that can be extracted from dependency relations varies. Still, the u
   \end{minipage}
 \end{figure}
 
-Syntactic contexts are less used than their lexical counterpart in large part due to the process of obtaining the trees discussed before. While nowadays there are several software solutions able to extract this kind of information, the process is decidedly more complex than counting words in a lexical context setting. Furthermore, the information is not 100 \% accurate, as the systems are trained using human annotated banks of trees (called treebanks) which is in itself an ambiguous and hard process \cite{JurafskyM09,perinet2015}.  This difficulty stems yet another problem with syntactic information: syntactic parsers are not easily available for languages other than English and the rest of those in  the indo-european family. As a last downside, these contexts are known to generate sparse computational representations \cite{sahlgren2006word}. Still, syntactic contexts are shown to be able to contribute more information about word's relations than simple lexical contexts \cite{Lin1997,pado2003constructing,turney2010,baroni2010distributional,LevyG14,Panchenko2017}.
+Syntactic contexts are less used than their lexical counterpart in large part due to the process of obtaining the trees discussed before. While nowadays there are several software solutions able to extract this kind of information, the process is decidedly more complex than counting words in a lexical context setting. Furthermore, the information is not 100 \% accurate, as the systems are trained using human annotated banks of trees (called treebanks) which is in itself an ambiguous and hard process \cite{JurafskyM09,perinet2015}.  This difficulty stems yet another problem with syntactic information: syntactic parsers are not easily available for languages other than English and the rest of those in  the indo-european family. As a last downside, these contexts are known to generate sparse computational representations as they are more specific than simpler lexical contexts \cite{sahlgren2006word}. Still, syntactic contexts are shown to be able to contribute more information about word's relations than simple lexical contexts \cite{Lin1997,pado2003constructing,turney2010,baroni2010distributional,LevyG14,Panchenko2017}. In other instances, lexical contexts are shown to perform better in NLP tasks except when the syntactic contexts are extracted from very large corpora (such as Google Syntactic N-gram corpus \cite{goldberg2013dataset} containing $10^{11}$ tokens) \cite{kiela2014systematic}.
 
 We have presented the two  main types of co-occurrence contexts that can represent a word in a corpus. In the next section we present the structures that allow mathematical and computational manipulation of the information provided by these contexts.
 
@@ -166,24 +166,24 @@ We have presented the two  main types of co-occurrence contexts that can represe
 %\blindtext %1 %7 lineas x 8.3 =~ 60 lineas
 
 
-\subsection{Vector Space Model}
-%\paragraph{Vector Space Model}
+\section{Vector Space Models}
 
 The whole point of determining contexts, either lexical or syntactical, for a set of words in a corpus is to be able to assess how similar their meaning is among them. This assessment of relatedness thus need to be measured by a metric in order to determine its level. The way we measure the relatedness between words relies on well-known algebraic operations, such as the dot  product. In order to calculate a dot product we need vectors. It follows that to calculate relatedness among words we need to represent words by means of vectors, where each vector describe a word and each dimension a context of it. 
 
 The Vector Space Model (VSM) consists in representing textual units in a multi-dimensional space. The textual units represented are not constrained to words themselves. We may describe co-occurrent features for documents, phrases, paragraphs, or other types \cite{manning1999foundations}. A matrix is used as the structure that holds each object and its context features. Indeed, in practical terms, a VSM is then an array of real-number vectors, where each one represent a text unit and the columns describes the co-occurrent contexts the word participates in. To illustrate  this, in Table \ref{tab:lexical_matrix} we represent words of the previous examples in a \textit{word space}. Each entry of this matrix (called a co-occurrence matrix) represent a weight that infers the importance of the row word (or target word) with respect to the column (context) co-occurrence in a given context, within an input corpus \cite{JurafskyM09}. That is, the word \textit{code}, co-occurs once with the context indicated by the second and third columns, which in turn correspond to the words \textit{chip} and \textit{works}.
 %We note that some vector space models are not constrained to 2-dimensional matrices and leverage structures of larger dimensions \cite{baroni2010distributional}.
 
-In the example, the weights consist merely in the frequency of co-occurrence of each word with each context. Indeed, there are still other two related parameters that affect the meaning extracted from a distributional model: the weight each cell in the matrix has, or how do each co-occurrence affect each word; and the similarity measure  between vectors we will use to determine the semantic relatedness among words. For a complete analysis on a wide range of parameters affecting vector space models, see \cite{baroni2010distributional,kiela2014systematic,levy2015improving}.
+In the example, the weights consist merely on the frequency of co-occurrence of each word with each context. Indeed, there are still other two related parameters that affect the meaning extracted from a distributional model: the weight each cell in the matrix has, or how do each co-occurrence affect each word; and the similarity measure  between vectors we will use to determine the semantic relatedness among words. For a complete analysis on a wide range of parameters affecting vector space models, see \cite{baroni2010distributional,kiela2014systematic,levy2015improving}.
 
 
 
 \begin{table}[]
 \centering
-\caption{Lexical contexts of the words appearing in the phrases of Figure \ref{fig:example_phrases}. The context is paradigmatic, the window being the complete phrase where the word occurs.}
+\caption{Matrix representation of the lexical contexts of the words appearing in the phrases of Figure \ref{fig:example_phrases}. The window is the complete phrase where the word occurs.}
 \label{tab:lexical_matrix}
 \begin{tabular}{@{}lrrrrrrrr@{}}
 \toprule
+ Words & \multicolumn{8}{c}{Contexts} \\ \midrule
        & $w_1$ & $w_2$ & $w_3$ & $w_4$ & $w_5$ & $w_6$ & $w_7$ & $w_8$ \\ \midrule
 code$_{w_1}$        & 0    & 1    & 1     & 0           & 0    & 0       & 0        & 0     \\
 chip$_{w_2}$        & 0    & 0    & 0     & 1           & 1    & 0       & 0        & 0     \\
@@ -204,7 +204,7 @@ The weight is an important parameter in the creation of a VSM for a NLP applicat
 
 Point-wise Mutual Information (PMI) \cite{Church1990} and Positive Point-wise Mutual Information (PPMI) \cite{niwa1994co} are two popular choices to weight terms in a co-occurrence matrix \cite{turney2010,JurafskyM17}. We describe both of them below.
 
-Given a co-occurrence matrix M, containing $W$ words (rows) and $C$ contexts (columns), where $f_{ij} \in \mathbb{R}^{W\times V}$ denotes the frequency of  target word $w_i$ frequency in the context $c_j$ , i.e., how many times they both co-occur. $N=\sum_{i=1}^W\sum_{j=1}^Cf_{ij}$ represents the sum of all the matrix cells. PMI is defined as:
+Given a co-occurrence matrix M, containing $W$ words (rows) and $C$ contexts (columns), where $f_{ij} \in \mathbb{R}^{W\times C}$ denotes the frequency of  target word $w_i$ frequency in the context $c_j$ , i.e., how many times they both co-occur. $N=\sum_{i=1}^W\sum_{j=1}^Cf_{ij}$ represents the sum of all the matrix cells. PMI is defined as:
 \begin{equation} \label{eq:pmi}
 PMI(w_i,c_j) = \log\dfrac{P(t_{ij}|c_j)}{P(t_{ij})P(c_j)}
 \end{equation}
@@ -229,7 +229,7 @@ PMI(w_i,c_j) = \max(PMI(w_i,c_j), 0)
 %3 sparsity (long, important paragraph)
 The second parameter to consider after weighting the co-occurrence matrix is how to actually determine the similarity between two word vectors.
 
-As with weighting schemes, there are multiple metrics \cite{ClarkBook2010,kiela2014systematic,clark2015vector} used in the literature to determine the similarity between two vectors. We will focus on two that are of interest to this thesis: cosine and Jaccard similarity. More types of metrics and their comparison can be found in the previously cited literature. While there does not seem to be a single best measure of similarity, we usually use the cosine similarity, as it naturally can deal with real-valued vectors. On the other hand, when dealing with binary presence-absence vectors, it is more common to use Jaccard. 
+As with weighting schemes, there are multiple metrics (defined and compared to greater detail in \cite{ClarkBook2010,ferret2010testing,kiela2014systematic,clark2015vector}) used in the literature to determine the similarity between two vectors. We will focus on two that are of interest to this thesis: cosine and Jaccard similarity. More types of metrics and their comparison can be found in the previously cited literature. While there does not seem to be a single best measure of similarity, we usually use the cosine similarity, as it naturally can deal with real-valued vectors. On the other hand, when dealing with binary presence-absence vectors, it is more common to use Jaccard. 
 
 \subparagraph{Cosine Similarity}
 The cosine similarity determines the angle between two multidimensional vectors. It is simply defined as the dot product between two vectors, normalized by the multiplication of their Euclidean length \cite{Manning2008}. The cosine similarity is bounded between $[0,1]$, yet we usually interpret the result in the positive space, where 0 means there is an angle of $90^\circ$ between the two word vectors, thus  no similarity at all; and 1 means there is no angle between them, so they are completely similar. Furthermore, if the weights of the matrix are non-negative values, the cosine similarity is bounded to the range $[0,1]$, The cosine similarity is defined as:
@@ -238,42 +238,92 @@ sim_{cosine}(\overrightarrow{w_1},\overrightarrow{w_2})  =  \dfrac{\overrightarr
 \end{equation}
 
 \subparagraph{Jaccard Index}
-Also named the Tanimoto index, the Jaccard index \cite{jaccard1908nouvelles} determines the similarity between binary vectors, it is defined, in terms of dot products:
+Also known as the Tanimoto index, the Jaccard index \cite{jaccard1908nouvelles} determines the similarity between binary vectors, it is defined, in terms of dot products:
 
 \begin{equation}
 sim_{Jaccard}(\overrightarrow{w_1},\overrightarrow{w_2}) = \dfrac{\overrightarrow{w_1} \cdot \overrightarrow{w_2}}{||\overrightarrow{w_1}||^2+||\overrightarrow{w_2}||^2 - \overrightarrow{w_1}\cdot\overrightarrow{w_2}}
+\vspace{1cm}
 \end{equation}
-In terms of sets, the Jaccard index simply calculates the ratio between the intersection of two word vectors divided by their union. We present the dot product version because it is easier to implement computationally with that formulation.
+
+In terms of two sets, $A$ and $B$, the Jaccard index  calculates the ratio between the cardinality of the intersection of two word vectors divided by the cardinality of their union: $sim_{	Jaccard}(A,B)=\dfrac{|A \cap B|}{|A \cup B|}$. We prefer the definition in terms of dot products because it is more straight-forward to implement computationally that way.
 
 
 \paragraph{Data Sparsity on VSM}
 
 Representing word's contexts as multidimensional  vectors is indeed a straight-forward, simple and  yet powerful method to transform textual data into actionable structures. The model links  textual information, in te form of words and contexts, with the methods used in machine learning.
 
-Nonetheless, there is an important issue that needs to be considered when dealing with vector space models. Indeed data sparsity 
+Nonetheless, there is an important issue that needs to be considered when dealing with vector space models: data sparsity.  A sparse data matrix is a matrix whose entries are mostly zero. Thus, the majority of the words (rows) in the corpus are described by very few contexts (columns). This is a significant problem as on the Knowledge Discovery phase of any NLP system we aim to train a learning model that will eventually predict, classify, group our words in one way ot another. If the words are represented by a limited number of context, the learning algorithms will not be able to generalize properly. Furthermore, when testing the systems, the system will not be able to handle unseen word-context co-occurrences. This will lead to reduced performance \cite{phan2008learning}.
+
+This phenomenon is not the consequence of using vector space models per se,  as the vectors are merely a representation of  word's distribution within a text. Indeed, words tend to be distributed in a text in a very predictable fashion. In any natural language corpus, most of the words occur very few times. On the other hand, very few words occur multiple times. The consequence is that most of the entries in a co-occurrence are zero because we observe very few unique word-context co-occurrences. Put differently, words co-occur most of the times with the same words and  very few times with other words \cite{sahlgren2006word}. Given that any corpus is limited, acceptable English co-occurrences will be missing from it and their weight will be zero while they  actually happen in other corpora \cite{JurafskyM17}. To illustrate sparsity, Table \ref{tab:lexical_matrix} co-occurrence matrix contains eight words and eight contexts (each of the words), for a total of 64 entries. Among these entries, only 20 values are non-zero, and more importantly each word is only represented  by 2.5 contexts in average. While it is a toy example, and 20 non-zero entries from 64 in a matrix would hardly be considered sparse, it reflects what actually happens with larger corpora, as this problem is corpus-size independent (and even more important with smaller corpora \cite{perinet2015}). 
+
+
+In order to deal with the distributional representation sparsity, we discuss below multiple techniques used in the literature \cite{sahlgren2006word,RatinovR09,piero2017} that aim to alleviate matrix sparsity.  In the following paragraphs we discuss explicit and implicit representations. We note that by explicit representation we refer to the classic weighted co-occurrence matrix, introduced before, where cell's values represent target word in a specific context. It is explicit in the sense that each column directly represent a context seen in the input corpus.
+%
+
+
+\subparagraph{Implicit Representations}
+These methods aim to reduce the sparsity as well as the dimension of the co-occurrence matrix while keeping latent (or implicit) features that best represent the original spaces. These techniques reduce the feature space to $k$ dimensions (usually $k$ is much smaller than the original number of columns) and thus the dimensions  are no longer directly interpretable.
+
+\begin{figure}
+\centering
+\includegraphics[width=.8\linewidth]{images/Chapitre2/svd.pdf}
+\caption{Factorization of the matrix $M$ using SVD. Three matrices are generated: $U$, $\Sigma$, and $V$. $U$ is the one that really interest us, it contains $|W|$ words and $k, k<C$ columns.}
+\label{fig:svd}
+\end{figure}
+%todo HAcer bold the matrix names
+
+Classic examples of implicit representations include Latent Semantic Analysis and Linear Discriminant Analysis, both methods generate a word-document (terms in rows, documents in columns) co-occurrence matrix, weighted by tf-idf. Then, the matrix is reduced into a smaller dimension by means of a Singular Value Decomposition (SVD). SVD keeps the top $k$ singular values that maximize the variance among the features, $k$ being smaller than the original number of dimensions.
+
+Recalling  the  definition of a co-occurrence matrix $M$ (where $f_{ij} \in \mathbb{R}^{W\times C}$), SVD factorizes $M$ into three matrices: two orthogonal matrices $U$ and $V$; and one diagonal, containing ordered eigenvalues $\Sigma$, and $V$, such that $M_{i\times j} = U_{i\times k}\Sigma_{k\times k}V_{k\times j}$, as shown in Figure \ref{fig:svd}. We are interested in matrix $W= U_k\Sigma_k$, as it  contains the words represented by $k$ singular values, and we thus can substitute $M$ with it. In the same fashion, we can obtain the same reduced representation for the contexts by using directly $V_k$. \cite{levy2015improving} found that, empirically, we can even dismiss the eigenvalues matrix $V_k$ in $W$ and obtain better general performance.
+
+% todo cite allison2006another saying that data imporoves results
+
+\begin{figure}
+\centering
+\includegraphics[width=.8\linewidth]{images/Chapitre2/nmf.pdf}
+\caption{Factorization of the matrix $M$ using NMF. Two matrices are generated: $W$ and $H$. $W$ contains the words in a $k$ reduced space. $H$ contains the contexts in the reduced space.}
+\label{fig:nmf}
+\end{figure}
+
+A similar approach, that of the Non-negative Matrix Factorization \cite{lee2001algorithms} (NMF)  is  also used to find latent  dimensions in the co-occurrence matrix. As shown in Figure \ref{fig:nmf}, NMF factorizes $M$ into only two matrices: $M_{i \times j} \approx W_{i\times k} H_{k\times j}$. The first matrix $W$ contains the words represented by a lower dimension $k$. On the other hand, $H$ represents the relation between the contexts and the newle induces dimensions. This procedure solves certain issues with SVD, such as containing only positive values in the factorized matrices, which is more intuitive when dealing with text, i.e., the original matrix is the result of the addition of the factorized values. Also, depending on the implementation, NMF is able to solve the Kullback-Leibler divergence (instead of the Euclidean distance, as SVD) as objective function. This measure is better suited for textual data, for example in the factorization of both lexical and syntactic co-occurrence matrices \cite{VandeCruys2011}.
+ 
+
+Lastly, the most popular implicit approach nowadays is the use of distributed representations, also known more popularly as word embeddings. The goal is to represent words with a rich dense matrix and relatively few dimensions. These representations are generated from very large bodies of text, creating a regular co-occurrence matrix and calculating, via either a neural network approach \cite{bengio2003neural,Collobert2011,mikolov2013distributed} or a matrix factorization \cite{pennington2014glove,levy2014neural},  a lower dimensional and dense matrix representation. This area is fast developing, with new methods and propositions every few months. Furthermore, the community is not really certain still on which approach is better, either depending exclusively on co-occurrence frequencies and matrix factorization methods, or on sophisticated prediction approaches coupled with neural networks techniques \cite{baroni2014don,levy2015improving}.
 
 
 
+\subparagraph{Enriched Explicit Representations}
+While implicit representations modify the interpretation of the columns of the co-occurrence matrix so that they are no longer directly interpretable\footnote{Still, the meaning can be inferred to a certain level with the help of the reduced matrices.},  enriched explicit representations modify the meaning of the contexts with the addition of replacement of information to them in order to better cover a larger set of target words and thus reduce the sparsity of the matrix. More importantly, the new contexts are still \textit{natural} concepts in the sense that are still easily interpretable by us humans.
+
+
+
+
+For example, leveraging the large size of the English Wikipedia corpus, the Explicit Semantic Analysis \cite{gabrilovich2007computing} aims to augment text presentation by describing words in terms of Wikipedia concepts. The method yields weighted vectors of Wikipedia concepts that best represent, according to a document ranking, an input text (see Figure \ref{fig:esa}).  The advantage of this representation is that indeed the concepts are human interpretable, not like implicit models, and it covers a very large body of information,  the Wikipedia corpus. As a downside, vectors using this representation tend to be very large representing a computational challenge. What is more, the representations are dependent on the size of the Wikipedia corpus used. Vectors based on non-English versions may suffer from the reduction of textual data, as English Wikipedia is considerably larger than most languages.
+
+\begin{figure}
+\centering
+\includegraphics[width=\linewidth]{images/Chapitre2/esa.pdf}
+\caption{Block description of the ESA process by \cite{gabrilovich2007computing}. The method ranks Wikipedia articles according to an input document. The document is then described by a weighted vector, where each dimension is a Wikipedia article, or concept.}
+\label{fig:esa}
+\end{figure}
+
+Fusion techniques are another option to enrich and eventually densify feature spaces.  While not largely applied in the textual analysis domain as in the multi-media information retrieval and phonetics fields \cite{ozkan2010latent,Ah-PineCC15}, they represent a set of simple yet powerful methods to merge information and create more powerful representations. Indeed, these operations are based on the combination of feature spaces  to obtain representations that leverage the complementarity of the original spaces. \cite{bruni2014multimodal} has employed fusion methods to generate enriched multi-media semantic spaces while blending images and text to define the similarity among words. While feature spaces are combined, these techniques do not modify the meaning of the contexts and they remain interpretable. In this thesis, as we described in the introduction of this work, and as we will see later on, we also use these techniques to fight data sparsity by combining linguistic spaces, without resorting to other types of data. Namely,  by leveraging the properties of two distributional representations, both lexical and syntactic co-occurrences, we can get more dense and stronger  word representations. 
+
+
+We have been discussing vectorial space representations, their parameters (matrix weighting, similarity measure) and one of their main challenge, data sparsity. While VSM models are the most popular to describe the semantic similarity between words, there are other structures that make it easier to  model the interactions that take place among lexical units within a corpus. In that sense, in the next section we introduce the fundamentals of graph-based representations for NLP, which are part of the contributions of this thesis.
+
+\section{Network-based Models}
 %
+	
+
+%\section{Graph-based Models}
 %
-%
-%
-%
-%\section{Vector Space Model and Graph-based representations}
-%\subsection{Vector Space Model}
-%\subsection{Graph-based Models}
-%
-%
-%
-%\section{Supervised and Unsupervised Methods}
-%\subsection{Supervised Methods}
-%\subsubsection{Logistic Regression}
-%\subsubsection{Structured Perceptron}
-%\subsection{Unsupervised Methods}
-%\subsubsection{Spectral Clustering}
 %
 %\section{Word Sense Induction and Disambiguation}
 %\section{Named Entity Recognition}
+
+%\section{Sequential Classification: Structured Perceptron}
+%\section{Clustering: Spectral Clustering}
 
 %++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 

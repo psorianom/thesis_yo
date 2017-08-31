@@ -25,7 +25,7 @@ According to their objectives, we can consider two types of contributions in the
 
 In the following paragraphs we introduce the general categories of LNs according to their type of content and relations. We will introduce these categories as well as the  approaches that make use of them.
 
-\cite{Mihalcea2011} defines four types of Language Networks (LN): co-occurrence network, syntactic-dependency network, semantic network and similarity network. Meanwhile, from a deeper linguistic point of view, \cite{Choudhury2009} defines broader categories, each having several sub-types. The main difference (in our context) between both definitions lies in the separation of categories. In \cite{Choudhury2009}, they conflate syntactic-dependency and co-occurrence networks into the same  category: word co-occurrence networks. Similarly, they join semantic and similarity networks together and place them inside a broader category of lexical networks. The third  family  defined concerns phonological networks which is out of the scope of this work. In this work we will explore four categories of linguistic networks: semantic, lexical co-occurrence, syntactic co-occurrence and heterogeneous networks. The following sections will elucidate what each kind of network represent, we will mention works that employ this kind of networks and also list the main methodology differences that  variate from one approach to another. 
+\cite{Mihalcea2011} defines four types of Language Networks (LN): co-occurrence network, syntactic-dependency network, semantic network and similarity network. Meanwhile, from a deeper linguistic point of view, \cite{Choudhury2009} introduces broader network's categories, each having several sub-types. The main difference (in our context) between both definitions lies in the separation of categories. In \cite{Choudhury2009}, they conflate syntactic-dependency and co-occurrence networks into the same  category: word co-occurrence networks. Similarly, they join semantic and similarity networks together and place them inside a broader category of lexical networks. The third  family  defined concerns phonological networks which is out of the scope of this work. In this work we will explore four categories of linguistic networks: semantic, lexical co-occurrence, syntactic co-occurrence and heterogeneous networks. The following sections will elucidate what each kind of network represent, we will mention works that employ this kind of networks and also list the main methodology differences that  variate from one approach to another. 
 %These difference will be developed in subsection \ref{} and \ref{} where we discuss the nature of the language network graph as well as the algorithms used to obtain a practical solution to a NLP task.
 
 \paragraph{Semantic Networks}
@@ -94,7 +94,7 @@ A Syntactic Co-occurrence Network (SCN) is very similar to a LCN  in the sense t
 
 A network representation that is on the border line between being a LCN and a SCN is that of \cite{2013.Bronselaer.TextAnalysisWithGraphs}. They  propose a graph document modelization. In their network, nodes represent words and edges their co-occurrence, as any LCN. Still, their graph resembles a SCN because the edges may represent one of three types of words: either prepositions, conjunctions or verbs. As a result,  they need to first extract syntactic information from a document, namely the part-of-speech tags of each word. They find the most relevant words of a given text by ranking the nodes of the graph. The words that best represent a document can be used to summarize it, as they show in their work.
 
-Approaches based on SCN are rarely used in WSD or WSI systems, and therefore they are an interesting reserch avenue to explore.
+Approaches based on SCN are rarely used in WSD or WSI systems, and therefore they are an interesting research avenue to explore.
 
 
 \paragraph{Heterogeneous Networks}
@@ -102,8 +102,7 @@ Until now we have described different types of networks with single types of nod
 
 Even though this kind of structure seems to open new avenues of research in the semantic analysis domain, only few explicitly take advantage of them, as is the case of \cite{2013.Saluja.Graph-BasedUnsupervisedLearning}. In their approach, they build a graph that links together features with words, and discover similarity measures that leverage the multi-typed nature of their network.
 
- 
- 
+
 \subsection{Algorithms used in Linguistic Networks}
 
 We have discussed until now the different types of networks from a content point of view. In this subsection, we address the details of the algorithms used to solve practical NLP tasks. In this section we will cover the details of four different types of graph algorithms.
@@ -170,6 +169,9 @@ In this subsection we also consider  subgraph extracting techniques which are ex
 Most of the reviewed approaches employ state of the art techniques \cite{2008.Klapaftis.WSIUsingCollocations,2010.Klapaftis.WSD.WSD.HierarchicalGraphs,2011.Jurgens.WSICommunityDetection,2013.Hope.GradedWSI}. Specifically, they utilize Chinese Whispers (CW) \cite{biemann2006chinese}, Hierarchical Random Graphs (HRG) \cite{clauset2008hierarchical}, Link Clustering (LC) \cite{ahn2010link}, and MaxMax (MM) \cite{hope2013maxmax} respectively. 
 
 Briefly, CW is a randomized graph-clustering method  which is time-linear with respect to the number of edges and does not need a fixed number of clusters as input. It only requires a maximum amount of iterations to perform. HRG, being a hierarchical clustering algorithm, groups words into a binary tree representation, which allows to have more in-detail information about the similarity among words when compared to flat clustering algorithms. Regarding LC, instead of clustering nodes, this procedure groups edges. Thus it can identify contexts related to certain senses, instead of finding groups of words as most approaches do. Finally, MM, is able to assemble words into a fixed cluster (hard clustering) or allow them to be in several groups at the same time (soft clustering). It shares certain characteristics with CW:  they are both methods that exploit similarity within the local neighborhood of nodes and both are time-linear. Nonetheless, a key difference is that CW is not deterministic, while MM is, thus MM will find always the same clustering result for the same input graph.
+
+ 
+ 
 
 \input{network_soa_table.tex}
 
