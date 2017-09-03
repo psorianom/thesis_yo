@@ -1,7 +1,7 @@
 \chapter{Background}
 \label{chap:backgnd}
 \begin{abstractchap}
-This chapter goes into detail about theoretical axes of this dissertation. First, we present language representations and specifically the three different types that interest us: lexical, syntactic and semantic. Secondly, we cover how we can infer relatedness among words based on the neighbors of each word. This intuition is expressed by the distributional hypothesis. Thirdly, we explain how  we can join words together through their common features by means of a graph-like structure. This structure is known as a language network. Fourth, we detail the techniques used in the multimedia literature to combine (or fuse) features coming from different sources and improve the performance of a knowledge-discovering system. In our work, instead of combining different multimedia sources, we combine diverse textual representations. Finally, we explain the (supervised and unsupervised) methods we employ to solve the NLP tasks at hand.
+This chapter goes into detail about the notions of the theoretical our work is based on. First, we introduce the distributional hypothesis and the parameters involved in the generation of descriptive contexts from a corpus. Secondly, present how can we describe the distributional contexts within a model, either directly through a vectorial representation or by means of a graph-based representation. Thirdly, we discuss one of the main challenges of dealing with textual data: data sparsity. We cover what is it, its consequences, as well as existent solutions to it. Finally, we summarize the concepts introduced and contextualize our propositions.
 \end{abstractchap}
 \minitoc
 
@@ -41,7 +41,7 @@ Distributional methods, based on the DH, have been used for a long time now \cit
 
 The actual implementation of a distributional model consists in three steps: (1) determine what type of context is going to be used, (2) chose a computable context representation, and (3) determine a weighting scheme  and a  relatedness measure.
 
-\subsection{Types of Contexts}
+\subsection{Types of Contexts}\label{sec:contexts}
 We move now onto the description of what are the types of contexts commonly used while implementing a distributional model to represent words.  We cover two types: lexical co-occurrence and syntactical co-occurrence. In this work we will exclusively focus on on those two contexts. The first one describes a word's context based on its nearby words.  The second defines a word's context according to the syntactic relations between the word and its neighbors. We will use the example phrases in Figure \ref{fig:example_phrases} to illustrate the kind of contexts we will describe below. 
 \begin{figure}
 \centering
@@ -89,7 +89,7 @@ Lexical co-occurrences are the most popular way to represent distributional cont
 The second type of context depends on a more profound analysis of text. As its name implies, sytanctic contexts are based on the analysis (or parsing) of text in order to obtain sense from them. Lexical contexts are able to somehow take into account the order of appearance of words in a phrase. Still, words in a sentence are not related among them like a list: semantic information is indeed extracted from words themselves, however syntax highly affects the way information is combined into semantic structures. Words tend to form groups between themselves, called constituents or chunks, which relate to other constituents to form a single phrase unit \cite{bender2013linguistic}.
 
 \subparagraph{Constituent Tree}
-Indeed, constituents are  represented with tree structures aptly named  constituents parse tree, or simply parse tree (see Figure \ref{fig:exo1_constits}) \cite{JurafskyM09}. These trees actually represent the context-free grammars models that we use to describe the chunk structure. As such, the parse tree differentiates between terminal, pre-terminals and non-terminal nodes. Non-terminal nodes refer to chunk labels (e.g., noun phrases\footnote{This nomenclature is the most prevalent: the Penn Tree Bank annotation.}: \textit{NP}, verbal phrases: \textit{VP}, prepositional phrases: \textit{PRP}), pre-terminal nodes pertain to part of speech categories (e.g., determinants: \textit{DT}; adjectives: \textit{JJ}; nouns: \textit{NN}). Finally, terminal nodes indicate the word itself. 
+Indeed, constituents are  represented with tree structures aptly named  constituents parse tree, or simply parse tree (see Figure \ref{fig:exo1_constits}) \cite{JurafskyM09}. These trees actually represent the context-free grammars models that we use to describe the chunk structure. As such, the parse tree differentiates between terminal, pre-terminals and non-terminal nodes. Non-terminal nodes refer to chunk labels (e.g., noun phrases\footnote{This nomenclature is the most prevalent: the Penn Tree Bank annotation.}: \textit{NP}, verbal phrases: \textit{VP}, prepositional phrases: \textit{PRP}), pre-terminal nodes pertain to Part of Speech (PoS) categories (e.g., determinants: \textit{DT}; adjectives: \textit{JJ}; nouns: \textit{NN}). Finally, terminal nodes indicate the word itself. 
 
 %todo References, who is using constituents trees??
 A constituents tree is illustrated in Figure \ref{fig:exo1_constits}. The image corresponds to the parse tree of the first phrase of the example in \ref{fig:example_phrases}: \textit{An interaction between a chip and a coil}. From the bottom-up,  looking at the node labeled \textit{chip}, we see it is a token of type noun (pre-terminal labeled \textit{NN}) and it belongs to a noun phrase (non-terminal \textit{NP}) which in turn belongs to a prepositional phrase (\textit{PP}) which finally is part of the main noun phrase of the sentence \textit{S}. Constituents usually include a word with a prominent role: the \textbf{head} of the constituent. In practical terms, the head (or governor) is the most important word in the chunk because it determines what kind of words (either a verb, an adjective, a noun, etc.) will be joining it within the constituent. 
@@ -198,7 +198,7 @@ field$_{w_8}$       & 0    & 0    & 0     & 0           & 1    & 1       & 1    
 
 %todo slides the word-embeddings.pdf page 34 would be cool to put in this chap
 %1 weighting
-\paragraph{Matrix Weights}
+\subsection{Matrix Weights}
 
 The weight is an important parameter in the creation of a VSM for a NLP application. Weights can be binary, simply  indicating presence or absence. They can count the number of co-occurrences of a word and the context, their absolute frequency. Weights may also be a type of discriminative measure that usually tries to give more importance to those contexts that co-occur more frequently with the target word while being less frequent  with the rest of the words in the text \cite{JurafskyM09,ClarkBook2010}.  
 
@@ -225,7 +225,7 @@ The second and third inconvenient are resolved by using Positive Point-wise Mutu
 PMI(w_i,c_j) = \max(PMI(w_i,c_j), 0)
 \end{equation}
 %2 similarity
-\paragraph{Defining Vector Similarity}
+\subsection{Defining Vector Similarity}
 %3 sparsity (long, important paragraph)
 The second parameter to consider after weighting the co-occurrence matrix is how to actually determine the similarity between two word vectors.
 
@@ -245,23 +245,98 @@ sim_{Jaccard}(\overrightarrow{w_1},\overrightarrow{w_2}) = \dfrac{\overrightarro
 \vspace{1cm}
 \end{equation}
 
-In terms of two sets, $A$ and $B$, the Jaccard index  calculates the ratio between the cardinality of the intersection of two word vectors divided by the cardinality of their union: $sim_{	Jaccard}(A,B)=\dfrac{|A \cap B|}{|A \cup B|}$. We prefer the definition in terms of dot products because it is more straight-forward to implement computationally that way.
+In terms of two sets, $A$ and $B$, the Jaccard index  calculates the ratio between the cardinality of the intersection of two word vectors divided by the cardinality of their union: $sim_{	Jaccard}(A,B)=\dfrac{|A \cap B|}{|A \cup B|}$. We prefer the definition in terms of dot products because in that way it is more straight-forward to implement it computationally.
+
+We have been discussing vectorial space representations and their parameters (matrix weighting, similarity measure). While VSM models are the most popular to describe the semantic similarity between words, there are other structures that make it easier to  model the interactions that take place among lexical units within a corpus. In that sense, in the next section we introduce the fundamentals of graph-based representations for NLP, which are part of the contributions of this thesis.
 
 
-\paragraph{Data Sparsity on VSM}
+\section{Network Models}
+Network\footnote{We will use the notion of \textit{network} and \textit{graph} interchangeably during the rest of this dissertation, unless stated otherwise.} based models have been studied deeply during the last years in the NLP field  \cite{Mihalcea2011}. While we can represent a graph as a matrix, and thus as a vector space model, graphs are useful representation formalism that can be applied to a large set of linguistic characteristics, from the relation between words in a text or between the features that describe them. Indeed, language being a dynamic complex system, networks provide an adequate model to represent and study the structure and evolution of linguistic systems \cite{Choudhury2009}. 
 
-Representing word's contexts as multidimensional  vectors is indeed a straight-forward, simple and  yet powerful method to transform textual data into actionable structures. The model links  textual information, in te form of words and contexts, with the methods used in machine learning.
+Furthermore, based on graph theory, we can conceive efficient and sophisticated solutions to NLP tasks, such as PoS tagging, role-labeling, word sense induction and disambiguation, chunk parsing \cite{Mihalcea2011}. Notably, NLP graph-based approaches are largely employed to solve unsupervised tasks, where we can expect to get insights from the data by looking at  the links existing between entities; and semi-supervised problems, again by leveraging relations to propagate across the network small quantities of hand-crafted tags \cite{nastase2015survey}. An additional non-negligible advantage of graph models are that they allow human interpretation and analysis through their visualization (nonetheless with relatively small samples of text). 
+
+
+Based on the  advantages just mentioned, in this thesis we base our linguistic\footnote{We will refer to a linguistic representation as an structure that holds textual units linked by their linguistic features, in this case, distributional co-occurrences.} model proposition on a graph-based structure. In the following paragraphs we discuss the types of networks used to represent textual data, which closely relates to the co-occurrence representations that we covered in the vector space model. Indeed, graph-based methods follow the same distributional principles as VSM. Thus, as we will see, the relationships among nodes on these networks are very similar to the types of contexts described in Section \ref{sec:contexts}.
+
+
+\subsection{Linguistic Networks}
+A graph is a data structure consisting of a set of vertices connected by
+a set of edges that  model relationships between objects.
+Formally it is defined as a set $G=(V,E)$, where $V$ is a
+collection of vertices $V=\{V_i,i=1,n\}$ and $E$ is a collection of
+edges over $V$, $E_{ij}=\{(V_i,V_j),V_i \in V, V_j \in V\}$. 
+
+When referring to language networks, nodes represent lexical units (most of the time words) and the edges represent the relationships between words. We present below the types of linguistic networks. 
+
+\subsection{Types of Linguistic Networks}
+
+According to their objectives, we can consider two types of contributions in the linguistic-network literature: on the one hand, there are those approaches that investigate the nature of language via its graph representation, and on the other hand, we find those that propose a practical solution to a given NLP problem  \cite{Choudhury2009}. In particular, we pay attention to two aspects of a given network-based technique: (1) the  characteristics of the linguistic data within the network, and (2), the  algorithms used to extract knowledge from it.
+
+
+In the following paragraphs we introduce the general categories of linguistic networks according to their type of content and relations. We will introduce these categories as well as the  approaches that make use of them.
+
+\cite{Mihalcea2011} defines four types of Language Networks (LN): co-occurrence network, syntactic-dependency network, semantic network and similarity network. Meanwhile, from a deeper linguistic point of view, \cite{Choudhury2009} introduces broader network's categories, each having several sub-types. The main difference (in our context) between both definitions lies in the separation of categories. In \cite{Choudhury2009}, they conflate syntactic-dependency and co-occurrence networks into the same  category: word co-occurrence networks. Similarly, they join semantic and similarity networks together and place them inside a broader category of lexical networks. The third  family  defined concerns phonological networks which is out of the scope of this work. In this work we will explore four categories of linguistic networks: lexical co-occurrence, syntactic co-occurrence, semantic and heterogeneous networks. Based  on the previously cited works, the following paragraphs will elucidate what does each kind of network represent.
+%These difference will be developed in subsection \ref{} and \ref{} where we discuss the nature of the language network graph as well as the algorithms used to obtain a practical solution to a NLP task.
+
+
+
+\paragraph{Lexical Co-occurrence Networks (LCN)}
+%An effective way to  represent word co-occurrences is by means of a graph structure. Indeed, this kind of graphs are the central column of a Lexical Co-occurrence Network.
+
+ In these structures, nodes represent words and edges indicate co-occurrence between them, i.e., two words appear together in the same context. The context is also defined by a window of terms. It may vary from a couple of words to a full document, although it is usually defined at sentence level. The edges' weight  represent the strength of a link and is generally a frequency based metric that takes into account the  number of apparitions of each word independently and together. Thus, usually the same type of weights as described are used to represent the \textit{strength}  of a relation.
+
+\begin{figure}[!h]
+\centering
+\includegraphics[width=0.8\linewidth]{images/Chapitre2/lex_net1.pdf}
+\caption{Lexical network for the word \textit{project}.}
+\label{fig:lex_net1}
+\end{figure}
+
+
+\paragraph{Syntactic Co-occurrence Networks (SCN)}
+A Syntactic Co-occurrence Network (SCN) is very similar to a LCN  in the sense that both exploit the distributional hypothesis. Nonetheless, SCNs go further by leveraging  syntactic information extracted from the text. Both of the two types of syntactic parses are used: constituency-based  and dependency-based parse trees. SCNs employ, most of the time, dependency trees to create a graph that relates words according to their syntactic relations. 
+%In the case of \cite{2013.Hope.GradedWSI}, a graph is built using syntactic dependencies.
+ These networks are usually used to perform WSI employing a very similar approach to those systems using LCNs. As before, the main difference being the semantic relatedness found with one or another type of network.
+
+
+\begin{figure}[!h]
+\centering
+\includegraphics[width=0.7\linewidth]{images/Chapitre2/syn_net1.pdf}
+\caption{Syntactic Network of the word \textit{color}.}
+\label{fig:syn_net1}
+\end{figure}
+
+\paragraph{Semantic Networks}
+A Semantic Network (SN) relates words, or concepts, according to well-defined semantic relations. The classical example of a SN is the renowned knowledge base Wordnet. This network, which serves also as an ontology, contains sets of synonyms (called \textit{synsets}) as vertices and semantic relations as their edges. Typical semantic relationships include synonymmy-antnonimy, hypernym-hyponym, holonym-meronym. However, other semantic similarities can be defined. The edges are usually not weighted, although in some cases certain graph similarity measures may be used.
+
+\begin{figure}[!h]
+\centering
+\includegraphics[width=0.7\linewidth]{images/Chapitre2/sem_net.pdf}
+\caption{Semantic Network of the word \textit{mammal}.}
+\label{fig:sem_net}
+\end{figure}
+
+
+\paragraph{Heterogeneous Networks}
+Until now, we have described different types of networks with single types of nodes and relations. Lately, heterogeneous networks have been defined in order to model multi-typed information in a single structure \cite{Jiawei2009}. In reality, we could argue that syntactic-based and semantic networks are already heterogeneous on their own right, as both of them contain edges that represent different types of relations.
+
+
+
+Without regards to their type, network-based structures are ultimately transformed into matrices before being treated computationally. Therefore, given that we are still modeling language (words), graphs suffer from sparsity just as vector space models. Indeed, data sparsity is an issue that affects the performance of knowledge discovery approaches \cite{mining12Book,PerinetH15} applied to textual data.
+
+\section{Data Sparsity}
+Representing word's contexts as multidimensional  vectors, either directly or through a graph-based structure, is indeed a straight-forward, simple and  yet powerful method to transform textual data into actionable structures. The model links  textual information, in te form of words and contexts, with the methods used in machine learning.
 
 Nonetheless, there is an important issue that needs to be considered when dealing with vector space models: data sparsity.  A sparse data matrix is a matrix whose entries are mostly zero. Thus, the majority of the words (rows) in the corpus are described by very few contexts (columns). This is a significant problem as on the Knowledge Discovery phase of any NLP system we aim to train a learning model that will eventually predict, classify, group our words in one way ot another. If the words are represented by a limited number of context, the learning algorithms will not be able to generalize properly. Furthermore, when testing the systems, the system will not be able to handle unseen word-context co-occurrences. This will lead to reduced performance \cite{phan2008learning}.
 
 This phenomenon is not the consequence of using vector space models per se,  as the vectors are merely a representation of  word's distribution within a text. Indeed, words tend to be distributed in a text in a very predictable fashion. In any natural language corpus, most of the words occur very few times. On the other hand, very few words occur multiple times. The consequence is that most of the entries in a co-occurrence are zero because we observe very few unique word-context co-occurrences. Put differently, words co-occur most of the times with the same words and  very few times with other words \cite{sahlgren2006word}. Given that any corpus is limited, acceptable English co-occurrences will be missing from it and their weight will be zero while they  actually happen in other corpora \cite{JurafskyM17}. To illustrate sparsity, Table \ref{tab:lexical_matrix} co-occurrence matrix contains eight words and eight contexts (each of the words), for a total of 64 entries. Among these entries, only 20 values are non-zero, and more importantly each word is only represented  by 2.5 contexts in average. While it is a toy example, and 20 non-zero entries from 64 in a matrix would hardly be considered sparse, it reflects what actually happens with larger corpora, as this problem is corpus-size independent (and even more important with smaller corpora \cite{perinet2015}). 
 
-
+\subsection{Dealing with data sparsity}
 In order to deal with the distributional representation sparsity, we discuss below multiple techniques used in the literature \cite{sahlgren2006word,RatinovR09,piero2017} that aim to alleviate matrix sparsity.  In the following paragraphs we discuss explicit and implicit representations. We note that by explicit representation we refer to the classic weighted co-occurrence matrix, introduced before, where cell's values represent target word in a specific context. It is explicit in the sense that each column directly represent a context seen in the input corpus.
 %
 
 
-\subparagraph{Implicit Representations}
+\paragraph{Implicit Representations}
 These methods aim to reduce the sparsity as well as the dimension of the co-occurrence matrix while keeping latent (or implicit) features that best represent the original spaces. These techniques reduce the feature space to $k$ dimensions (usually $k$ is much smaller than the original number of columns) and thus the dimensions  are no longer directly interpretable.
 
 \begin{figure}
@@ -309,10 +384,25 @@ For example, leveraging the large size of the English Wikipedia corpus, the Expl
 
 Fusion techniques are another option to enrich and eventually densify feature spaces.  While not largely applied in the textual analysis domain as in the multi-media information retrieval and phonetics fields \cite{ozkan2010latent,Ah-PineCC15}, they represent a set of simple yet powerful methods to merge information and create more powerful representations. Indeed, these operations are based on the combination of feature spaces  to obtain representations that leverage the complementarity of the original spaces. \cite{bruni2014multimodal} has employed fusion methods to generate enriched multi-media semantic spaces while blending images and text to define the similarity among words. While feature spaces are combined, these techniques do not modify the meaning of the contexts and they remain interpretable. In this thesis, as we described in the introduction of this work, and as we will see later on, we also use these techniques to fight data sparsity by combining linguistic spaces, without resorting to other types of data. Namely,  by leveraging the properties of two distributional representations, both lexical and syntactic co-occurrences, we can get more dense and stronger  word representations. 
 
+%todo random techniques for data spaarsity see \cite{Sahlgreen,Lenci}
 
-We have been discussing vectorial space representations, their parameters (matrix weighting, similarity measure) and one of their main challenge, data sparsity. While VSM models are the most popular to describe the semantic similarity between words, there are other structures that make it easier to  model the interactions that take place among lexical units within a corpus. In that sense, in the next section we introduce the fundamentals of graph-based representations for NLP, which are part of the contributions of this thesis.
+\section{Positioning}
 
-\section{Network-based Models}
+We have introduced four axis that define the work that we carry out in this thesis: our propositionas are based on the distributional hypothesis: we assume that words that share a common context are related. The relation is determined by the type of context: whether lexical or syntactic properties. If we choose a lexical context, the size of the window (how many words to the right, to the left) should be determined according to the ultimate goal of the NLP task at hand. This window has an effect on the semantic properties of the relatedness among words: the shorter the window, the closer we get to a synonymy similarity, i.e., we may be able to intercheange words one for another and keep a coherent phrase. The larger the window, the more topical the relatedness is, i.e., words are related in a broader sense. On the other hand, when using shorter windows we indeed approach to the relatedness provided by syntactic relations \cite{sahlgren2006word}, which relate words that participate in the same syntactic dependency functions, also known as functional similarity \cite{LevyG14}. Again, this implies that words could be substituted without losing sense within a phrase.
+
+These contexts need to be represented computationally in order to perform some sort of analysis over them. Vector space models allow for this representation. By mean of co-occurrence matrices, we keep track of what words are seen with what contexts within a corpus. These counts may then be affected by some weight that determines the relevance of said co-occurrences in terms of uniqueness in terms of the whole set of co-occurrences found. Once these word's vectors are created, we can thus finally calculate a degree of relatedness between them by employing vector similarity metrics, notably the cosine similarity (for real-valued vectors) and Jaccard (binary valued vectors) metrics.
+
+While matrices are the fundamental structure used in computational operations, we can model the links among words intuitively with graph-based structures. Indeed, by modeling text as graphs we gain access to  established graph-theory techniques which helps us elucidate the inner structure of textual data. 	
+
+Whether its vector based or graph based, a textual, explicit, and distributional representation will be sparse. There are too many words in a text and its assured that, while they could occur in other texts, they will not occur in a single text. This becomes an important problem with NLP systems: words are described by only a small set of features. 
+
+Based on these facts, we present in the following two chapters our contributions. Based on the distributional hypothesis, we select both lexical and syntactic contexts, indeed creating a linguistic resource that hold both types of information in order to get a complementary insight of words' relations. Our network sets a lexical window, a co-occurrence weighting, and the definition of similarity between vectors according to both semantic tasks we treat: word sense induction and disambiguation and named entity recognition. Nonetheless, these parameters can be changed easily. Regarding representation, we base our model on a graph-based structure which holds the words as nodes and the linguistic relations as edges. Being able to use the structure of the graph is useful to solve NLP semantic tasks \cite{nastase2015survey}.    
+
+The choice of both types of contexts entails the need to address the sparsity issue. At the same time, leveraging both of them is significant to our goals. In this sense, we use fusion techniques form the multi-media analysis literature to deal with both sparsity and the heterogeneity of our contexts.
+
+The next chapter introduces our first contribution, a linguistic network as a resource for solving NLP tasks.
+
+
 %
 	
 
