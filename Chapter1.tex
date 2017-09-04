@@ -16,7 +16,7 @@ Making sense of texts plays a vital role on the evolution of general artificial 
 	\includegraphics[width=1\linewidth]{./images/Chapitre1/calendar2.png}
 	\caption{}
 \end{subfigure}
-\caption[foo]{(a) While searching \textit{Who invented Python?}, Google recongizes the simple question an directly gives us the answer from Wikipedia. (b) Gmail detects we received an email from an airline and parses it, finds the date, and automatically creates the corresponding event in our calendar.}	
+\caption{(a) While searching \textit{Who invented Python?}, Google recognizes the simple question an directly gives us the answer from Wikipedia. (b) Gmail detects we received an email from an airline and parses it, finds the date, and automatically creates the corresponding event in our calendar.}	
 \label{fig:google_nlp}
 \end{figure}
 %
@@ -67,7 +67,7 @@ There are several research challenges that arise from the choices taken in each 
 %\end{itemize}
 
 
-We propose three contributions, one in terms of theoretical modelisation and two in terms of NLP applications. Specifically, the contributions that we propose in this work are the following:
+We propose three contributions, one in terms of theoretical modelization and two in terms of NLP applications. Specifically, the contributions that we propose in this work are the following:
 \begin{itemize}
 \item a hypergraph network-based model to hold and combine heterogeneous linguistic data %as well as a tool to extract said data from unstructured text.
 \item a network-based algorithm to discover semantic relatedness between linked words
@@ -147,16 +147,20 @@ Addressing the sparsity of textual data is not an easy task and often involves c
 
 Figure \ref{fig:challenges_contribs} synthesizes the concerned NLP process-flow stages of this work (first line), the challenges that we aim to alleviate (second line), and their effect on the contributions we propose (third line). The remainder of this thesis is structured as follows. 
 
-\paragraph{Chapter \ref{chap:backgnd}} This chapter contains the theoretical background on the concepts discussed in this thesis. At the same time, we present the state of the art on the techniques that are relevant to our work. Specifically, we discuss the basics on text representation and how they are all related together by the distributional hypothesis. We then introduce the two main types of mathematical entities to manipulate text in a computer: vector-space models and graph-based models. Given our choice to work with graphs, we continue this path and introduce their basic concepts and move onto how graphs are employed to hold textual data as well as some prominent NLP applications in the literature. 
+\paragraph{Chapter \ref{chap:backgnd}} This chapter contains the theoretical background on the concepts discussed in this thesis. At the same time, we present the state of the art on the techniques that are relevant to our work. Specifically, we discuss the basics on text representation and how they are all related together by the distributional hypothesis. We then introduce the two main types of mathematical entities to manipulate text in a computer: vector-space models and graph-based models. Given our choice to work with graphs, we continue this path and introduce the types of textual graphs that concern us. Finally, we describe an inherent problem to text data: sparsity.
 %Afterwards, we present how these features can be combined to improve the results of single-feature based solutions. 
-Finally, we detail the machine learning methods we employ in certain as part of our methodology. 
+%Finally, we detail the machine learning methods we employ in certain as part of our methodology. 
 
-\paragraph{Chapter \ref{chap:ling_net}} This As our first contribution, we present and define a novel structure to hold language information: the hypergraph linguistic model.  We discuss its characteristics and the intuitions behind its conception: the hypergraph choice,the role of nodes and edges, the type of features stored, the advantages it represents in terms of accessing and manipulating the data. 
+\paragraph{Chapter \ref{chap:ling_net}} We begin by giving a review on how linguistic networks are used in the literature. This contextualizes our first contribution. We present and define a theoretical contribution: a novel structure to hold language information based on a hypergraph linguistic model.  We discuss its characteristics and the intuitions behind its conception: the choice of the structure,the role of nodes and heterogeneous edges, the type of features stored, the advantages it represents in terms of accessing and manipulating the data. Then, we introduce a set of techniques to make use of heterogeneous relations while dealing with sparsity, the feature fusion techniques. These methods are integral part of our contributions. Finally, we present a concrete application of our hypergraph model using the English Wikipedia. We describe its properties and motivations. The content of this chapter is drawn from \cite{sorianoJournal,sorianoLREC,sorianoEGCChallenge}.
 
-This chapter describes the process of parsing and storing an English Wikipedia Syntactical Dump. We use open source tools on freely available data to generate a software that is able to extract lexical and syntactic data from a given corpus.We thus create and publicly release a syntactically annotated version of the English Wikipedia containing often-neglected information, stored in a format that facilitates its manipulation. 
-\paragraph{Chapter \ref{chap:wsd}} In this chapter, we present an algorithm that exploits the structure of the network, i.e., the connections between nodes. Namely, we derive senses from a test corpus by finding related words connected to a single main node. We test the linguistic and lexical features and discuss about its qualities. Our results improve on the performance of similar propositions from the literature. We study the combination of features using multimedia fusion techniques in the next chapter.
-
-We explore the application of multimedia fusion techniques using linguistic features to solve NLP tasks. Briefly, fusion techniques may consist on trivially concatenating feature columns or a combination that aims to transfer relatedness information from one representation to a second one. We experiment with these methods on three datasets for named entity recognition and one dataset for word sense induction and disambiguation. Indeed, we show that using certain configurations of fusion techniques can lead to improvements over single-feature and trivial-concatenation representation matrices. Furthermore, we explore the contribution from each representation kind to each sense and class in each task respectively.
+%This chapter describes the process of parsing and storing an English Wikipedia Syntactical Dump. We use open source tools on freely available data to generate a software that is able to extract lexical and syntactic data from a given corpus.We thus create and publicly release a syntactically annotated version of the English Wikipedia containing often-neglected information, stored in a format that facilitates its manipulation. 
+\paragraph{Chapter \ref{chap:wsd}} In this chapter, we present our two applied contributions. First, an algorithm that exploits the structure of the network, i.e., the connections between nodes to solve word sense induction and disambiguation. 
+%Namely, we derive senses from a test corpus by finding related words connected to a single main node.
+We test the linguistic and lexical features and discuss about its qualities. Our results improve on the performance of similar propositions from the literature.
+% We study the combination of features using multimedia fusion techniques in the next chapter.
+Secondly, we explore the application of multimedia fusion techniques using linguistic features to solve NLP tasks. 
+%Briefly, fusion techniques may consist on trivially concatenating feature columns or a combination that aims to transfer relatedness information from one representation to a second one. 
+We experiment with these methods on three datasets for named entity recognition and one dataset for word sense induction and disambiguation. Indeed, we show that using certain configurations of fusion techniques can lead to improvements over single-feature and trivial-concatenation representation matrices. Furthermore, we explore the contribution from each feature space for each sense and class in each task respectively. This work has been published or accepted for publication in \cite{sorianoCICLING,sorianoDS}.	
 
 \paragraph{Chapter \ref{chap:conclusions}} We conclude this dissertation and present possible avenues for future work.
 

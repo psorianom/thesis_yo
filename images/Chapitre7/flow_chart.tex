@@ -3,7 +3,8 @@
 \usepackage[latin1]{inputenc}
 \usepackage{tikz}
 \usetikzlibrary{shapes,arrows, shadows}
-
+ \usepackage{fontspec}
+ \setmainfont{Fira Sans}
 %%%<
 \usepackage{verbatim}
 \usepackage[active,tightpage]{preview}
@@ -18,15 +19,15 @@
       shadow yshift = 1ex,
       draw,
       thick,
-      fill = blue!20},
+      fill = gray!20},
     general shadow = {%
       shadow scale = 1,
       shadow xshift = -.5ex,
       shadow yshift = .5ex,
       draw,
       thick,
-      fill = blue!20},
-    fill = blue!20, 
+      fill = gray!20},
+    fill = gray!20, 
     text width=4.5em,
 	text badly centered,
     draw,
@@ -41,7 +42,7 @@
     node distance=3cm,
     text badly centered,
     draw,
-    fill=blue!20,
+    fill=gray!20,
     tape bend top=none,
     double copy shadow}
 }
@@ -69,9 +70,9 @@ introduced in PGF/TikZ >= 1.09.
 
 
 % Define block styles
-\tikzstyle{decisiono} = [diamond, draw, fill=blue!20, 
+\tikzstyle{decisiono} = [diamond, draw, fill=gray!20, 
     text width=4.5em, text badly centered, node distance=3cm, inner sep=0pt]
-\tikzstyle{block} = [rectangle, draw, fill=blue!20, 
+\tikzstyle{block} = [rectangle, draw, fill=gray!20, 
     text width=5em, text centered, rounded corners, minimum height=4em]
 \tikzstyle{line} = [draw, -latex']
 \tikzstyle{cloud} = [draw, ellipse,fill=red!20, node distance=3cm,

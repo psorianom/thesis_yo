@@ -1,14 +1,21 @@
 \chapter{Linguistic Model Applications: NLP Semantic Tasks} 
 \label{chap:wsd}
 \begin{abstractchap}
-Word Sense Induction and Disambiguation (WSD/WSI) is an elementary semantic NLP task useful to build larger systems. In this chapter, we leverage the network presented in the previous chapter and propose an algorithm that takes into account the structure of our model. Based on the real-world property of the network, we induce senses by grouping words that share a similar sense. We then assign these senses to target words. We show that our method improves on similar network-based methods.
+This chapter contains the experiments we performed as applications of the proposed model. We address the use of the heterogeneous contexts, the structure of the network and the sparsity of textual data.
+First, we propose a method to solve word sense induction and disambiguation. This task is an elementary semantic NLP task useful to build larger systems. In the first section of this chapter, we leverage the network presented previously and propose an algorithm that takes into account the structure of our model. Based on the real-world property of the network, we induce senses by grouping words that share a similar sense. We then assign these senses to target words. We show that our method improves on similar network-based methods. Furthermore, we analyze how each type of context behave in terms of performance for each target word tested.
+
+Secondly, in the second section of the chapter, we explore the use of well-known multi-modal fusion techniques to solve two prominent Natural Language Processing tasks. Specifically, we focus on solving Named Entity Recognition and Word Sense Induction and Disambiguation by applying feature-combination methods that have already shown their efficiency in the multi-media analysis domain. We present a series of experiments employing fusion techniques in order to combine textual linguistic features. Our results show that the combination of textual features indeed improves the performance compared to single feature and the trivial feature concatenation. 
+%Furthermore, we perform an extensive analysis on the importance of each feature relevance with respect to the senses and classes discovered in WSI/WSD and NER, respectively.
+
 \end{abstractchap}
 
 \minitoc
 \section{Word Sense Induction and Disambiguation}
 \subsection{Introduction}
 \label{chap5:intro}
-In this chapter we employ the model introduced before to propose a solution to both Word Sense Disambiguation (WSD) and Induction  (WSI) tasks. We begin by giving a description and a succinct state of the art for both tasks. Specifically, we identify what type of language network (from those defined in Section\ref{sec:ling_networks}) is used and how.
+In this chapter we employ the model introduced before to propose a solution to both Word Sense Disambiguation (WSD) and Induction  (WSI) tasks. The intuition of our method is not original, as we will see, but still we address concerns that are not very well studied, namely the use of heterogeneous context features to solve semantic tasks while reducing the number of parameters compared to similar approaches. Indeed, we also analyze the difference provided by different types of contexts. Our method is evaluated with two important datasets, that of Semeval 2007 and 2010.
+
+We begin by giving a description and and recalling the art for both tasks. Specifically, we identify what type of language network is used and how.
 %from a linguistic-network point of view.
 We then present the characteristics of our proposed method. Finally we describe and discuss the obtained results.
 
@@ -17,24 +24,24 @@ We then present the characteristics of our proposed method. Finally we describe 
 
 Word sense disambiguation, or WSD, is the task of examining a word in different contexts (we refer to a word in a particular context as an instance)  and determining which is the sense being used in each one of the contexts analyzed. Usually a list of senses from where to chose the correct one is given as an input. When this list is not available, WSD then becomes a different, complementary task: word sense induction, or WSI. WSI also analyses  tokens of a target word context but before assigning a sense to each of its instances, it first generates a list of possible senses from where to select from. 
 
-\paragraph{Word Sense Disambiguation}In the literature \cite{2007.Sinha.Mihalcea.Unsupervised,2007.Tsatsaronis.WSDwithSpreading,2007.Navigli.GraphConnectivity,2009.Agirre.PersonalizedPageRankWSD,2010.Klapaftis.WSD.WSD.HierarchicalGraphs,2010.Siberer.GraphCooccurrenceWSD,2014.Moro.Navigli.EntityLinking_WSD}, WSD 
+\paragraph{Word Sense Disambiguation}
+%In the literature \cite{2007.Sinha.Mihalcea.Unsupervised,2007.Tsatsaronis.WSDwithSpreading,2007.Navigli.GraphConnectivity,2009.Agirre.PersonalizedPageRankWSD,2010.Klapaftis.WSD.WSD.HierarchicalGraphs,2010.Siberer.GraphCooccurrenceWSD,2014.Moro.Navigli.EntityLinking_WSD}, WSD 
 %2004.Mihalcea.SemanticNetworkPageRank,  2008.Agirre.Multilingual
-is usually solved using semantic networks (SN). Specifically, Wordnet and to some extent BabelNet or Wikipedia (considering an article as a single concept).
+%is usually solved using semantic networks (SN). Specifically, Wordnet and to some extent BabelNet or Wikipedia (considering an article as a single concept).
 
-The general process used to solve WSD follows a two-step algorithm. Given an input text with a words to disambiguate, and their corresponding context, WSD systems accomplish the following:
+Recall that the general process used to solve WSD follows a two-step algorithm. Given an input text with a words to disambiguate, and their corresponding context, WSD systems accomplish the following:
 \begin{enumerate}
 \item Link target words (usually nouns, without stop-words and functional words) with their corresponding  sense (or synset in the case of Wordnet-like dictionaries) and extract their vertices and edges into a new, smaller SN. 
 \item Apply a node ranking technique, usually a random walk based method, and select, for each ambiguous word in the input text,  its top ranking synset node as the correct sense.
 \end{enumerate}
 
 
-The cited methods differences boil down to three aspects. Firstly, the type of semantic relation implied by the edges of the network. Secondly, the function used to  assign a weight to each edge, as well as its meaning. On the other hand, a common characteristic of these approaches is that, as said before, they all rely on semantic networks and thus are constrained by the limitations of such resources, mainly their static content and human annotated nature. 
+The differences in the methods, in general boil down to three aspects. Firstly, the type of semantic relation implied by the edges of the network. Secondly, the function used to  assign a weight to each edge, as well as its meaning. On the other hand, a common characteristic of these approaches is that, as said before, they all rely on semantic networks and thus are constrained by the limitations of such resources, mainly their static content and human annotated nature. We find that the use of a lexical knowledge base, such as Wordnet, is pervasive in this task. Indeed, new resources, such as BabelNet, solves to some extent the fixed (no new senses are included automatically) nature of this type of resources by leveraging the ever-evolving knowledge of Wikipedia. 
 
+\paragraph{Word Sense Induction}We believe that in order to solve WSD in a truly end-to-end unsupervised way, one would need to automatically find a list of senses for a word without the help of pre-built semantic networks. 
+%In that sense, researchers generally use lexical co-occurrence networks, or LCNs, and thus leverage the distributional hypothesis, to automatically discover senses for a given target word. Therefore, WSI graph-based methods \cite{2004.Veronis,2007.Klapaftis.UOY,2010.Navigli.InducingWordSenses.Triangles,2008.Klapaftis.WSIUsingCollocations,2011.DiMarco.Navigli.ClusteringWebSearch,2011.Jurgens.WSICommunityDetection} are tightly related to LCNs.
+Unsupervised WSI is performed as follows:
 
-We find that the use of a lexical knowledge base, such as Wordnet, is pervasive in this task. Indeed, new resources, such as BabelNet, solves to some extent the fixed (no new senses are included automatically) nature of this type of resources by leveraging the ever-evolving knowledge of Wikipedia. 
-
-\paragraph{Word Sense Induction}We believe that in order to solve WSD in a truly end-to-end unsupervised way, one would need to automatically find a list of senses for a word without the help of pre-built semantic networks. In that sense, researchers generally use lexical co-occurrence networks, or LCNs, and thus leverage the distributional hypothesis, to automatically discover senses for a given target word. Therefore, WSI graph-based methods \cite{2004.Veronis,2007.Klapaftis.UOY,2010.Navigli.InducingWordSenses.Triangles,2008.Klapaftis.WSIUsingCollocations,2011.DiMarco.Navigli.ClusteringWebSearch,2011.Jurgens.WSICommunityDetection} are tightly related to LCNs.
- 
 Given an input document with a set of target words, coupled with a set of contexts (a target word in a unique context is called an instance), the goal is to discover a list of senses for each target word and then assign each instance in the document with an automatically generated sense. The common four steps used are the following:
 
 \begin{enumerate}
@@ -70,7 +77,7 @@ Being able to design new similarity metrics that deal with different types of in
 %The cited works use a LCN as described before while other works such as \cite{2014.Tao.Qian.LexicalChainHypergraphWSI} represent the co-occurrence by means of a hypergraph schema. In short, a hypergraph structure is a graph generalization where an edge (called hyperedge) can link multiple vertices per edge and thus it is able to provide a more complete description of the interactions between several nodes.
 
 
-Formally, the objective of WSD/WSI is the following: given a document $d$ with a set $T$ of  target words $tw \in T$ and the set $C$ with contexts for each target word $ct_{tw}$. 
+Formally, the objective of WSI/WSD is the following: given a document $d$ with a set $T$ of  target words $tw \in T$ and the set $C$ with contexts for each target word $ct_{tw}$. 
 Specifically, each paragraph represents the context  of a target word. A target word in a specific context is also called an instance.
 % $tw$. %Each word $tw$ features several $ct$.
 The goal is first to solve the WSI task, that is, automatically determine a list of senses for a given $tw$, and then assign one meaning from this list to each of its instances, the WSD task.
@@ -84,7 +91,15 @@ Hyperlex performs WSI and WSD using a weighted lexical co-occurrence network. Th
 
 The second approach, \textit{UOY}, described in \cite{2007.Klapaftis.UOY},  relies itself on the small-world intuition presented  by Hyperlex to find hubs and its adjacent nodes to represent senses.   In short, these methods, as ours, exploit the real-world characteristics of linguistic networks by theorizing that there are certain few high-degree nodes (called hubs) that carry an important role in the network and therefore may represent, coupled with their neighbors, a sense for a given target word. Particularly, UOY considers bigrams and trigrams that co-occur in a paragraph as hyperedges. Under a frequent-itemset setting, they determine important hyperedges given their \textit{support} and their \textit{confidence}  values. Then, the clustering of words takes place by finding the hubs and considering them as sense carriers only if they satisfy a threshold mainly set upon their containing-hyperedge confidence value. Finally, once the senses are identified, each target word instance (represented by a context) is assigned to a sense according to the sum of confidences of the hyperedge appearing on said context. 
 
-In our method, we generate a network for each $tw$ and consider that the high-degree nodes inside this network may represent a $tw$ sense. In Algorithm \ref{alg:wsd} we show the general flow of our approach.  We detail the steps taken alongside the corresponding line in the algorithm below. 
+In our method, we generate a network for each $tw$ and consider that the high-degree nodes inside this network may represent a $tw$ sense. Figure \ref{fig:wsd_wsi_process}  shows an overview of the process. Also, in Algorithm \ref{alg:wsd} we show the general flow of our approach.  We detail the steps taken alongside the corresponding line in the algorithm below. 
+
+\begin{figure}
+\centering
+\includegraphics[width=1\linewidth]{images/Chapitre4/wsd_wsi_process.png}
+\caption{Block diagram of the WSI/WSD method proposed.}
+\label{fig:wsd_wsi_process}
+\end{figure}
+
 
 \paragraph{Creation of the linguistic network}
 %In the previous sections we worked with the English Wikipedia as background corpus to build and model our proposed linguistic network. Given the large size of Wikipedia, and to iterate faster our experiments, we decided to change the corpus to one with a more manageable size.
@@ -106,7 +121,7 @@ We compute the Jaccard index between each node $n_{i,j} \in U$ as $Jaccard(i,j)=
 Once the incidence matrix $F_{tw}$ is built we can proceed to induce senses for a target word by clustering words (vertices) together. First, we calculate the degree of each node $n_i \in F_{tw}$. The degree of a node is simply the number of hyperedges it is incident in. Nodes are sorted in descending order and evaluated one by one. We consider the top $c$-nodes as sense hub candidates (line 6). We accept or reject a node $n \in F_{tw}$ as a sense carrying word according to one condition. As shown from line 11 to 17 in the pseudo-code, we set a minimum limit to the average of the Jaccard similarities between each pair of neighbors of node $n \in F_{tw}$ within each hyperedge  $n$ belongs to. Formally, for a node $n$, we define the average Jaccard measure as: $$AvgJaccard(n)=\frac{1}{|hedges(n)|}\sum_{h\in hedges(n)}\frac{\sum_{\substack{i\in h\\j\in h;i\neq j}}Jaccard(i,j)}{|h| + 1}$$ 
 where $hedeges(n)$ is the set of hyperedges $n$ is incident in and its cardinality is defined as $|hedges(n)|$. $|h|$ is the number of nodes in hyperedge $h$. 
 
-The Jaccard similarity measure allows us to easily determine the neighbors of each node in the current bipartite hypergraph representation. As each node is joined to a sentence or dependency node, calculating the Jaccard similarity amounts to determining the level of co-occurrence between each word according to a specific type of hyperedge (represented as a node from the other graph partition) while taking into account the total number of hyperedges the words participate in. We differentiate specifically from the previously described method, UOY, in that in the case of that system, the weighting of the hyperedges is done by computating the average confidence metric of each hyperedge. In this regard, the Jaccard similarity is more flexible with respect to the confidence metric, as the confidence requires in the numerator the number of contexts (paragraphs in UOY's case) shared by all the members of the hyperedge, whereas the Jaccard measure takes pairs of members individually and thus is less strict in the apparition of all the elements of the hyperedge in the contexts. Given the nature of the features used (lexical and syntactical dependencies), we fix our thresholds in a manual but simpler way by defining percentiles and taking the value of the threshold directly, without having to change it according to the characteristics of the data.
+The Jaccard similarity measure allows us to easily determine the neighbors of each node in the current bipartite hypergraph representation. As each node is joined to a sentence or dependency node, calculating the Jaccard similarity amounts to determining the level of co-occurrence between each word according to a specific type of hyperedge (represented as a node from the other graph partition) while taking into account the total number of hyperedges the words participate in. We differentiate specifically from the previously described method, UOY, in that in the case of that system, the weighting of the hyperedges is done by computing the average confidence metric of each hyperedge. In this regard, the Jaccard similarity is more flexible with respect to the confidence metric, as the confidence requires in the numerator the number of contexts (paragraphs in UOY's case) shared by all the members of the hyperedge, whereas the Jaccard measure takes pairs of members individually and thus is less strict in the apparition of all the elements of the hyperedge in the contexts. Given the nature of the features used (lexical and syntactical dependencies), we fix our thresholds in a manual but simpler way by defining percentiles and taking the value of the threshold directly, without having to change it according to the characteristics of the data.
 
 If node $n$ satisfies both thresholds $th_1$ and $th_2$, it is deemed as a sense purveyor and all its neighbors (words that appear in the same hyperedges as $n$) are conflated into a single set representing a $tw$ sense. This new sense is added to $SoS_{tw}$ (line 17). The sense set is then removed from $F_{tw}$.
 
@@ -154,7 +169,7 @@ The assignation of a sense consists in looking at each $tw$ instance represented
 	\Return{$SoS_{tw}$}
 }
 
-\caption{Pseudo-code of our WSD/WSI network-based approach}
+\caption{Pseudo-code of our WSI/WSD network-based approach}
 \label{alg:wsd}
 \end{algorithm}
 
@@ -162,7 +177,7 @@ The assignation of a sense consists in looking at each $tw$ instance represented
 \subsection{Experiments}
 
 \subsubsection{Datasets}
-We trained and evaluated our system on two datasets: Semeval-2007 (task 2) \cite{semeval2007task2} and Semeval-2010 (task 14) \cite{Semeval2010}. The Semeval-2007 task consisted in the induction and disambiguation of a single set of 100 words, 65 verbs and 35 nouns, each target word having a set of contexts where the word appear. On the other hand, the Semeval-2010 task consisted also on 100 words, with 50 being verbs and 50 being nouns. This time, a training set from which the senses of a word have to be induced is provided. In our experiment, for the Semeval-2010 dataset, we induce the senses from the training set and disambiguate the target words within the test set.
+We trained and evaluated our system on two datasets: Semeval-2007 (task 2) \cite{semeval2007task2} and Semeval-2010 (Task 14) \cite{Semeval2010}. The Semeval-2007 task consisted in the induction and disambiguation of a single set of 100 words, 65 verbs and 35 nouns, each target word having a set of contexts where the word appear. On the other hand, the Semeval-2010 task consisted also on 100 words, with 50 being verbs and 50 being nouns. This time, a training set from which the senses of a word have to be induced is provided. In our experiment, for the Semeval-2010 dataset, we induce the senses from the training set and disambiguate the target words within the test set.
 
 We apply a light pre-treatment, consisting on token lemmatization and we remove all words that appear less than four times. Concerning the individual graphs of each target word, we work only with nouns and if the extracted graph has fewer than 100 nodes, we do not apply any filtering (we keep all the extracted words). We do this in order to avoid empty solutions.
 
@@ -184,9 +199,9 @@ Each type of hyperedge has its own network characteristics as mentioned before. 
 \subsection{Results}
 Both Semeval-2007 and Semeval-2010 tasks are evaluated by an unsupervised and supervised set of measures. 
 \paragraph{Semeval-2007}
-In the case of Semeval-2007, the unsupervised evaluation assumed the induced senses as clusters of examples. The induced clusters are compared to the sets of examples tagged with the given gold standard word senses (classes), and evaluated using the \textit{F-Score} measure for clusters. 
+In the case of Semeval-2007, the unsupervised evaluation assumed the induced senses as clusters of examples. These clusters are compared to the sets of examples tagged with the given gold standard word senses (classes), and evaluated using the \textit{F-Score} measure for clusters. 
  
-The supervised setting maps the induced senses to gold standard senses, and use a mapping produced by the organizers to tag the test corpus with gold standard tags. The mapping is
+The supervised setting maps the induced senses to manually-defined gold standard senses, and use a mapping produced by the organizers to tag the test corpus with gold standard tags. The mapping is
 automatically produced by the organizers, and the resulting results evaluated according to the
 usual precision and recall measures for supervised word sense disambiguation systems. 
 
@@ -202,7 +217,7 @@ Moving onto the supervised results for Semeval-2007, in Table \ref{tab:sem2007_s
 
 
 
-As a way of determining where does both systems complement each other, in Figure \ref{fig:nouns_fs} and \ref{fig:verbs_fs} we show the unsupervised F-Score value for nouns and verbs respectively. We can see that, as the previous result tables indicated, \textbf{DEP} did better overall. Nonetheless, and what is most interesting in these figures, is that there are certain words, nouns and verbs, that obtain better scores using \textbf{LEX} instead of \textbf{DEP} and vice versa. For example, the nouns \textit{area}, \textit{future}, and \textit{state} are better treated by \textbf{SEN}, according to this measure, even if by a small margin. On the other hand, with respect to the verbs, the differences between performance are more important. The system \textbf{SEN} does better while finding senses and assigning them to the verbs \textit{avoid}, \textit{fix}, and \textit{work}. This information will be useful during the design of hybridization techniques between feature of our hypergraph structure.
+As a way of determining where does both systems complement each other, in Figure \ref{fig:nouns_fs} and Figures  \ref{fig:verbs_fs2} and \ref{fig:verbs_fs3} we show the unsupervised F-Score value for nouns and verbs respectively (we split the verbs in two figures for visibility). We can see that, as the previous result tables indicated, \textbf{DEP} did better overall. Nonetheless, and what is most interesting in these figures, is that there are certain words, nouns and verbs, that obtain better scores using \textbf{LEX} instead of \textbf{DEP} and vice versa. For example, the nouns \textit{area}, \textit{future}, and \textit{state} are better treated by \textbf{SEN}, according to this measure, even if by a small margin. On the other hand, with respect to the verbs, the differences between performance are more important. The system \textbf{SEN} does better while finding senses and assigning them to the verbs \textit{avoid}, \textit{fix}, and \textit{work}. This information will be useful during the design of hybridization techniques between feature of our hypergraph structure.
 
  
 
@@ -250,28 +265,37 @@ UoY(2007) & 77.7 & 81.6 & 73.3 & 9.28 \\ \bottomrule
  \begin{figure}[!htb]
 \centering
 \includegraphics[width=1\linewidth]{images/Chapitre5/tex_img_files/nouns_fs.pdf}
-\caption{Unsupervised F-Score results for the nouns of the Semeval 2007 test set}
+\caption{Unsupervised F-Score results for the nouns of the Semeval 2007 test set.}
 \label{fig:nouns_fs}
 \end{figure}
 
  \begin{figure}[!htb]
 \centering
-\includegraphics[width=1\linewidth]{images/Chapitre5/tex_img_files/verbs_fs.pdf}
-\caption{Unsupervised F-Score results for the verbs of the Semeval 2007 test set}
-\label{fig:verbs_fs}
+\includegraphics[width=1\linewidth]{images/Chapitre5/tex_img_files/verbs_fs_2.pdf}
+\caption{Unsupervised F-Score results for the first half of verbs of the Semeval 2007 test set.}
+\label{fig:verbs_fs2}
 \end{figure}
 
+ \begin{figure}[!htb]
+\centering
+\includegraphics[width=1\linewidth]{images/Chapitre5/tex_img_files/verbs_fs_3.pdf}
+\caption{Unsupervised F-Score results for the second half of verbs of the Semeval 2007 test set.}
+\label{fig:verbs_fs3}
+\end{figure}
+
+%todo add phrase that says that syntactic is not as good as seen in the paper where they compare a lot of distributional models... 	
 
 
-
+%todo split verbs?
 \paragraph{Semeval-2010}
 In Semeval-2010, two unsupervised evaluation metrics are introduced: \textit{V-Measure} and \textit{paired F-Score}. Briefly, the V-Measure assesses the quality of a clustering solution by measuring the degree to which each cluster consists of instances principally belonging to a single gold standard class, or homogeneity; and to completeness, the level with which each gold standard class consists of instances primarily assigned to a single cluster.
 
 The paired F-Score evaluation transforms the clustering problem into a classification one. Two instance pairs sets are generated, the first one coming from the system induced clusters, by including pairs of the instances found in each cluster. The second set of instance pairs is built from the gold standard classes. It contains pairs of the instances found in each class. We can then define \textit{Precision} and \textit{Recall}. Precision is computed as the ratio of the number of common instance pairs between the two sets divided by the total number of pairs in the clustering solution. Recall is the count of common instance pairs between the two sets divided by the total number of pairs in the gold standard. The paired F-Score is the harmonic mean of both quantities.
 
-Concerning the supervised evaluation, it follows explicitly that of Semeval-2007, using recall as the main performance measure. For more details about these measures, we refer the reader to the more comprehensive descriptions found in \cite{Semeval2010,VandeCruys2011,pedersen2010duluth}.
+Concerning the supervised evaluation, it follows explicitly that of Semeval-2007, using recall as the main performance measure as in  \cite{Semeval2010,VandeCruys2011,pedersen2010duluth}.
+%For more details about these measures, we refer the reader to the more comprehensive descriptions found 
 
-
+\subsection{Discussion}
 In Table \ref{tab:sem2010_VM} we present our systems compared to the baseline and other methods using during Semeval 2010. V-Measure is a metric well-known for favoring systems producing a higher number of clusters \cite{VandeCruys2011,pedersen2010duluth}. Thus, it is considered not a very reliable metric. We have included it to have a global insight about the performance of our method. We remark that only \textbf{LEX} performed better than both baselines, random assignation of senses (Random) and using the most frequent sense (MFS). Also, we note that we included only the best performing systems, in this case \textit{NMF$_{lib}$} and  \textit{Hermit}. The former  did not participate on the competition but was developed later. We include it henceforth to illustrate how systems variate from one position to another depending the metric used to assess the performance. The latter was the best method on this metric from the task challenge. It is important to notice that other systems exist between Hermit and \textbf{LEX}. They were not included for the sake of clarity.
 
 The second unsupervised measure, Paired F-Score, can be seen in Table \ref{tab:sem2010_FS}. In this case both systems presented performed better than the random baseline. Any system presented was able to beat the MFS baseline. We note that \textbf{DEP} does much better compared to \textbf{LEX} concerning verbs, namely 58\% vs. 28\% F-Score. Still, the results are low considering the best results of the competition, 63\% from Duluth, although again, it generates a number of senses very similar to the MFS baseline. Both our systems induce a considerable amount of clusters while keeping a descent F-Score.
@@ -280,7 +304,7 @@ Finally, we in Table \ref{tab:sem2010_SR} we show the supervised Recall results 
 
 Concerning our systems, in this evaluation they seem to perform the best, or in a comparable level, to the top methods.  We find that in general our systems seem to perform better on the Semeval-2007 dataset. Discovering the reason could shed light into improving the performance on the Semeval-2010 test set. Given the results, it seems like a combination of features (syntactic plus lexical) in  a single algorithm could yield better results. 
 
-As a side note, it is argued that supervised Recall is not a very robust metric as the supervised method within tends to converge towards the most frequent sense. In this regard, several researchers \cite{VandeCruys2011,pedersen2010duluth} have voiced their concerns about the quality of the current WSD/WSI evaluation metrics as well as the need of new, more robust techniques to properly evaluate these systems.
+As a side note, it is argued that supervised Recall is not a very robust metric as the supervised method within tends to converge towards the most frequent sense. In this regard, several researchers \cite{VandeCruys2011,pedersen2010duluth} have voiced their concerns about the quality of the current WSI/WSD evaluation metrics as well as the need of new, more robust techniques to properly evaluate these systems.
 
 %We evaluate our systems by means of the F-score and a precision-recall curve which provides a deeper analysis of the performance of each system while considering the variation of threshold $th_3$.
 
@@ -382,17 +406,15 @@ Random & 57.3 & 51.5 & 65.7 \\ \bottomrule
 
 
 
-The F-score of both systems is shown in Figure \ref{tab:results}. Indeed, in our experiment, the dependency based model \textit{dep} preformed better than \textit{lex} using classic lexical co-occurrence. Even more, in Figure \ref{fig:prec_recall} we   appreciate that even while using different threshold values, we achieve, in general, better recall and precision by using syntactic dependencies. It must be noted  that this particular Semeval task was dominated by the most frequent sense with an F-score of 80.7, assigning an average of one sense per target word. Our solutions assign an average of 1.257 and 1.200 for \textit{lex} and \textit{dep} respectively.
+%The F-score of both systems is shown in Figure \ref{tab:results}. Indeed, in our experiment, the dependency based model \textit{dep} preformed better than \textit{lex} using classic lexical co-occurrence. Even more, in Figure \ref{fig:prec_recall} we   appreciate that even while using different threshold values, we achieve, in general, better recall and precision by using syntactic dependencies. It must be noted  that this particular Semeval task was dominated by the most frequent sense with an F-score of 80.7, assigning an average of one sense per target word. Our solutions assign an average of 1.257 and 1.200 for \textit{lex} and \textit{dep} respectively.
 
+\subsection{Conclusion}
 
+We proposed a WSI/WSD method based on the contexts from the hypergraph model presented in the previous chapter. We show how using the inner links within the hypergraph structure we can group words that represent senses and then assign them to target words. Our method distinguishes from similar works in two main aspects: the definition of similarity used, the reduced number of parameters that are needed, the use of diverse types of contexts to solve the task. 	We show that our method beats said similar approaches. Also, we discovered the behavior of syntactic contexts in comparison to lexical contexts at word-level. Indeed, lexical contexts seem to perform better. This is in line with other works on distributional representations \cite{kiela2014systematic}.
 
-\subsection{Discussion and Conclusion}
 
 \section{Named Entity Recognition}
 \label{chap:fusion}
-\begin{abstractchap}
-We explore the use of well-known multi-modal fusion techniques to solve two prominent Natural Language Processing tasks. Specifically, we focus on solving Named Entity Recognition and Word Sense Induction and Disambiguation by applying feature-combination methods that have already shown their efficiency in the multi-media analysis domain. We present a series of experiments employing fusion techniques in order to combine textual linguistic features. Our results show that the combination of textual features indeed improves the performance compared to single feature and the trivial feature concatenation. Furthermore, we perform an extensive analysis on the importance of each feature importance with respect to the senses and classes discovered in WSI/WSD and NER, respectively.
-\end{abstractchap}
 
 %\minitoc
 
@@ -404,7 +426,7 @@ Named Entity Recognition (NER) and Word Sense Induction and Disambiguation (WSI/
 
 %In the classic case of NER, we need to determine, given its context, whether a word is referring a person, a location, an organization or another miscellaneous entity. On the other hand, in WSI/WSD the goal is to determine and assign the specific meaning of a target word, again based on its context.
 
-Word Sense Induction and Disambiguation entails two closely related tasks\footnote{Even though these tasks are closely related, they are independent from one another. Still, in this chapter we consider them to be a single one.}. WSI aims to automatically discover the set of possible senses for a target word given a text corpus containing several occurrences of said target word. Meanwhile, WSD takes a set of possible senses and determines the most appropriate sense for each instance of the target word according to the instance's context. WSI is usually approached as an unsupervised learning task, i.e., a cluster method is applied to the words occurring in the instances of a target word. The groups found are interpreted as the senses of the target word. The WSD task is usually solved with knowledge-based approaches, based on WordNet; or more recently with supervised models which require annotated data.
+%Word Sense Induction and Disambiguation entails two closely related tasks\footnote{Even though these tasks are closely related, they are independent from one another. Still, in this chapter we consider them to be a single one.}. WSI aims to automatically discover the set of possible senses for a target word given a text corpus containing several occurrences of said target word. Meanwhile, WSD takes a set of possible senses and determines the most appropriate sense for each instance of the target word according to the instance's context. WSI is usually approached as an unsupervised learning task, i.e., a cluster method is applied to the words occurring in the instances of a target word. The groups found are interpreted as the senses of the target word. The WSD task is usually solved with knowledge-based approaches, based on WordNet; or more recently with supervised models which require annotated data.
 
 As stated before, both tasks rely on features extracted from text. Usually, these representations are obtained from the surrounding context of the words in the  input corpus. Mainly,  two types of representations are used. According to their nature we call these features lexical and syntactical. 	The first type requires no extra information than that contained already in the analyzed text itself. It consists merely on the tokens surrounding a word, i.e., those tokens that come before and after within a fixed window. The second type, syntactical features, is similar to the lexical representation in that we also consider as features the tokens that appear next to the corpus' words. Nonetheless, it requires a deeper degree of language understanding. In particular, these features are based on part of speech tags, phrase constituents information, and syntactical functionality between words, portrayed by syntactical dependencies. Likewise, specific features, particular to one task are also be employed.
 
@@ -426,8 +448,8 @@ The rest of the chapter is organized as follows: in section \ref{chap6:back}, we
 %as well as its application in the NLP domain. 
 We introduce the fusion operators that we use in our experiments in section \ref{chap6:application}. Then, in section \ref{chap6:expes} we show the effectiveness of the presented methods by testing them on NER and WSI/WSD and their respective datasets. Finally, in section \ref{chap6:conclusion} we present our conclusions and future directions to explore. A more general overview on fusion for multimedia analysis can be found in \cite{AtreyHEK10}.
 
-\subsection{Background and Related Work}
-\label{chap6:back}
+%\subsection{Background and Related Work}
+%\label{chap6:back}
 % 
 %We first describe below the fusion techniques we use in our methodology as well as relevant use cases where they have been employed. Then, we focus exclusively on fusion techniques applied to NLP tasks, which is the general domain of the two tasks (NER and WSI/WSD) we focus on.                                                                                                                 
 %\paragraph{Multimodal Fusion Techniques}
@@ -475,9 +497,9 @@ We introduce the fusion operators that we use in our experiments in section \ref
 %\paragraph{Hybrid Fusion}
 %We may leverage the advantages of the previous two types of fusion techniques by combining them once more in a hybrid setting. As described in \cite{AtreyHEK10,yu2014informedia}, the main idea is to simultaneously combine features at the feature level, i.e., early fusion, and at the same semantic space or decision level. Nonetheless, they define a specific type of hybrid fusion. In this chapter, we adopt a looser definition of hybrid fusion. That is, we perform hybrid fusion by leveraging the combination of the fusion strategies described before.
 
-We consider the first three types of fusion techniques (early fusion, late fusion and cross fusion) as the building blocks to the experiments we conduct.  While we work with a single modality, i.e., textual data, we consider the different kinds of features extracted from it as distinct modalities. Our intuition being that the semantic similarities among words in these different spaces can be combined in order to exploit the latent complementarity between the lexical and syntactical representations. The fusion should therefore improve the performance of the NLP tasks at hand, NER and WSI/WSD.
+We consider the first three types of fusion techniques described in the Chapter \ref{sec:fusion} (early fusion, late fusion and cross fusion) as the building blocks to the experiments we conduct.  While we work with a single modality, i.e., textual data, we consider the different kinds of features extracted from it as distinct modalities. Our intuition being that the semantic similarities among words in these different spaces can be combined in order to exploit the latent complementarity between the lexical and syntactical representations. The fusion should therefore improve the performance of the NLP tasks at hand, NER and WSI/WSD.
 
-Our first goal is to assess the effectiveness of the classic fusion methods and then, as a second goal, to propose new combinations that yield better outcomes in terms of performance than the simpler approaches. The new combinations are found empirically. Nonetheless, as we will show, their effectiveness replicates to different datasets and NLP tasks. 
+Our first goal is to assess the effectiveness of the classic fusion methods and then, as a second goal, to propose new combinations that yield better outcomes in terms of performance than the simpler approaches. The new combinations are found empirically. Nonetheless, as we will show, their effectiveness replicates to different datasets and NLP tasks. As will be clear in the next sections, the ways in which we tackle the tasks are, by themselves, mostly not original. We focus specially on the generation of new representation spaces. We use well-proven methods to solve both WSI/WSD and NER, so that comparisons with other systems may make more sense.
 %In a general sense,
 %having two similarity matrices $S_1$ and $S_2$ defined as above, we define the cross-media similarity fusion as:
 %
@@ -495,6 +517,8 @@ Our first goal is to assess the effectiveness of the classic fusion methods and 
 
 \subsection{Applying Fusion Techniques}
 \label{chap6:application}
+ Our first goal is to assess the effectiveness of the classic fusion methods and then, as a second goal, to propose new combinations that yield better outcomes in terms of performance than the simpler approaches. The new combinations are found empirically. Nonetheless, as we will show, their effectiveness replicates to different datasets and NLP tasks. 
+
 In the present subsection we address the core of the work performed in this chapter.
 We formally describe the fusion techniques we employ in the next section. Also, we  delineate the procedure followed in our experiments. 
 
@@ -598,7 +622,7 @@ The features used for NER are based roughly on the same as those used in \cite{D
 \subsubsection{Learning Methods}
 We use supervised and unsupervised learning methods for NER and WSI/WSD respectively. On the one hand, for NER, as supervised algorithm, we use an averaged structured perceptron \cite{Collins2002,Daume2006} to determine the tags of the named entities. We considered Logistic Regression and linear SVM. We chose the perceptron because of its performance and the lower training time.
 
-On the other hand, for WSD/WSI, specifically for the induction part, we applied spectral clustering, as in  \cite{GoyalH14}, on the input matrices in order to automatically discover senses (a cluster is considered a sense). Regarding disambiguation, we trivially assign senses to the target word instances according to the number of common words in each cluster and the context words of the target word. In other words, for each test instance of a target word, we select the cluster (sense) with the maximum number of shared words with the current instance context.
+On the other hand, for WSI/WSD, specifically for the induction part, we applied spectral clustering, as in  \cite{GoyalH14}, on the input matrices in order to automatically discover senses (a cluster is considered a sense). Regarding disambiguation, we trivially assign senses to the target word instances according to the number of common words in each cluster and the context words of the target word. In other words, for each test instance of a target word, we select the cluster (sense) with the maximum number of shared words with the current instance context.
 
 
 %\begin{table*}
@@ -760,7 +784,7 @@ $M^{\scriptscriptstyle STD}$ &$\hat{b}_{\scriptscriptstyle LXEF}$           &  5
 \end{table}
            
 \paragraph{Second Degree Fusion} 
-The second degree fusion techniques presented in Table \ref{tab:ner_2d} show that the recombination of cross fusion techniques gets us closer to the early fusion baseline. With the exception of cross late early fusion, the rest of the recombination schemes yield interesting results. First, in cross early fusion, the best results, for the most part, are obtained while using the $\slex$ matrix combined with the output of $E(\mlex, \mstd)$, which is still far from the baseline values. Concerning, EXEF, we get already close to surpass the baselines with the $\mstd$ matrix, with the exception of the CONLL dataset. In LXEF, even though the cross fusion $X(\ssyn, \mlex)$ is not the best performing, we found experimentally that by combining it with $\mlex$ through a late fusion, it gets  a strong complementary representation. Our intuition in this case was to complement $\mlex$ with itself but enriched with the $\ssyn$ information. In the N-degree fusion results we discover that indeed this propagation of information helps us beat the baselines we set before.
+The second degree fusion techniques presented in Table \ref{tab:ner_2d} show that the recombination of cross fusion techniques gets us closer to the early fusion baseline. With the exception of cross late early fusion, the rest of the recombination schemes yield interesting results. First, in cross early fusion, the best results, for the most part, are obtained while using the $\slex$ matrix combined with the output of $E(\mlex, \mstd)$, which is still far from the baseline values. Concerning, EXEF, we get already close to surpass the baselines with the $\mstd$ matrix, except for the CONLL dataset. In LXEF, even though the cross fusion $X(\ssyn, \mlex)$ is not the best performing, we found experimentally that by combining it with $\mlex$ through a late fusion, it gets  a strong complementary representation. Our intuition in this case was to complement $\mlex$ with itself but enriched with the $\ssyn$ information. In the N-degree fusion results we discover that indeed this propagation of information helps us beat the baselines we set before.
 \paragraph{N-degree Fusion}
 Finally, the last set of experiments are shown in Table \ref{tab:ner-nf1}. Using a recombination of fusion techniques, a so-called hybrid approach, we finally beat the baselines (single features and early fusion) for each dataset. We note that the best configuration made use of a weighted early fusion with $\alpha=0.95$. This indicates that the single feature matrix, $\mlex$ is enriched a small amount by the fusion recombination, which is enough to improve the results of said baselines. In CONLL, the early fusion (see Table \ref{tab:ner-1d}) baseline being 78.13, we reached 78.69, the lowest improvement of the three datasets. Regarding the Wikipedia corpus, in WNER, we went from 79.78 to 81.75; and in WGLD, from 61.96 to 67.29, the largest improvement of all.
 
@@ -798,14 +822,12 @@ $M^{\scriptscriptstyle LEX}_{\alpha=0.95}$ & $ \hat{b}_{\scriptscriptstyle EELXE
 
 
 \subsection{Word Sense Induction and Disambiguation}
-Having learned the best fusion configuration from the previous task, in this experiments we set to test if the improvements achieved can be transfered into another NLP task, namely Word Sensed Induction and Disambiguation (WSI/WSD).
+Having learned the best fusion configuration from the previous task, in these experiments we set to test if the improvements achieved can be transfered into another NLP task, namely Word Sensed Induction and Disambiguation (WSI/WSD). As preprocessing, we simply remove stopwords and tokens with less than three letters.
 \input{semeval2007}
-\subsubsection{Pre-processing}
-We simply remove stopwords and tokens with less than three letters.
 \subsubsection{Features}
-We use the same set of features from the previous task, with the exception of the standard NER features, that is, those represented by $M^{STD}$, as they are specifically designed to tackle NER.
+We use the same set of features from the previous task, without the standard NER features, that is, those represented by $M^{STD}$, as they are specifically designed to tackle NER.
 \subsubsection{Test Dataset}
-The WSI/WSD model is tested on the dataset of  the SEMEVAL-2007 WSID task \cite{Agirre2007}. The task was based on a set of 100 target words (65 nouns and 35 verbs), each  word having a set of instances, which are specific contexts where the word appear. Senses are induced from these contexts and applied to each one of the instances.
+The WSI/WSD model is tested on the dataset of  the SEMEVAL-2007 WSID task \cite{Agirre2007}. The task was based on a set of 100 target words (65 verbs and 35 nouns), each  word having a set of instances, which are specific contexts where the word appear. Senses are induced from these contexts and applied to each one of the instances.
 
 
 \subsubsection{Evaluation Measures}
@@ -828,9 +850,9 @@ In general, we found that the recombination fusion techniques work in terms of i
 
 In the following, we discuss how each type of feature affects the performance of individual classes in NER or the senses discovered in WSI/WSD.
 
-\subsection{Feature Importance Analysis}
-\subsubsection{WSI/WSD}
-\subsubsection{NER}
+%\subsection{Feature Importance Analysis}
+%\subsubsection{WSI/WSD}
+%\subsubsection{NER}
 
 \subsection{Conclusion and Future Work}
 \label{chap6:conclusion}

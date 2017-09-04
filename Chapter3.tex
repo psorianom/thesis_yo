@@ -1,18 +1,20 @@
 \chapter{Hypergraph Linguistic Model}
 \label{chap:ling_net}
 \begin{abstractchap}
-In the previous chapter we presented the theoretical notions used in representing text through a distributional approach, the parameters, the models to implement them in real applications and the problems that naturally arise from these implementations. In this chapter we present and define the whole of our contributions. We organize this  chapter  in four parts: first, we introduce a state of the art on how the information contained in linguistic graphs is used for WSD/WSI and NER. Secondly, we introduce our model, addressing the limitations of classical language networks. Thirdly, we present a second state of the art on the combination  of contextual features in NLP with fusion techniques. Finally, we apply the proposed model to a corpus extracted from the English Wikipedia. We describe the process and the characteristics of the extracted network.
+In the previous chapter we presented the theoretical notions used in representing text through a distributional approach, the parameters, the models to implement them in real applications and the problems that naturally arise from these implementations. In this chapter we present and define the whole of our contributions. We organize this  chapter  in four parts: first, we introduce a state of the art on how the information contained in linguistic graphs is used for WSD/WSI and NER. Secondly, we introduce our model, addressing the limitations of classical language networks. Thirdly, we present feature fusion techniques. Finally, we materialize the proposed model to a corpus extracted from the English Wikipedia. We describe the process and the characteristics of the extracted network.
 \end{abstractchap}
 \minitoc
+
+\section{Introduction}
+A hypergraph linguistic model is the first core contribution of this thesis. We will describe the motivations and its characteristics below. On Figure \ref{fig:maindiag}, we can appreciate the block diagram of the ensemble of our propositions. At the top, we see that the hypergraph resource that we propose on this chapter is the stepping stone framework upon which we base the rest of our work. The model entails three  important characteristics: (1) the possibility to leverage three types of information. That is, syntactic, lexical  and what we will call standard features (explained later on), (2) as the words will be linked together, there is an inner structure that will emerge from the model, finally (3) the relations will between words are sparse. The tree of them are addressed with our propositions, while testing their practicality with well-established task domain corpora, which we use as benchmark input data in our experiments. These approaches, our 2nd and 3rd contributions, are described in the next chapter.
+
 
 \begin{figure}
 \centering
 \includegraphics[width=1\linewidth]{./images/Chapitre3/main_diag.pdf}
-\caption{Modular description of this dissertation}
+\caption{Modular description of the hypergraph model we propose and of the experiments performed based on this model.}
 \label{fig:maindiag}
 \end{figure}
-\section{Introduction}
-A hypergraph linguistic model is the first core contribution of this thesis. We will describe the motivations and its characteristics below. On Figure \ref{fig:maindiag}, we can appreciate the block diagram of the ensemble of our propositions. At the top, we see that the hypergraph resource that we propose on this chapter is the stepping stone framework upon which we base the rest of our work. The model entails three  important characteristics: (1) the possibility to leverage three types of information. That is, syntactic, lexical  and what we will call standard features (explained later on), (2) as the words will be linked together, there is an inner structure that will emerge from the model, finally (3) the relations will between words are sparse. The tree of them are addressed with our propositions, while testing their practicality with well-established task domain corpora, which we use as benchmark input data in our experiments. These approaches, 2nd and 3rd contributions, are described in the next chapter.
 
 In order to contextualize our proposition, we begin with the state of the art on how linguistic networks are employed in the literature. We are interested on those networks previously covered: lexical, syntactical and semantic co-occurrence networks. We give emphasis to two aspects: how the inner structure is used to solve the tasks at hand, and what type of graph-based algorithm is used. The literature on graph-based approaches for NLP is vast, we thus focus specifically on semantic tasks, notably Word Sense Induction and Disambiguation, and Named Entity Recognition. We chose these two tasks as we focus on both of them for the rest of our contributions. Next, we introduce our model, how to build it  and its properties. 
 
@@ -140,7 +142,7 @@ Nonetheless, as a regular random-walk algorithm, in PageRank the probability dis
 %
 These approaches make a conventional use of PageRank: they apply it and rank nodes to select the most appropriate senses for ambiguous words. Still, there are some improvements over the classical use of PageRank in WSD. Some techniques employ a different version of PageRank called Personalized PageRank (or PageRank with restart \cite{Murphy2012} or PPR) were a random walker may return to a specific starting node with certain probability rather than jumping to a random node. This formulation allows researchers to assign more weight to certain nodes. For example, in \cite{2009.Agirre.PersonalizedPageRankWSD} they are able to use the complete Wordnet graph as their SN. They do this by directly adding context words of a polysemous token into Wordnet and then giving a uniform initial distribution to only these nodes. In this way, they force PageRank to give more importance to the context words without the need of extracting a subgraph from the SN. In \cite{2014.Moro.Navigli.EntityLinking_WSD} they apply the same technique to obtain a \textit{semantic signature} of a given sense vertex. After applying PPR, they obtain a frequency distribution over all the  nodes in the graph. The so-called semantic signature consists in those nodes that were visited more than an arbitrary threshold and that best represent an input sense node.
 
-There are other methods which share the properties of random walk approaches. In  \cite{2007.Tsatsaronis.WSDwithSpreading,2013.Kivimaki.AGraph-BasedApproach} they apply a method known as spreading activation. This algorithm aims to iteratively diffuse the initial weights of a set of seed nodes across the network. Specifically, once a weighted semantic network is built, they \textit{activate}  the nodes representing the context senses, assigning a value of 1, while \textit{disactivating} the rest by setting them to 0. They determine the most pertinent senses to the input nodes by storing, for each of them, the last active sense node with the highest activation value. 
+There are other methods which share the properties of random walk approaches. In  \cite{2007.Tsatsaronis.WSDwithSpreading,2013.Kivimaki.AGraph-BasedApproach} they apply a method known as spreading activation. This algorithm aims to iteratively diffuse the initial weights of a set of seed nodes across the network. Specifically, once a weighted semantic network is built, they \textit{activate}  the nodes representing the context senses, assigning a value of 1, while \textit{deactivating} the rest by setting them to 0. They determine the most pertinent senses to the input nodes by storing, for each of them, the last active sense node with the highest activation value. 
 
 Beyond WSD and into the task of determining word similarities, we found the work of \cite{2009.Yeh.Wikiwalk}, where they calculate a semantic similarity between a pair of words while leveraging a Wikipedia SN. For each word, they  apply PPR to find the articles that best represent a word. 
 %They set the initial distribution in such a way that the articles that best represent each word have a higher probability than the rest of nodes. 
@@ -192,7 +194,7 @@ We propose a model that holds different types of linguistic relations extracted 
  with the {vertex} set $V$ and the hyperedge set $E$. Let $V$ denote a finite set of objects, and let $E$  (the hyperarcs or hyperedges) be a
 group of subsets  of $V$ such that $V = \cup_{e_j \in E}e_j$.
 %todo add biblio how hypergraphs are used in NLP??
-A \emph{weighted hypergraph} is a hypergraph that has a positive number $w(e)$ associated with each hyperedge, called the \emph{weight} of the hyperedge $e$. A \emph{weigted hypergraph} is then denoted by $\mathcal{H}=(V,E,w)$.
+A \emph{weighted hypergraph} is a hypergraph that has a positive number $w(e)$ associated with each hyperedge, called the \emph{weight} of the hyperedge $e$. A \emph{weighted hypergraph} is then denoted by $\mathcal{H}=(V,E,w)$.
 %
 A hyperedge $e$ is said to be \emph{incident} with a vertex $v$ when
 $v \in e$.
@@ -208,7 +210,9 @@ $v \in e$.
 
 Building upon previous linguistic representations \cite{2007.Klapaftis.UOY,2011.Haishan.AHypergraphbased,2014.Tao.Qian.LexicalChainHypergraphWSI}, our model is indeed based on the use of a hypergraph.
 % As stated before, hypergraphs have been employed in the literature to model complex systems. 
-Their single most important difference with regular graphs, being able to relate more than two vertices at the same type, allows for a better characterization of interactions within a set of individual elements (in our case, words) \cite{heintz2014beyond}. Indeed, our hypergraph modelization initially integrates four types of relations between tokens: sentence co-occurrence, part-of-speech tags, words' constituents data and dependency relations in a single linguistic structure. These relationships were chosen because its is relatively easy to obtain them for high-resource languages. These features can be seen as building blocks for NLP models. Extracting deeper language features would implicate relying even more on general domain systems. In any case, our goal is to arrive to more complex annotations (e.g., named entities) from the selected features and relations. Indeed, as we discussed before, different types of contexts gives us different types of similarities. Recall that a shorter lexical window approximates us to a syntactical context. That is why we decided to keep a lexical context at sentence level, so that it may complement the distributional semantic information provided by the dependency functions context as well as the phrase-constituency syntactic context. In short, we  aim to cover three levels of possible semantic relatedness via  three levels (in terms of the size of the neighborhood of a target word) of distributional co-occurrences (see Figure \ref{}): with syntactic dependencies. a short range with dependency functions, a medium range with phrase constituency membership, and a longer range with sentence lexical co-occurrences. The intuition is that when solving NLP tasks, having direct access to these three semantic spaces will help to determine a more appropriate meaning's relation between words. 
+Their single most important difference with regular graphs, being able to relate more than two vertices at the same type, allows for a better characterization of interactions within a set of individual elements (in our case, words) \cite{heintz2014beyond}. Indeed, our hypergraph modelization initially integrates four types of relations between tokens: sentence co-occurrence, part-of-speech tags, words' constituents data and dependency relations in a single linguistic structure. These relationships were chosen because its is relatively easy to obtain them for high-resource languages. These features can be seen as building blocks for NLP models. Extracting deeper language features would implicate relying even more on general domain systems. In any case, our goal is to arrive to more complex annotations (e.g., named entities) from the selected features and relations. Indeed, as we discussed before, different types of contexts gives us different types of similarities. Recall that a shorter lexical window approximates us to a syntactical context. That is why we decided to keep a lexical context at sentence level, so that it may complement the distributional semantic information provided by the dependency functions context as well as the phrase-constituency syntactic context. In short, we  aim to cover three levels of possible semantic relatedness via  three levels (in terms of the size of the neighborhood of a target word) of distributional co-occurrences 
+%todo (see Figure \ref{})
+: a short range with dependency functions, a medium range with phrase constituency membership, and a longer range with sentence lexical co-occurrences. The intuition is that when solving NLP tasks, having direct access to these three semantic spaces will help to determine a more appropriate meaning's relation between words. 
 
  
 \subsection{Construction}
@@ -237,7 +241,7 @@ Each hyperedge is labeled according to an identifier that allows the hypergraph 
 \subsection{Running Example}
 We illustrate the process of creating a sample hypergraph model with the following example phrase: \textit{The report contains copies of the minutes of these meetings}.  We tokenize the phrase, keeping all the words, and we lemmatize and parse it to obtain both constituency and dependency trees. For clarity, we  only show nouns as well as only the first three noun phrases, and the nominal subject (\textit{nsubj}) and direct object (\textit{dobj}) dependency relations.
 
-\paragraph{Constituency Tree} The constituency tree of the example phrase is shown in Figure \ref{fig:tree}. The sentence, as well as each noun phrase (\textit{NP}) node is identified by a number, these numbers serve as an unique identifier of the phrase chunk within the whole sentence. We can observe that this phrase is composed by five noun phrases and one verb phrase. Meanwhile, some \textit{NP} are formed by other kind of phrases, depending on the grammar production rule used to build each one of them. Furthermore, as is usual in this kind of structures, there is a one to one relation between the number of tokens in the sentence  and the number of leaves in the tree. We see in total three hyperedges of this type: $NP_1, NP_2$ and $NP_3$, each corresponding to the noun phrases in the constituents tree.
+\paragraph{Constituency Tree} The constituency tree of the example phrase is shown in Figure \ref{fig:tree_constits}. The sentence, as well as each noun phrase (\textit{NP}) node is identified by a number, these numbers serve as an unique identifier of the phrase chunk within the whole sentence. We can observe that this phrase is composed by five noun phrases and one verb phrase. Meanwhile, some \textit{NP} are formed by other kind of phrases, depending on the grammar production rule used to build each one of them. Furthermore, as is usual in this kind of structures, there is a one to one relation between the number of tokens in the sentence  and the number of leaves in the tree. We see in total three hyperedges of this type: $NP_1, NP_2$ and $NP_3$, each corresponding to the noun phrases in the constituents tree.
  
 \paragraph{Dependency Tree}
 The dependencies of the example phrase are shown in Figure \ref{fig:tree_deps_report} as a tree structure. The relations can also be seen as tuples in Table \ref{tab:depends_report} In these relations' examples, the head is the first token to appear  followed by the dependent word. Two hyperedges are found: 
@@ -267,10 +271,10 @@ $nsubj_{contains}$ and $dobj_{contains}$.
 		\begin{tabular}{@{}ll@{}}
 %		 \toprule
 		 \textbf{root}(root, contains)    & \textbf{det}(minutes, the)       \\
-		 \textbf{det}(report, The)        & \textbf{nmod}(copies, minutes)   \\
-		 \textbf{nsubj}(contains, report) & \textbf{case}(meetings, of)      \\
+		 \textbf{det}(report, The)        & \textbf{nmod:of}(copies, minutes)   \\
 		 \textbf{dobj}(contains, copies)  & \textbf{det}(meetings, these)    \\
-		 \textbf{case}(minutes, of)       & \textbf{nmod}(minutes, meetings)
+		 \textbf{nmod:of}(minutes, meetings)       & \textbf{nmod}(minutes, meetings) \\
+		 \textbf{nsubj}(contains, report) &
 		 \end{tabular}
 		 \captionof{table}{Dependency relations of the example phrase.}
 		 \label{tab:depends_report}
@@ -282,7 +286,7 @@ $nsubj_{contains}$ and $dobj_{contains}$.
  
 \paragraph{Hyperdges Found}
 From both syntactic parses and the phrase itself we build a hypergraph representation as stated before.  We show below the hyperedges sets found for each type,  ($\textsc{\textbf{NP}}$, $\textsc{\textbf{SEN}}$, and $\textsc{\textbf{DEP}}$), and their members. Each hyperedge  is labeled  with a unique identifier:
-
+%todo imagen con el hypergrafo completo would be nice
 \begin{itemize}
 \item $\textsc{\textbf{NP}}=\{NP_1, NP_2, NP_3\}$
 	\begin{itemize}
@@ -306,41 +310,51 @@ From both syntactic parses and the phrase itself we build a hypergraph represent
 Looking at the table, we can   infer that the word \textit{copies} appears  in two hyperedges of type $\textsc{\textbf{NP}}$: first in \textit{NP$_2$}, which is built from a noun phrase  and two prepositional phrases (\textit{PP}). Secondly, we see that it is part of \textit{NP$_3$}, which  indicates a plural noun (\textit{NNS}).
 Regarding the syntactic dependency hyperedges, the word \textit{copies} appear in the \textit{dobj} \textit{contains} column which indicates that \textit{copies} was the direct object of the verb \textit{contains}. Concerning the sentence hyperedges, we see that the token \textit{copies} appeared in the same sentence S$_1$ as the other four noun words.
 
-\subsection{Discussion}
-With the short example we show the intuitive way in which we identify three different kinds of relations: lexical co-occurrence (at sentence level), dependency co-occurrence, and noun phrase co-occurrence. Looking at the incidence matrix we see the three levels of semantic relatedness we aim to represent with the three different types of context: sentence, dependency, and noun phrase level. At the same time, there is a structure within the hypergraphs. Groups of words are found to be together either directly or by means of paths traced by other nodes. 
-
-On the other hand, also looking a the matrix, we realize that it is sparse\footnote{Sparse for the  size of this example incidence matrix. Sparsity increases as more text is included in the hypergraph.}. Sparsity, as we saw previously, affects the performance of knowledge discovery techniques applied to NLP tasks. 
-
-Just as the literature approaches covered before, we aim to solve semantic tasks by using the proposed linguistic resource and its relations. Yet, unlike those approaches we have three levels of semantic relatedness to dispose of and the $n$-ary relations from the hypergraph structure. 
-% We can thus build systems that allow us to interpret a word from different perspectives according to said relations.
-
-
-%In order to apply the proposed linguistic network to an input corpus we first need to parse it and thus obtain the required information from it to populate the hypergraph. In the following, we describe the method used to extract and store linguistic information from the English Wikipedia. %The procedure begins by extracting the text from an English Wikipedia dump and concludes by saving into disk the Wikipedia corpus in the format of our proposed language network (represented as a hypergraph incidence matrix with its complementary metadata information about the meaning of each vertex and hyperedge). 
-
-
-
-
 \begin{figure}
 \centering
 \includegraphics[width=\linewidth]{images/Chapitre3/incidence_mat.pdf}
 \caption{Incidence matrix of the example phrase hypergraph modelization.}
 \label{fig:incidence_report}
-%todo change font to fira!
+%todo change font to fira of this pic!
 \end{figure}
 
 
-\label{chap6:back}
+\subsection{Discussion}
+With the short example we show the intuitive way in which we identify three different kinds of relations: lexical co-occurrence (at sentence level), dependency co-occurrence, and noun phrase co-occurrence. Looking at the incidence matrix we see the three levels of semantic relatedness we aim to represent with the three different types of context: sentence, dependency, and noun phrase level. At the same time, there is a structure within the hypergraphs. Groups of words are found to be together either directly or by means of paths traced by other nodes. 
+
+On the other hand, also looking a the matrix, we realize that it is sparse\footnote{Sparse for the  size of this example incidence matrix. Sparsity increases as more text is included in the hypergraph.}. Sparsity, as we saw previously, affects the performance of knowledge discovery techniques applied to NLP tasks. 
+
+Just as the literature approaches covered before, we aim to solve semantic tasks by using the proposed linguistic resource and its relations. Yet, unlike those approaches we have three contexts and thus three levels of semantic relatedness, coupled to the $n$-ary relations from the hypergraph structure. Nonetheless, our model also suffers from data sparsity. We will show how to deal with this issue in the following section. The general idea is that by combining features from the different contexts we can alleviate the problem as similarities not seen in a context may complement the features from another context. The set of approaches that perform this combination are known as multimedia fusion techniques.
+% We can thus build systems that allow us to interpret a word from different perspectives according to said relations.
+
+
+
+
+                                                                                            
+\section{Feature Fusion Techniques}\label{sec:fusion}
  
-We first describe below the fusion techniques we use in our methodology as well as relevant use cases where they have been employed. Then, we focus exclusively on fusion techniques applied to NLP tasks, which is the general domain of the two tasks (NER and WSI/WSD) we focus on.                                                                                                                 
-\section{Multimodal Fusion Techniques}
-Multimodal fusion is a set of popular techniques used in multimedia analysis tasks. T\textit{}hese methods integrate multiple media features, the affinities among these attributes or the decisions obtained from systems trained with said features, to obtain rich insights about the data being used and thus to solve a given analysis  task \cite{AtreyHEK10}. We note that these techniques come at the price of augmenting the complexity of a given system by increasing or reducing the sparsity of a given feature matrix.
+%We first describe below multimedia (or multimodal) fusion techniques  as well as relevant use cases where they have been employed. 
+%Then, we focus exclusively on fusion techniques applied to NLP tasks, which is the general domain of the two tasks (NER and WSI/WSD) we focus on.                   
+
+Multimodal fusion is a set of popular techniques used in multimedia analysis tasks. These methods integrate multiple media features, the affinities among these attributes or the decisions obtained from systems trained with said features, to obtain rich insights about the data being used and thus to solve a given analysis  task \cite{AtreyHEK10}. We note that these techniques come at the price of augmenting the complexity of a given system by increasing or reducing the sparsity of a given feature matrix.
 
 
 In the multimodal fusion literature we can discern two main common types of techniques: early fusion and late fusion. 
 \subsection{Early Fusion}
 This technique is the most widely used fusion method. The principle is simple: we take both modal features and concatenate them into a single representation matrix. More formally, we consider two matrices  that represent different modality features each  over the same set of individuals. To perform early fusion we concatenate them column-wise, such that we form a new matrix having the same number of lines but increasing the number of columns to the sum of the number of columns of both matrices. The matrices may also be weighted as to control the influence of each modality.
 
+Such trivial fusion can is showed in Figure \ref{fig:ef_diag}. Two matrices are used, $A$ and $B$. Each one represent a different feature space. They both have the same number of rows $n$, they have $m$ and $p$ columns, respectively. After an early fusion operation, the final matrix has $m+p$ features. We will use these matrix notations to exemplify the rest of fusions.
+
 The main advantage of early fusion is that a single unique model is fitted while leveraging the correlations among the concatenated features. The method is also easy to integrate into an analysis system. The main drawback is that we increase the representation space and may make it harder to fit models over it.
+
+\begin{figure}
+\centering
+\includegraphics[width=0.7\linewidth]{images/Chapitre3/ef_diag.pdf}
+\caption{Early Fusion of feature matrices $A$ and $B$. The result is the concatenation of both matrices.}
+\label{fig:ef_diag}
+\end{figure}
+
+
 %
 
 %   of shape $(n, m + p)$. Following the literature notation of [vulic], the early fusion representation matrix EF is defined as:
@@ -352,15 +366,35 @@ The main advantage of early fusion is that a single unique model is fitted while
 %
 %Early fusion has been employed in several multimodal tasks. For example, [?]. 
 \subsection{Late Fusion}
-In contrast to early fusion, in late fusion the combination of multimodal features are generally performed at the decision level, i.e., using the output of independent models trained  each with an unique set of features \cite{ClinchantAC11}. In this setting,  decisions produced by each model are combined into a single final result set.
+In contrast to early fusion, in late fusion the combination of multimodal features are generally performed at the decision level, i.e., using the output of independent knowledge discovery models trained  each with a unique set of features \cite{ClinchantAC11}. In this setting,  decisions produced by each model are combined into a single final result set. The diagram in Figure \ref{fig:lf1} shows this combination of matrices $A$ and $B$.
 %
 The methods used to combine preliminary decisions usually involve one of two types: rule-based (where modalities are combined according to domain-specific knowledge) or linear fusion (e.g., weighting and then adding or multiplying both matrices together). This type of fusion is very close to the so-called ensemble methods in the machine learning literature.
 %
-Late fusion combines both modalities in the same semantic space. In that sense,  we may also combine modalities via an affinity representation instead of final decision sets. In other words, we can combine two modality matrices by means of their respective similarities. A final representation is then usually obtained by adding the weighted similarity matrices.
+Late fusion combines both modalities in the same semantic space. In that sense,  we may also combine modalities via an affinity representation instead of final decision sets. In other words, we can combine two modality matrices by means of their respective similarities. A final representation is then usually obtained by adding the weighted similarity matrices, as in Figure \ref{fig:lf2}, where two such matrices are computed, $SIM(A)$, and $SIM(B)$ and then combined into a single weighted matrix (determined by the parameter $\alpha$).
 %
 
-The advantages of late fusion include the combination of features at the same level of representation (either the fusion of decisions or similarity matrices). Also, given that independent models are trained separately, we can chose which algorithm is more adequate for each type of
-features.
+The advantages of late fusion include the combination of features at the same level of representation (either the fusion of decisions or similarity matrices). Also, given that independent models are trained separately, we can choose which algorithm is more adequate for each type of features. 
+
+\begin{figure}
+	\centering
+	\begin{subfigure}[t]{.5\textwidth}
+	\centering
+	\includegraphics[width=0.9\linewidth]{images/Chapitre3/lf1_diag.pdf}
+	\caption{Fusion of decisions.}
+	\label{fig:lf1}
+	\end{subfigure}% 
+	\begin{subfigure}[t]{.5\textwidth}
+	\centering
+	\includegraphics[width=0.9\linewidth]{images/Chapitre3/lf2_diag.pdf}
+	\caption{Fusion of similarity matrices.}
+	\label{fig:lf2}	
+	\end{subfigure}
+	\caption{Late fusion possibilities. To the left, fusion of knowledge discovery models' decisions. To the right, fusion of similarity matrices.}
+	\label{fig:lf_diag}
+\end{figure}
+
+
+
 
 %For example, in information retrieval (Ah-Pine et al., 2015), lexicon learning (Vulic et al., 2016), coreference resolution (Eisenstein and Davis, 2007); different types of representations (different modalities) can be combined in order to take advantage of the complementarity existing among them
 \subsection{Cross-media Similarity Fusion}
@@ -372,10 +406,257 @@ A third type of fusion technique, cross-media similarity fusion (or simply cross
 \item Linearly combine both similarity matrices (lexical $k$-nearest lexical neighbors with the syntactical features) via a matrix product.
 \end{enumerate}  
 
+\begin{figure}
+\centering
+\includegraphics[width=0.9\linewidth]{images/Chapitre3/xf_diag.pdf}
+\caption{Cross fusion for matrices $A$ and $B$. Similarities are computed, the best similarities are selected for $A$ and finally a product is calculated between the similarities of $B$ and the top similarities of $A$.}
+\label{fig:xf_diag}
+\end{figure}
+
+Figure \ref{fig:xf_diag} presents a cross fusion between matrices $A$ and $B$. The similarity matrices $SIM(A)$ and $SIM(B)$ are obtained. The $k$-nearest neighbor operation is applied to matrix $A$, yielding a matrix $SIM(A)'$ containing only the most representative similarities. Finally, cross fusion is represented by the product $SIM(A)' \times SIM(B)$.
+
 Cross fusion aims to bridge the semantic gap between two modalities by using the most similar neighbors as proxies to transfer valuable information  from one modality onto another one. Usually, the result of a cross fusion is combined with the previous techniques, early and late fusion. In this work we perform  experiment in that sense.
 
 \subsection{Hybrid Fusion}
-We may leverage the advantages of the previous two types of fusion techniques by combining them once more in a hybrid setting. As described in \cite{AtreyHEK10,yu2014informedia}, the main idea is to simultaneously combine features at the feature level, i.e., early fusion, and at the same semantic space or decision level. Nonetheless, they define a specific type of hybrid fusion. In this chapter, we adopt a looser definition of hybrid fusion. That is, we perform hybrid fusion by leveraging the combination of the fusion strategies described before.
+We may leverage the advantages of the previous two types of fusion techniques by combining them once more in a hybrid setting. As described in \cite{AtreyHEK10,yu2014informedia}, the main idea is to simultaneously combine features at the feature level, i.e., early fusion, and at the same semantic space or decision level. Nonetheless, they define a specific type of hybrid fusion. In this chapter, we adopt a looser definition of hybrid fusion. That is, we perform hybrid combination of features by leveraging the combination of the fusion strategies described before.
 
-In the following section we set to solve a natural language processing task using the model described above. Specifically, we address the word sense induction and disambiguation challenges. Both tasks are located on the computational semantics sub-domain of NLP. By making use of the network we want to test the effectiveness of using different types of linguistic features. 
+
+
+
+
+\subsection{Discussion}
+The fusion operators presented (early, late, and cross fusion) are simple and straight-forward. In total, they have two parameters to control: $a$ in late fusion, controlling the importance for each matrix $A$ and $B$; and $k$, controlling how many top similarities are kept in cross fusion.
+
+As we will ee in the experiments carried out in the next chapter, it is the aggregation of several of these operators that yields interesting results against the use of single features or independent fusion operators. This is in line with other relevant research \cite{Ah-PineCC15}. We consider early fusion, the simple concatenation, a baseline to the rest of fusion aggregations we perform. 
+
+Fusion techniques also have downsides. The operators densify the feature-space matrix but at the same time the number of dimensions grow considerably (with the early fusion operation). Additionally, to the increment of density, the number of features represent an important challenge computationally. We address these concerns on the following chapter.
+
+Before getting into the experimentation details, in order to make our hypergraph linguistic resource concrete, we present the process to obtain such representation from a raw corpus, namely the English Wikipedia. The method we describe first extracts text from the corpus and then analyses it to create a Syntactically Annotated English Wikipedia Dump (SAEWD). From there we detail the steps we carried out to store it as the proposed language network (represented as a hypergraph incidence matrix with its complementary metadata information about the meaning of each vertex and hyperedge). 
+
+
+
+\section{Wikipedia Syntactic Dump}
+%In order to have a working dataset, we first built an application that process and parse any input corpus. We describe its properties, its inputs, the information extracted, as well as the output generated by the software.
+
+In order to materialize our proposed linguistic model, we need to first create a chain of applications that will extract text from a semi-structured body of text, tokenize it, parse it to extract the syntactic trees the model requires, and then store in order to be used by an NLP application. In this section we describe this process, implemented as an application that takes a corpus as input and outputs the linguistic resource we introduced in the previous sections. In this practical example, we use the English Wikipedia corpus as the source for our corpus.
+
+\subsection{Related Parsed Dumps}
+%Today, the broad reach of Wikipedia in Text Mining (TM) and Natural Language Processing (NLP) research  is indisputable. Several recent approaches and tools have  been conducted based on the explicit and implicit knowledge contained in it. Certainly, Wikipedia provides a common ground for researchers and developers to test and compare their results.
+
+The online encyclopedia Wikipedia\footnote{\url{https://en.wikipedia.org}} has been used as a source of valuable data as well as a common background corpus to perform experiments and compare results for diverse NLP/TM related tasks. For example, concerning the first case, in the area of Information Extraction, Wikipedia's infoboxes structured information is used in \cite{Wu2010} as a valuable resource to complement and improve their open IE system. Along the same line, \cite{charton2010}  extracted metadata from Wikipedia while leveraging its internal structure in order to produce a semantically annotated corpus. Moving on to the Information Retrieval field, features extracted from Wikipedia can also help to better predict the performance of a query  \cite{katz2014} in a given  corpus.  In the second case, as a background collection for experiments, a document-aligned version of English and Italian Wikipedia has been used to determine the quality between word's translations \cite{vulic2011}.  
+
+Wikipedia, being such a popular resource  already has various off-the-shelf parsed snapshots (or dumps). These parsed dumps allow researchers to focus more into their approaches than into the extraction and transformation of Wikipedia's data.  We briefly describe certain relevant parses found in the literature.   
+%
+
+
+
+%The already mentioned parsed dump from \cite{ATSERIAS08}
+A relevant Wikipedia parsed dump example comes from \cite{ATSERIAS08}. Their work provides a balanced amount of syntactic and semantic information. In short, the dump includes each word's part of speech tag, their dependency relations as well as the output of three different named entity recognition parsers. Additionally, they provide a graph structure that leverages Wikipedia's internal composition alongside its corresponding metadata. Nonetheless, the resource is no longer available on the original URL although it may be obtained through Yahoo's Webscope\footnote{\url{https://webscope.sandbox.yahoo.com/}} datasets library.  In \cite{FLICKINGER10}, they perform a deep parse analysis is performed to provide detailed syntactic and semantic information. The authors leverage a previously manually annotated portion of the English Wikipedia. They extract a grammar from this portion and also train a statistical model  to automatically parse the rest of Wikipedia. Even though the parse offered is deep and rich in details, the annotation labels, as well as the corpus output format, may not be convenient and easy to use because of its complexity and particular nature. \cite{SchenkelSK07}  released a purely semantic XML parse that links WordNet concepts to Wikipedia pages. They focus greatly on cleaning and pre-treating Wikipedia. In this paper we do not focus as much into the cleaning of Wikipedia as already available tools can solve the task quite well for non-specific needs. 
+Finally, there are certain Wikipedia dumps that offer the raw cleaned text without any extra subsequent parsing or analysis. Such is the case of the corpus made available by \cite{westbury2010}. This corpus makes  use of the \textit{WikiExtractor} script  \cite{Attardi2015} to clean the Wikipedia dump.
+  
+  
+Although the existing parses and dumps already satisfy numerous specific research needs, they have certain limitations that drove us to build our own resource: the Syntactically Annotated English Wikipedia  Dump (SAEWD). Specifically, we address the following shortcomings: the lack of constituents-based tree information, the complex output formats, the limited online access and the absence of the tools used (i.e., the source code) to create the annotated corpus. In SAEWD we include the complete parse tree information for each word provided by well-known parsing tools. We store the extracted information in a simple and already existing output format. Additionally, we give open access to the parsed dump and we share our source code with the community. The code allows anyone (with programming skills) to  apply our processing pipeline and build their own particular Wikipedia parse or even to parse other text collections. Finally, we present and provide a hypergraph linguistic network for fast NLP/TM experimentation. Indeed, SAEWD aims to be used as a stepping stone for a standard Wikipedia parsed version for the largest possible set of tasks in future research. 
+
+SAEWD uses widely known English language parsing tools, namely those included in the Stanford CoreNLP suite.  Aside from being accessible and regularly maintained, it provides a common set of labels (Universal Dependencies\footnote{\url{http://universaldependencies.github.io/docs/}}) used by numerous NLP and TM experiments. Regarding SAEWD output's format, we believe that the file format we use, which follows  that of \cite{ATSERIAS08}, allows for fast reading and simple interpretation. Among other syntactical information, we provide the constituents parse branch for each word (explained in detail in Section \ref{text:description}). 
+Constituent's paths, and hence chunk's production rules, have been proved useful as a complement feature to classic text representations \cite{sagae2009,Bergsma2012,Massung2013}. 
+%This information is commonly missed by most Wikipedia parses. It may be due to the fact that it may not be easy or clear to use the constituents nodes information; or may be because storing a tree branch is not as straightforward as stocking a single relationship type label, as is the case of a dependency parse.
+
+Furthermore, we propose a hypergraph linguistic representation. Over the past few years, research on the NLP domain has been focusing on novel techniques that take advantage of the characteristics of language networks to achieve new and interesting results \cite{Mihalcea2011}. That is why, in addition to SAEWD, we also propose, as a proof of concept, a hypergraph representation that stores certain information found in a SAEWD in a practical way that allows for fast and effortless data extraction. This hypergraph can be indeed considered as a Linguistic Network \cite{Choudhury09}.  It aims to facilitate the implementation of graph-based approaches by allowing researchers to jump directly into the algorithm development stage. We use a sub-sample of the Wikipedia corpus consisting of articles related to Natural Language Processing and Text Mining. 
+% Our parsed dump,  the source code used to generate it, the network and its metadata will be online and available for LREC 2016.
+
+In the following sections we describe the steps we undertook to transform a Wikipedia dump into SAEWD (Section 2), we give a detailed account of the contents of SAEWD and the format in which we stored the parsed information (Section 3), then we explain the characteristics of our proposed network structure (Section 4). Lastly, we present our final comments on the nature of the work done as well as possible future work perspectives.
+
+
+
+
+\begin{figure}[t]
+
+	\centering
+	\includegraphics[scale=.8]{images/Chapitre7/flow_chart.pdf}
+	\caption{The tree steps we took to build SAEWD.}
+	\label{fig:flow}
+%TODO change figs to Chapter4 folder!
+\end{figure}
+
+\subsection{Construction of SAEWD}
+The three main steps we followed to build SAEWD are presented in Figure \ref{fig:flow}. Briefly, we have one input, which is the Wikipedia dump and one output which is the parsed snapshot. In the following we provide a detailed description of each of the process. 
+
+ 
+We begin the construction of the parsed corpus with the Wikipedia dump XML file obtained from the Wikipedia database\footnote{\url{https://dumps.wikimedia.org/enwiki}} from early November 2014. This dump  contains around 4.7 million article pages\footnote{We kept all articles available in the Wikipedia dump.}. As shown in Figure \ref{fig:flow}, we apply the following processing steps in order to yield the final parsed version.
+ 
+\subsubsection{Cleaning Wikipedia} First, we discard Wikipedia's  tables, references and lists, markup annotations and HTML tags with the \textit{WikiExtractor} \cite{Attardi2015}  script. 
+We used this tool to clean and split the content of the original XML file into 429 folders each one containing 100 files of approximately 300 kB. These files contain a certain number of complete Wikipedia articles which is automatically determined by WikiExtractor  according to the maximum possible size assigned for each file, 300 kB in our case, thus the number of articles in each file may vary. We decided to use numerous files as well as a small size to easily read their content into memory while parsing. Having multiple small files also makes it easier to handle the multi-threading aspect of our parsing tool.
+We kept WikiExtractor's original folder nomenclature which assigns to each one of them a sequence of letters sorted lexicographically\footnote{We have folders named \textit{AA}, \textit{AB}, \textit{AC} and so on.}. The files containing the cleaned text is simply named \textit{wiki\_XX} where  \textit{XX} goes from 00 to 99, as we have 100 files per folder. 
+It is important to note that the Wikipedia articles' titles themselves are not sorted in any specific way, as it was not in the interest of our research to have them ordered. 
+Inside each cleaned file, besides the article's text, WikiExtractor keeps the original article's URL as well as its unique Wikipedia ID within an XML-like label that also doubles as  article separator. 
+
+\subsubsection{Parsing Wikipedia} Next, once the Wikipedia dump had been cleaned, we use the Stanford CoreNLP\footnote{\url{http://nlp.stanford.edu/software/corenlp.shtml}} \cite{manning2014} analysis tools to parse all the file texts produced during the previous step. As a part of our processing pipeline, we first perform  sentence segmentation, word tokenization and lemmatization. Below, we briefly describe each of the extracted attributes. We also exemplify them in detail in Section \ref{text:description}.
+\begin{itemize}
+\item PoS tagging: We obtain the grammatical category of each word, i.e., the part-of-speech tag, using the CoreNLP default tagger, the \textit{left3words} PoS tagging model.
+\item Dependency parse: this attribute consists on an extracted tree that describes the types of grammatical relations between words, i.e., the dependency-based parse tree. 
+The analysis was performed with the Stanford's \textit{Shift-Reduce}  parser.
+% This parser is known to perform better than other Stanford parsers.                                  
+ %(notably  faster and  with stronger \textit{F1} measure than the previous PCFG parser, although not as accurate as the Recurrent Neural Network system trained with semantic word vectors).
+As information representation, we use the basic dependencies scheme, as we wanted to include each one of the possible dependency relations without any collapsing between them.    
+                                                                                                                                                                                    
+                                                                                                                                                                                    
+\item Constituents parse:                                                                                                                                                           
+the output of this analysis is a rooted tree that represents the syntactic structure of a phrase.                                                                                  
+This tree is commonly known as the constituency-based parse tree.                                                                                                                  
+For each word, we store its complete path in the constituency tree.
+ Specifically, we keep all the nodes of a word's own branch from the root to the word itself.
+ We employ the Stanford Shift-Reduce parser.
+ This path is transformed into a single line and included in SAEWD. 
+ 
+
+\end{itemize} 	
+%\section{Parsed files organization}
+ Finally, once the parsing process is complete, the parsed files are stored into individual files and thus there are as much parsed files as input Wikipedia cleaned files. The parsed files keep their original name plus the \texttt{parsed} extension, e.g., \texttt{wiki\_00.parsed}. The structure within the files is described in Section \ref{section3.2}. After parsing, we found the statistics shown in Table \ref{tab:corpus_stats}.
+ 
+\begin{table}[t]
+\centering
+\caption{English Wikipedia dump statistics.}
+\label{tab:corpus_stats}
+\begin{tabular}{lr}
+{\bf Number of tokens}      & 1,889,769,908 \\
+{\bf Unique tokens (types)} & 8,761,691 \\
+{\bf Number of sentences}   &  84,760,512\\
+{\bf Average number of tokens per sentence} & 22.30
+\end{tabular}
+\end{table}
+
+\subsection{SAEWD Description}\label{text:description}
+In this section we describe in detail the characteristics of SAEWD.
+
+
+
+
+\begin{table*}[ht]
+\centering
+\caption{Extract of a Wikipedia parsed file. The phrase shown is the parse result of the previous example sentence in Figure~\ref{fig:tree_saewd} }
+\label{tab:parse}
+\noindent\makebox[\textwidth]{%
+\begin{tabular}{llllll}
+ \multicolumn{6}{l}{\textit{FILENAME wiki\_00.parsed}}                                           \\ \hline
+  \textbf{token}   & \textbf{lemma}   & \textbf{POS} & \textbf{constituency}                      & \textbf{head} & \textbf{dependency} \\ \hline
+ \multicolumn{6}{l}{\textit{\%\%\#PAGE Anarchism}}                                         \\ \hline
+  {$\vdots$}      &      {$\vdots$}   &  {$\vdots$}   &     {$\vdots$}                              &    {$\vdots$}  &     {$\vdots$}       \\  \hline
+ \multicolumn{6}{l}{\textit{\%\%\#SEN 25  9}}                                             \\ \hline
+						 A       & a       & DT  & NP\_22,S\_97                      & 3    & det        \\ %\cline{2-7} 
+                         great   & great   & JJ  & NP\_22,S\_97                      & 3    & amod       \\ %\cline{2-7} 
+                         brigand & brigand & NN  & NP\_22,S\_97                      & 4    & nsubj      \\ %\cline{2-7} 
+                         becomes & become  & VBZ & VP\_44,S\_97                      & 0    & root       \\ %\cline{2-7} 
+                         a       & a       & DT  & NP\_18,NP\_20,VP\_44,S\_97        & 6    & det        \\ %\cline{2-7} 
+                         ruler   & ruler   & NN  & NP\_18,NP\_20,VP\_44,S\_97        & 4    & xcomp      \\ %\cline{2-7} 
+                         of      & of      & IN  & PP\_57,NP\_20,VP\_44,S\_97        & 9    & case       \\ %\cline{2-7} 
+                         a       & a       & DT  & NP\_18,PP\_57,NP\_20,VP\_44,S\_97 & 9    & det        \\ %\cline{2-7} 
+                         Nation  & nation  & NN  & NP\_18,PP\_57,NP\_20,VP\_44,S\_97 & 6    & nmod       \\ %	\cline{2-7} 
+\hline 
+      
+\end{tabular}}
+\end{table*}
+
+% Please add the following required packages to your document preamble:
+% \usepackage{multirow}
+% \usepackage{graphicx}
+\begin{table*}[ht]
+\centering
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{cl|cccc|cccc|c}
+\multirow{2}{*}{\textbf{PoS Tag}} & \multirow{2}{*}{\textbf{Token}} & \multicolumn{4}{c}{\textbf{NP}} & \multicolumn{4}{c}{\textbf{DEP}} & \multicolumn{1}{l}{\textbf{SEN}} \\ 
+ &  & \multicolumn{1}{c}{$ \text{NP\_22}_1 $} & \multicolumn{1}{c}{$ \text{NP\_20}_1 $} & $ \text{NP\_18}_1  $& \multicolumn{1}{c}{$ \text{NP\_18}_2 $} & nsubj\_become & xcomp\_become & nmod\_ruler & \multicolumn{1}{c}{amod\_brigand} & \multicolumn{1}{l}{$ \text{~~S}_1 $} \\ \cline{1-11} 
+\multirow{3}{*}{\textbf{NN}} & \multicolumn{1}{l|}{brigand} & 1 &  &  &  & 1 &  &  & & 1 \\
+ & \multicolumn{1}{l|}{ruler} &  & 1 & 1 &  &  & 1 &  &  & 1 \\
+ & \multicolumn{1}{l|}{nation} &  & 1 &  & 1&  &  & 1 &  & 1 \\ \hline
+\textbf{VB} & \multicolumn{1}{l|}{becomes} &  &  &  &  &  &  &  & & 1 \\ \hline
+\textbf{JJ} & \multicolumn{1}{l|}{great} & 1 &  &  &  &  &  &  & 1 & 1 \\ \hline
+\end{tabular}
+}
+\caption{Brief example of the linguistic network incidence matrix of the previous used phrase. On the left side, as on the top, we can see the metadata we store for each word (rows) and each column (hyperedges). We omit the rest of the words from the example phrase for brevity.  }
+\label{ref:incidence}
+\end{table*}
+
+\subsubsection{Constituency parse storage in detail}
+%The  result from the constituency parse is not as straightforward to store as the other kinds of parses, i.e., the output is  a deeper tree structure than that of a dependency parse. Thus, we believe that the storage of this information in SAEWD requires a more in detail explanation. 
+%In this subsection, we will describe how we stock the information concerning  the phrases' constituents. 
+
+We will use an example to better explain the storage of the constituency-based parse tree. In Figure \ref{fig:tree_saewd} we can see the constituency parse of the phrase  \textit{A great brigand becomes a ruler of a Nation}. On the bottom of the figure, we observe the constituent's path (or branch), of the words \textit{brigand} and \textit{Nation}. As in any tree structure, each leaf node has a defined path from the root node to itself. In this example, the leaf containing the noun \textit{brigand} 
+%(PoS tag \textit{NN})
+ follows the bottom-up path \textit{NP22}$\rightarrow$\textit{S97}. \textit{Brigand's} parent node is a Noun Phrase (NP) node which in turn comes from the root of the tree, the Sentence node \textit{S}. We assign to each phrase chunk an identifier (22 and 97 in this case) in order to distinguish them according to their building elements as specified by the grammar rule used.
+  In other words, a phrase chunk, e.g., a NP, a Verbal Phrase (VP), a Prepositional Phrase (PP), or other chunk defined by the grammar in CoreNLP, may be built from different types of PoS tags. Thus, again from Figure \ref{fig:tree_saewd}, we see that the sentence \textit{S97} is  built both from a NP and a VP chunk. 
+ In a similar way, the noun phrase \textit{NP18} is produced by a determinant (DT) and a noun (NN), while  \textit{NP22} is generated by a determinant, an adjective (JJ) and a noun.
+  The identification digits are obtained from the hash code that represents each chunk object inside our Java application. For each phrase-chunk tree node, we keep the last two significative figures produced by the \texttt{hashCode}\footnote{Java \texttt{hashCode} function description: \url{https://en.wikipedia.org/wiki/Java\_hashCode\%28\%29}} Java method.
+%\begin{figure}[]
+%\resizebox{\linewidth}{!}{%
+%\begin{forest} 
+%[S97
+%	[NP22 [DT [A, blue text]] [JJ [great, blue text]] [NN [brigand, blue text]]]
+%    [VP44 [VBZ [becomes, blue text]]
+%      [NP20
+%        [NP18 [DT [a, blue text]] [NN [ruler, blue text]]]
+%        [PP57 [IN [of, blue text]]
+%          [NP18 [DT [a, blue text]] [NN [Nation, blue text]]]]]]]
+%	\node [draw,fill = blue!20,text width=21em] at (1.5,-6.8) (sparse) {\textbf{brigand} (NN): NP22$\rightarrow$S97 \\ \textbf{Nation} (NN): NP18$\rightarrow$PP57$\rightarrow$NP20$\rightarrow$VP44$\rightarrow$S97};
+%\end{forest}
+%}
+
+%\caption{Constituency tree for the phrase \textit{{A great brigand becomes a ruler of a Nation}.}
+%% On the bottom, we can see the bottom-up path stored for the words \textit{brigand} and \textit{Nation}.
+%}
+%\label{fig:tree_saewd}
+%\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics[width=0.8\linewidth]{images/Chapitre3/trees/tree_saewd.pdf}
+\caption{Constituency tree for the phrase \textit{A great brigand becomes a ruler of a Nation}. On the bottom, we can see the bottom-up path stored for the words \textit{brigand} and \textit{Nation}.}
+\label{fig:tree_saewd}
+\end{figure}
+ 
+
+
+As another example, the noun \textit{Nation} has the following bottom-up constituency path: \textit{NP18}$\rightarrow$\textit{PP57}$\rightarrow$\textit{NP20}$\rightarrow $\textit{VP44}. Indeed, the string \texttt{NP\_18,PP\_57,NP\_20,VP\_44,S\_97}, originating from the previously described path,  is the information we keep about the constituency parse for each token in the Wikipedia dump.
+
+
+
+\subsubsection{Annotation scheme}\label{section3.2}
+To store the parsed text we use a scheme  inspired by that used in \cite{ATSERIAS08}. The format can be considered as a regular tsv file (i.e., the entries are separated by tab spaces) with additional metadata tags. An extract from a parsed file can be observed in Table \ref{tab:parse}. 
+
+The file includes two headers: the first one simply indicates the name of the current parse file; the second one contains the names that describe each column. The tags and columns our parsed dump contains are the following:
+\begin{itemize}
+\item Metadata tags:
+\begin{enumerate}
+\item {FILENAME}: indicates the original file used to extract the current parse, 
+\item {\%\%\#PAGE}: denotes a new Wikipedia article, as well as its title, 
+\item {\%\%\#SEN}: marks the beginning of a new sentence. It is followed by two integers: (1) the number of the current sentence, and (2), the number of tokens in the sentence.
+
+\end{enumerate}
+
+\item Parse columns for each token:
+\begin{enumerate}
+\item Token: the token itself,
+\item Lemma: the token the canonical form,
+\item POS: its part of speech tag,
+\item Constituency: the bottom-up constituency path described before,
+\item Head: the head index of the dependency relation the current token belongs to,
+\item Constituency: the name of the grammatical relationship this token participates in as a dependent.
+\end{enumerate}
+\end{itemize}
+
+Using the example phrase introduced before (Table \ref{tab:parse}), the token \textit{becomes} has \textit{become} as lemma, it is a verb, thus it has \textit{VBZ} as PoS tag, its constituency path is \textit{VP\_44,S\_97}, so it belongs to the verb phrase {VP44} which in turn comes from sentence {S97}. Finally, \textit{becomes}, being the main verb, is in this case the grammatical root of the sentence and its head is by convention determined as  zero. 
+
+\subsubsection{Discussion}
+Concerning the computation time, SAEWD takes around 40 hours to be produced using a general purpose laptop (Intel i7 4700MQ with 4 cores, 8 GB and Linux Mint 17 as operative system). Most of the time is taken by the parsing step. 
+
+We verified the consistency of the corpus built by analyzing a sample of 20 Wikipedia articles. The output of CoreNLP and the information contained in the corpus match.
+
+
+
+\section{Conclusion}
+
+In this chapter  we analyzed the state of the art of linguistic network-based approaches to semantic similarity task from a graph-centric point of view. We reviewed the techniques in terms of its graph characteristics, from their structure to the algorithms employed. Among the literature covered, certain non-explored research paths were identified, namely the lack of syntactic data on the networks employed, and therefore, a homogeneous network nature that only allows for relations of a unique type. 
+
+We addressed these paths with the proposition of a hypergraph linguistic model that is able to hold heterogeneous language information.  We believe that this structure allows the integration multiple kinds of information and has vast potential in terms of which algorithms it can be used with. The three levels of context we integrated in the model (sentence lexical co-occurrence, dependency function co-occurrence, and constituent-membership co-occurrence) aim to cover distinct levels of semantic relatedness. We noted the challenges of dealing both with textual data sparsity and leveraging the heterogeneity of the hypergraph. To alleviate both concerns, we propose the use of fusion functions, introduced also in this chapter. The structure of the hypergraph is also an important characteristic that we can use to find groups of semantically related words within a corpus. Finally, we presented a materialization of a corpus, a portion of the English Wikipedia, as the linguistic network we proposed.
+
+In the following section we set to solve two natural language processing challenges using the model described above as a linguistic resource. Specifically, we address the tasks of word sense induction and disambiguation, and the named entity recognition. Both tasks are located on the computational semantics sub-domain of NLP. By making use of the network we want to test the effectiveness of using different types of linguistic features. 
 

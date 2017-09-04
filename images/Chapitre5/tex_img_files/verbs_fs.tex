@@ -24,13 +24,13 @@ ybar, %ymin=0,
 %xmin=0,
 %xlabel=Xstuff,
 ylabel=FScore,
-flexible xticklabels from table={../../data/depsVerbs.tsv}{word}{col sep=tab},
+flexible xticklabels from table={../data/depsVerbs.tsv}{word}{col sep=tab},
 x tick label style={rotate=90,text height=.5ex, xshift=.8ex, font=\tiny}, % To make sure the text labels are nicely aligned
 xtick=data,
 %nodes near coords,
 nodes near coords align={vertical}]
-\addplot+[bar width=.2] table[x expr=\coordindex,y=Fscore]{../../data/depsVerbs.tsv};
-\addplot+[bar width=.2] table[x expr=\coordindex,y=Fscore]{../../data/senVerbs.tsv};
+\addplot[black,fill=black, bar width=.2] table[x expr=\coordindex,y=Fscore]{../data/depsVerbs.tsv};
+\addplot[gray,fill=gray, bar width=.2] table[x expr=\coordindex,y=Fscore]{../data/senVerbs.tsv};
 \legend{DEP,LEX}
 \end{axis}
 
