@@ -10,7 +10,7 @@ Secondly, in the second section of the chapter, we explore the use of well-known
 \end{abstractchap}
 
 \minitoc
-\section{Word Sense Induction and Disambiguation}
+\section{Leveraging the Network Structure}
 \subsection{Introduction}
 \label{chap5:intro}
 In this chapter we employ the model introduced before to propose a solution to both Word Sense Disambiguation (WSD) and Induction  (WSI) tasks. The intuition of our method is not original, as we will see, but still we address concerns that are not very well studied, namely the use of heterogeneous context features to solve semantic tasks while reducing the number of parameters compared to similar approaches. Indeed, we also analyze the difference provided by different types of contexts. Our method is evaluated with two important datasets, that of Semeval 2007 and 2010.
@@ -20,7 +20,7 @@ We begin by giving a description and and recalling the art for both tasks. Speci
 We then present the characteristics of our proposed method. Finally we describe and discuss the obtained results.
 
 %\subsection{Linguistic Networks in WSD and WSI}
-\subsection{Related Work}
+%\subsection{Related Work}
 
 Word sense disambiguation, or WSD, is the task of examining a word in different contexts (we refer to a word in a particular context as an instance)  and determining which is the sense being used in each one of the contexts analyzed. Usually a list of senses from where to chose the correct one is given as an input. When this list is not available, WSD then becomes a different, complementary task: word sense induction, or WSI. WSI also analyses  tokens of a target word context but before assigning a sense to each of its instances, it first generates a list of possible senses from where to select from. 
 
@@ -72,7 +72,7 @@ Being able to design new similarity metrics that deal with different types of in
 
 
 
-\subsection{Approach}
+\subsection{Proposed Method}
 	
 %The cited works use a LCN as described before while other works such as \cite{2014.Tao.Qian.LexicalChainHypergraphWSI} represent the co-occurrence by means of a hypergraph schema. In short, a hypergraph structure is a graph generalization where an edge (called hyperedge) can link multiple vertices per edge and thus it is able to provide a more complete description of the interactions between several nodes.
 
@@ -174,7 +174,7 @@ The assignation of a sense consists in looking at each $tw$ instance represented
 \end{algorithm}
 
 	
-\subsection{Experiments}
+\subsection{Experiments and Evaluation}
 
 \subsubsection{Datasets}
 We trained and evaluated our system on two datasets: Semeval-2007 (task 2) \cite{semeval2007task2} and Semeval-2010 (Task 14) \cite{Semeval2010}. The Semeval-2007 task consisted in the induction and disambiguation of a single set of 100 words, 65 verbs and 35 nouns, each target word having a set of contexts where the word appear. On the other hand, the Semeval-2010 task consisted also on 100 words, with 50 being verbs and 50 being nouns. This time, a training set from which the senses of a word have to be induced is provided. In our experiment, for the Semeval-2010 dataset, we induce the senses from the training set and disambiguate the target words within the test set.
@@ -196,7 +196,7 @@ Each type of hyperedge has its own network characteristics as mentioned before. 
 
 
 
-\subsection{Results}
+\subsection{Results and Discussion}
 Both Semeval-2007 and Semeval-2010 tasks are evaluated by an unsupervised and supervised set of measures. 
 \paragraph{Semeval-2007}
 In the case of Semeval-2007, the unsupervised evaluation assumed the induced senses as clusters of examples. These clusters are compared to the sets of examples tagged with the given gold standard word senses (classes), and evaluated using the \textit{F-Score} measure for clusters. 
@@ -293,9 +293,8 @@ In Semeval-2010, two unsupervised evaluation metrics are introduced: \textit{V-M
 The paired F-Score evaluation transforms the clustering problem into a classification one. Two instance pairs sets are generated, the first one coming from the system induced clusters, by including pairs of the instances found in each cluster. The second set of instance pairs is built from the gold standard classes. It contains pairs of the instances found in each class. We can then define \textit{Precision} and \textit{Recall}. Precision is computed as the ratio of the number of common instance pairs between the two sets divided by the total number of pairs in the clustering solution. Recall is the count of common instance pairs between the two sets divided by the total number of pairs in the gold standard. The paired F-Score is the harmonic mean of both quantities.
 
 Concerning the supervised evaluation, it follows explicitly that of Semeval-2007, using recall as the main performance measure as in  \cite{Semeval2010,VandeCruys2011,pedersen2010duluth}.
-%For more details about these measures, we refer the reader to the more comprehensive descriptions found 
 
-\subsection{Discussion}
+
 In Table \ref{tab:sem2010_VM} we present our systems compared to the baseline and other methods using during Semeval 2010. V-Measure is a metric well-known for favoring systems producing a higher number of clusters \cite{VandeCruys2011,pedersen2010duluth}. Thus, it is considered not a very reliable metric. We have included it to have a global insight about the performance of our method. We remark that only \textbf{LEX} performed better than both baselines, random assignation of senses (Random) and using the most frequent sense (MFS). Also, we note that we included only the best performing systems, in this case \textit{NMF$_{lib}$} and  \textit{Hermit}. The former  did not participate on the competition but was developed later. We include it henceforth to illustrate how systems variate from one position to another depending the metric used to assess the performance. The latter was the best method on this metric from the task challenge. It is important to notice that other systems exist between Hermit and \textbf{LEX}. They were not included for the sake of clarity.
 
 The second unsupervised measure, Paired F-Score, can be seen in Table \ref{tab:sem2010_FS}. In this case both systems presented performed better than the random baseline. Any system presented was able to beat the MFS baseline. We note that \textbf{DEP} does much better compared to \textbf{LEX} concerning verbs, namely 58\% vs. 28\% F-Score. Still, the results are low considering the best results of the competition, 63\% from Duluth, although again, it generates a number of senses very similar to the MFS baseline. Both our systems induce a considerable amount of clusters while keeping a descent F-Score.
@@ -305,48 +304,6 @@ Finally, we in Table \ref{tab:sem2010_SR} we show the supervised Recall results 
 Concerning our systems, in this evaluation they seem to perform the best, or in a comparable level, to the top methods.  We find that in general our systems seem to perform better on the Semeval-2007 dataset. Discovering the reason could shed light into improving the performance on the Semeval-2010 test set. Given the results, it seems like a combination of features (syntactic plus lexical) in  a single algorithm could yield better results. 
 
 As a side note, it is argued that supervised Recall is not a very robust metric as the supervised method within tends to converge towards the most frequent sense. In this regard, several researchers \cite{VandeCruys2011,pedersen2010duluth} have voiced their concerns about the quality of the current WSI/WSD evaluation metrics as well as the need of new, more robust techniques to properly evaluate these systems.
-
-%We evaluate our systems by means of the F-score and a precision-recall curve which provides a deeper analysis of the performance of each system while considering the variation of threshold $th_3$.
-
-
-% As test set, we employ the data provided for Task 02 of Semeval-2007 \cite{semeval2007task2} which evaluated word sense induction systems. The dataset consists on 100 target words\footnote{We note that for this experiment we worked solely with nouns.} (65 verbs and 35 nouns), each target word having a set of paragraph contexts where it appears. From the available performance assessing techniques, we are  interested in the unsupervised evaluation, which is rated using the F-score produced by the furnished evaluation script. We modify it to obtain also the precision and recall measures. 
- 
- 
- 
-% \begin{figure}[]
-% \begin{minipage}{0.48\textwidth}
-%   \centering
-%    \begin{tabular}{ll}
-%    \hline
-%    \textbf{System} & \textbf{\begin{tabular}[c]{@{}l@{}}Nouns \\ FSc.\end{tabular}} \\ \hline
-%    
-%    {dep}            & 80.6                                                         \\
-%    {lex}              & 79.5                                                           \\ \hline
-%    \end{tabular}
-%  \caption{Best F-scores obtained for both our methods on Task 02 of Semeval-2007, using lexical (\textit{lex}) and syntactic dependency (\textit{dep}) co-occurrences. }
-%   \label{tab:results}
-% \end{minipage}
-% \hfill
-%\begin{minipage}{.48\textwidth}
-%  %\centering
-%  \pgfplotsset{height=0.9\columnwidth, width=\columnwidth}
-%  \begin{tikzpicture}[]
-%    \begin{axis}[
-%    xmin=0.94,
-%    xmax=1,
-%%    ymin=0.73,
-%%    ymax=0.755,
-%    ylabel={Precision},
-%    xlabel={Recall}]
-%    \addplot[color=red,mark=x] table [x=recall, y=precision]  {data/deps.tsv};
-%    \addplot[color=blue,mark=o] table [x=recall, y=precision]  {data/sens.tsv};
-%    \end{axis}
-%  \end{tikzpicture}
-%  \caption{Precision-Recall curve for \textit{lex} and \textit{dep} systems. To improve visibility, we focused the scale on the curves.}
-%  \label{fig:prec_recall}
-%\end{minipage}%
-%
-%\end{figure} 
 
 \begin{table}[]
 \centering
@@ -405,15 +362,11 @@ Random & 57.3 & 51.5 & 65.7 \\ \bottomrule
 \end{table}
 
 
-
-%The F-score of both systems is shown in Figure \ref{tab:results}. Indeed, in our experiment, the dependency based model \textit{dep} preformed better than \textit{lex} using classic lexical co-occurrence. Even more, in Figure \ref{fig:prec_recall} we   appreciate that even while using different threshold values, we achieve, in general, better recall and precision by using syntactic dependencies. It must be noted  that this particular Semeval task was dominated by the most frequent sense with an F-score of 80.7, assigning an average of one sense per target word. Our solutions assign an average of 1.257 and 1.200 for \textit{lex} and \textit{dep} respectively.
-
 \subsection{Conclusion}
-
 We proposed a WSI/WSD method based on the contexts from the hypergraph model presented in the previous chapter. We show how using the inner links within the hypergraph structure we can group words that represent senses and then assign them to target words. Our method distinguishes from similar works in two main aspects: the definition of similarity used, the reduced number of parameters that are needed, the use of diverse types of contexts to solve the task. 	We show that our method beats said similar approaches. Also, we discovered the behavior of syntactic contexts in comparison to lexical contexts at word-level. Indeed, lexical contexts seem to perform better. This is in line with other works on distributional representations \cite{kiela2014systematic}.
 
 
-\section{Named Entity Recognition}
+\section{Combining Heterogeneous Features}
 \label{chap:fusion}
 
 %\minitoc
@@ -515,7 +468,7 @@ Our first goal is to assess the effectiveness of the classic fusion methods and 
 %\subsection{NER and WSI/WSD}
 %Previously we introduced NLP works that made use of a fusion strategy to improve a single modality system. Nonetheless, and to the best of our knowledge, there is no work that addresses NER directly while using fusion techniques from the multimedia analysis domain.
 
-\subsection{Applying Fusion Techniques}
+\subsection{Proposed Method}
 \label{chap6:application}
  Our first goal is to assess the effectiveness of the classic fusion methods and then, as a second goal, to propose new combinations that yield better outcomes in terms of performance than the simpler approaches. The new combinations are found empirically. Nonetheless, as we will show, their effectiveness replicates to different datasets and NLP tasks. 
 
@@ -655,16 +608,16 @@ Our first goal is to compare the efficiency of the basic multimedia fusion techn
 To this end, we evaluate the aforementioned 4 fusion levels. We note that the fusion combinations in the third and fourth level (2F and NF) are proposed based on the results obtained in the previous levels. In other words, in order to reduce the number of experiments, we restrict our tests to the best performing configurations. This is due to the large number of possible combinations (an argument to a fusion operation may be any valid output of a second fusion operation).
 
 
-\subsection{Named Entity Recognition}
+\subsubsection{Named Entity Recognition}
 
-\subsubsection{Pre-processing}
+\paragraph{Pre-processing}
 
 As is usual when preprocessing text before performing named entity recognition, \cite{RatinovR09}, we normalize tokens that include numbers. For example, the token 1980 becomes *DDDD* and 212-325-4751 becomes *DDD*-*DDD*-*DDDD* . This allows a degree of abstraction to tokens that contain years, phone numbers, etc. We do not normalize punctuation marks.
 
-\subsubsection{Features}
+\paragraph{Features}
 The linguistic information we use are extracted with the Stanford's CoreNLP parser \cite{manning2014}. Again, the features used for these experiments on NER are those described before: lexical, syntactic and standard features, i.e., $M^{LEX}$, $M^{SYN}$, and $M^{STD}$, respectively. 
 
-\subsubsection{Test Datasets}We work with three corpus coming from different domains:
+\paragraph{Test Datasets}We work with three corpus coming from different domains:
 \begin{itemize}
 \item [(1)] CoNLL-2003 (CONLL): This dataset was used in the language-independent named entity recognition CoNLL-2003 shared task \cite{SangM03}. It contains selected news-wire articles from the Reuters Corpus. Each article is annotated manually. It is divided in three parts:  training (\textit{train}) and two testing sets (\textit{testa} and \textit{testb}). The training part contains 219,554 lines, while the test sets contain 55,044 and 50,350 lines, respectively. The task was evaluated on the \textit{testb} file, as in the original task.
 \item [(2)]WikiNER (WNER): A more recent dataset \cite{Balasuriya2009} of selected English \allowbreak Wikipedia articles, all of them annotated automatically with the author's semi-supervised \allowbreak method. In total, it contains 3,656,439 words. 
@@ -674,10 +627,10 @@ The linguistic information we use are extracted with the Stanford's CoreNLP pars
 
 \end{itemize}
 %
-\subsubsection{Evaluation Measures}
+\paragraph{Evaluation Measures}
 We evaluate our NER models following the standard CoNLL-2003 evaluation script. Given the amount of experiments we carried on, and the size constraints, we report exclusively the total F-measure for the four types of entities (Location, Organization, Person, Miscellaneous). WNER and WGLD datasets are evaluated on a 5-fold cross validation.
 
-\subsubsection{Results}
+\paragraph{Results}
 We present in this subsection the results obtained in the named entity recognition task, while employing the 4 levels of fusion proposed in the previous section.
 
 In contrast to other related fusion works \cite{Ah-PineCC15,ClinchantAC11,GialampoukidisM16}, we do not focus our analysis on the impact of the parameters of the fusion operators. Instead, we focus our analysis on the effect of the type of linguistic data being used and how, by transferring information from one feature type to another, they can be experimentally recombined to generate more complete representations.
@@ -821,20 +774,20 @@ $M^{\scriptscriptstyle LEX}_{\alpha=0.95}$ & $ \hat{b}_{\scriptscriptstyle EELXE
 
 
 
-\subsection{Word Sense Induction and Disambiguation}
+\subsubsection{Word Sense Induction and Disambiguation}
 Having learned the best fusion configuration from the previous task, in these experiments we set to test if the improvements achieved can be transfered into another NLP task, namely Word Sensed Induction and Disambiguation (WSI/WSD). As preprocessing, we simply remove stopwords and tokens with less than three letters.
 \input{semeval2007}
-\subsubsection{Features}
+\paragraph{Features}
 We use the same set of features from the previous task, without the standard NER features, that is, those represented by $M^{STD}$, as they are specifically designed to tackle NER.
-\subsubsection{Test Dataset}
+\paragraph{Test Dataset}
 The WSI/WSD model is tested on the dataset of  the SEMEVAL-2007 WSID task \cite{Agirre2007}. The task was based on a set of 100 target words (65 verbs and 35 nouns), each  word having a set of instances, which are specific contexts where the word appear. Senses are induced from these contexts and applied to each one of the instances.
 
 
-\subsubsection{Evaluation Measures}
+\paragraph{Evaluation Measures}
 Being an unsupervised task, the evaluation metrics of WSI/WSD are debated in terms of quality \cite{CruysA11}. We consider supervised recall and unsupervised F-measure, as in the competition original paper \cite{Agirre2007}. The first one maps the output of a system to the true senses of the target words' instances and the second one measures the quality of the correspondence between the automatically found clusters and the senses. 
 We consider that the number of senses found by the system is also a rather good indicator of performance: the best competition baseline assigns the most frequent sense to each target word (this baseline is called MFS), thus this baseline system would have an average of 1 sense (cluster) per word. A system that goes near this average may be indeed not resolving the task efficiently but finding the MFS trivial solution. Consequently, to show that we do not fall in the MFS solution, we display in our results the average number of clusters.
 
-\subsubsection{Results}
+\subsection{Results and Discussion}
 Word sense induction and disambiguation results are found in Table \ref{ref:wsd-semeval}. Again, we aim to surpass the baseline of the single features and early fusion.  We experimentally set $\beta=0.90$ and $\gamma=50$. In this task, in late fusion, when the first matrix  is deemed more relevant than the second one, the performance is higher. This may be due to the fact that, in this task, the feature matrices rows contain types (that is, each line represent an unique word), and thus they are more dense, which may entail more noisy data. By reducing the relevance of the second matrix in late fusion, we are effectively attenuating the less important information. Regarding $\gamma=50$, again due to the denser characteristic of the matrices, there is a larger quantity of true similar words that are useful to project information into another matrix, through cross fusion.  
 
 The WSI/WSD results are shown in Table \ref{ref:wsd-semeval}. In the following paragraph, we will discuss these result all at once. Due to the page limit constraint, we omit certain configurations that do not yield interesting results either by converging to the MFS solution (1 sense found per target word) or because the performance shown by those  configurations is not interesting.
@@ -854,7 +807,7 @@ In the following, we discuss how each type of feature affects the performance of
 %\subsubsection{WSI/WSD}
 %\subsubsection{NER}
 
-\subsection{Conclusion and Future Work}
+\subsection{Conclusion}
 \label{chap6:conclusion}
 We presented  a comparative study of multimedia fusion techniques applied to two NLP tasks: Named Entity Recognition and Word Sense Induction and Disambiguation. We also proposed new fusion recombinations in order to complement the information contained in the single representation matrices. In order to accomplish this goal, we built upon basic fusion techniques such as early and late fusion, as well as cross media fusion to transfer quality information from one set of features to another. 
 
