@@ -1,0 +1,53 @@
+\documentclass[10pt, a4paper]{standalone}
+ 
+\usepackage{hyperref}
+\usepackage{graphicx}
+\usepackage{multirow}
+\usepackage{float}
+\usepackage{graphicx}
+\usepackage{color}
+\usepackage{transparent}
+\usepackage{forest} 
+\usepackage{booktabs}
+ 
+ \usepackage{fontspec}
+ \setmainfont{Fira Sans}
+ \usepackage{caption}
+\usepackage{amsmath}
+\restylefloat{table}
+% for eps graphics
+\usepackage{lipsum}
+ 
+ 
+%\setlength\PreviewBorder{5pt}%
+\begin{document} 
+\forestset{
+    sn edges/.style={for tree={parent anchor=south, child anchor=north}},
+    blue text/.style={for tree={text=gray!50}}}
+
+
+ \minipage{1.08\textwidth}
+% \captionof*{figure}{Constituency tree for the phrase \textit{{A great brigand becomes a ruler of a Nation}.}}
+\resizebox{\linewidth}{!}{%
+\begin{forest}
+for tree={edge=->}
+[contains,blue text,
+	[report,blue text,edge label={node[midway,left,font=\scriptsize]{nsubj}}
+		[The, blue text, edge label={node[midway,left,font=\scriptsize]{det}}]
+		[great,blue text,edge label={node[midway,right,font=\scriptsize]{amod}}]]
+[ruler,blue text,edge label={node[midway,right,font=\scriptsize]{xcomp}}
+	[a,blue text,edge label={node[midway,left,font=\scriptsize]{det}}]	
+	[Nation,blue text,edge label={node[midway,right,font=\scriptsize]{nmod}}
+		[of,blue text,edge label={node[midway,left,font=\scriptsize]{case}}]
+		[a,blue text,edge label={node[midway,right,font=\scriptsize]{det}}]
+	]]
+]
+\end{forest}
+}
+
+
+% On the bottom, we can see the bottom-up path stored for the words \textit{brigand} and \textit{Nation}.
+
+
+\endminipage
+\end{document}
