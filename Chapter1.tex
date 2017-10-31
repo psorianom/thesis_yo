@@ -20,7 +20,7 @@ Making sense of texts plays a vital role on the evolution of general artificial 
 \label{fig:google_nlp}
 \end{figure}
 %
-Indeed, making computers learn,  via theories, algorithms and applications, is the general objective of artificial intelligence research \cite{Sugiyama2015}. Coming from this multi-disciplinary area, Natural Language Processing\footnote{And its more applied branch, text mining or text analysis. While it is sometimes argued that text mining deals with the structured data information extracted from text, I believe both terms considerably overlap nowadays. For ease of readability, in this dissertation we use both terms interchangeably, while preferring Natural Language Processing.} (NLP) is the domain that aims to make machines understand our language \cite{JurafskyM09} and thus making it possible to communicate with them in our own language. Specifically, speech and text, the latter being the focus of this work.
+Indeed, making computers learn,  via theories, algorithms and applications, is the general objective of artificial intelligence research \cite{Sugiyama2015}. Coming from this multi-disciplinary area, Natural Language Processing (NLP) is the domain that aims to make machines understand our language \cite{JurafskyM09} and thus making it possible to communicate with them in our own language. Specifically, speech and text, the latter being the focus of this work.
 
 Although a challenging task, primarily given the ambiguity and dynamics of human language, NLP has developed rapidly \cite{ClarkBook2010} during the last two decades mainly due to the combination of three factors: 
 \begin{itemize}
@@ -82,8 +82,8 @@ Representing unstructured text within a model that describes textual units and t
 
 
 \paragraph{Contribution}
-We propose a linguistic resource in the form of an heterogeneous language network to be used as a first essential data model to solve Natural Language Processing tasks. 
-During the last decade, graphs have been used to model textual data given its ability to naturally represent the dynamics and structured of text.
+
+During the last decade, graphs have been used to model textual data given its ability to naturally represent the dynamics and structured of text. We propose a linguistic resource in the form of an heterogeneous language network to be used as a first essential data model to solve Natural Language Processing tasks. 
 
 The originality of our work consists in taking into account different types of features, e.g., lexical, syntactical, and orthographic information; and unifying them under a single hypergraph structure. An hypergraph differs from a graph in that its edges may link several nodes together at the same time. This flexibility allows for simple and efficient access to the stored elements, either specific types of words or specific features. (revoir: advantages of hyperedges]
 %
@@ -101,7 +101,7 @@ Linguistic networks are complex structures that may hold  heterogeneous entities
 
 We propose a variant to a literature algorithm that solves word sens induction and disambiguation mainly by leveraging  the structure of a language network in. The assumption of the algorithm is that of the network having "real-world" characteristics, broadly, this means that there are several tight-knit groups of words within the structure. Nonetheless, contrary to the existent model, our proposition differs regarding the considerably lower number of parameters by adjusting them automatically according to the statistics of the concerned network. We also allow for more flexibility of the studied contexts of each word. Furthermore, we leverage the structure of our proposed linguistic model and go beyond the classic homogeneous cooccurrences by studying the effect of heterogeneous features on the quality of the senses induced by the system. Our experiments show the interest of our method by improving on the performance of similar methods and by being on the same ballpark of state-of-the-art methods. We also thoroughly analyze the characteristics of the results --the word senses-- according to the different types of  obtained by our system.
 
- This We  improve the overall performance compared to other similar graph-based techniques.
+ We  improve the overall performance compared to other similar graph-based techniques.
 
 \subsection{Combining features and dealing with sparsity}
 \paragraph{Challenge}
@@ -151,7 +151,7 @@ Figure \ref{fig:challenges_contribs} synthesizes the concerned NLP process-flow 
 %Afterwards, we present how these features can be combined to improve the results of single-feature based solutions. 
 %Finally, we detail the machine learning methods we employ in certain as part of our methodology. 
 
-\paragraph{Chapter \ref{chap:ling_net}} We begin by giving a review on how linguistic networks are used in the literature. This contextualizes our first contribution. We present and define a theoretical contribution: a novel structure to hold language information based on a hypergraph linguistic model.  We discuss its characteristics and the intuitions behind its conception: the choice of the structure,the role of nodes and heterogeneous edges, the type of features stored, the advantages it represents in terms of accessing and manipulating the data. Then, we introduce a set of techniques to make use of heterogeneous relations while dealing with sparsity, the feature fusion techniques. These methods are integral part of our contributions. Finally, we present a concrete application of our hypergraph model using the English Wikipedia. We describe its properties and motivations. The content of this chapter is drawn from \cite{sorianoJournal,sorianoLREC,sorianoEGCChallenge}.
+\paragraph{Chapter \ref{chap:ling_net}} We begin by giving a review on how linguistic networks are used in the literature. This contextualizes our first contribution. We present and define a theoretical contribution: a novel structure to hold language information based on a hypergraph linguistic model.  We discuss its characteristics and the intuitions behind its conception: the choice of the structure, the role of nodes and heterogeneous edges, the type of features stored, the advantages it represents in terms of accessing and manipulating the data. Then, we introduce a set of techniques to make use of heterogeneous relations while dealing with sparsity, the feature fusion techniques. These methods are integral part of our contributions. Finally, we present a concrete application of our hypergraph model using the English Wikipedia. We describe its properties and motivations. Contents of this chapter are published in \cite{sorianoJournal,sorianoLREC,sorianoEGCChallenge}.
 
 %This chapter describes the process of parsing and storing an English Wikipedia Syntactical Dump. We use open source tools on freely available data to generate a software that is able to extract lexical and syntactic data from a given corpus.We thus create and publicly release a syntactically annotated version of the English Wikipedia containing often-neglected information, stored in a format that facilitates its manipulation. 
 \paragraph{Chapter \ref{chap:wsd}} In this chapter, we present our two applied contributions. First, an algorithm that exploits the structure of the network, i.e., the connections between nodes to solve word sense induction and disambiguation. 

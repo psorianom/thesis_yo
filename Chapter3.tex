@@ -1,22 +1,46 @@
-\chapter{Hypergraph Linguistic Model}
+\chapter{Fusion-Enriched Hypergraph Linguistic Model}
 \label{chap:ling_net}
 \begin{abstractchap}
-In the previous chapter we presented the theoretical notions used in representing text through a distributional approach, the parameters, the models to implement them in real applications and the problems that naturally arise from these implementations. In this chapter we present and define the whole of our contributions. We organize this  chapter  in four parts: first, we introduce a state of the art on how the information contained in linguistic graphs is used for WSD/WSI and NER. Secondly, we introduce our model, addressing the limitations of classical language networks. Thirdly, we present feature fusion techniques. Finally, we materialize the proposed model to a corpus extracted from the English Wikipedia. We describe the process and the characteristics of the extracted network.
+In the previous chapter we presented the theoretical notions used to represent text with a distributional approach, that is, the parameters, the models to implement them  and the problems that naturally arise from these kinds of representations. In this chapter we introduce and define the first set of our contributions. Briefly, we present a linguistic framework to represent textual data. Feature fusion techniques are then applied over this network in order to better leverage the data contained in it while addressing the sparsity issue.
+
+We organize this  chapter  in four parts: we present a brief state of the art on how the information contained in linguistic graphs is used for WSD/WSI and NER. Secondly, we introduce our model. Thirdly, we present  the method used to combine the data held in our mode, specifically using feature fusion techniques. Finally, we materialize the proposed model by transforming an English Wikipedia based corpus into our proposed framework.
 \end{abstractchap}
 \minitoc
 
 \section{Introduction}
-A hypergraph linguistic model is the first core contribution of this thesis. We will describe the motivations and its characteristics below. On Figure \ref{fig:maindiag}, we can appreciate the block diagram of the ensemble of our propositions. At the top, we see that the hypergraph resource that we propose on this chapter is the stepping stone framework upon which we base the rest of our work. The model entails three  important characteristics: (1) the possibility to leverage three types of information. That is, syntactic, lexical  and what we will call standard features (explained later on), (2) as the words will be linked together, there is an inner structure that will emerge from the model, finally (3) the relations will between words are sparse. The tree of them are addressed with our propositions, while testing their practicality with well-established task domain corpora, which we use as benchmark input data in our experiments. These approaches, our 2nd and 3rd contributions, are described in the next chapter.
+
+In the previous chapter we covered the details concerning the parameters regarding the construction of a distributional representation model, as well as its challenges.
+The challenges that we will address in this chapter are two: (1) how to organize heterogeneous textual information within a single linguistic resource, and (2), how to leverage said information to obtain complementary representation spaces, while taking into account the feature sparsity issue that is characteristic of textual data.
+
+
+A fusion-enriched hypergraph linguistic model is the first contribution of this thesis. The model consists on two componentsw which address two research questions each: the issue of making sparsity less severe and leveraging different types of features  by using a single feature representation space. We will describe our motivations and its characteristics in the following paragraphs. We can appreciate the block diagram of the ensemble of our propositions  on Figure \ref{fig:maindiag}. On the top, our enriched linguistic model proposition, which is the focus of this chapter. On the bottom and grayed out, the application of said model in NLP tasks, described thoroughly in Chapter \ref{chap:wsd}.
+
+The model we present here entails three  important characteristics: firstly, the possibility to leverage different\footnote{We use three in our model definition: syntactic, lexical  and what we will call standard features (explained later on).} types of information.  Secondly, as the words will be linked together, there is an inner structure that will emerge from the model and which we exploit in our experiments. Thirdly, given that we treat unstructured text data, the relations (or features)  between words are sparse, this is alleviated by combining features via fusion techniques. 
+%In the following chapter, we test the practicality of our proposal with well-established tasks and related evaluation corpora, which we use as benchmark input data in our experiments. 
+
+Our network is based on the distributional hypothesis, as described in the previous chapter.  As co-occurrence features, we select both lexical and syntactic contexts, indeed creating a linguistic resource that hold both types of information in order to get a complementary insight of words' relations. Our network sets a lexical window, a co-occurrence weighting, and the definition of similarity between vectors according to two semantic NLP tasks we treat in the following: word sense induction and disambiguation and named entity recognition. Nonetheless, the parameters chosen can be easily changed. Regarding representation, we base our model on a graph-based structure which holds the words as nodes and the linguistic relations as edges. Being able to use the structure of the graph is useful to solve NLP semantic tasks \cite{nastase2015survey}. The following paragraphs will describe this structure in detail.   
+%
+%As stated before, both types of textual contexts entail the need to alleviate the feature-matrix sparsity issue. At the same time, we want to leverage these contexts as it is significant to our goals. In this sense, we use fusion techniques form the multimedia analysis literature to deal with both sparsity and the heterogeneity of our contexts.
+
+%The next chapter introduces our first contribution, a linguistic network as a resource for solving NLP tasks.
+
+
 
 
 \begin{figure}
 \centering
 \includegraphics[width=1\linewidth]{./images/Chapitre3/main_diag.pdf}
-\caption{Modular description of the hypergraph model we propose and of the experiments performed based on this model.}
+\caption{Modular description of the contributions of this thesis. Notably the fusion enriched hypergraph model we propose and in the bottom (grayed out) the NLP tasks applications based on said model.}
 \label{fig:maindiag}
 \end{figure}
 
-In order to contextualize our proposition, we begin with the state of the art on how linguistic networks are employed in the literature. We are interested on those networks previously covered: lexical, syntactical and semantic co-occurrence networks. We give emphasis to two aspects: how the inner structure is used to solve the tasks at hand, and what type of graph-based algorithm is used. The literature on graph-based approaches for NLP is vast, we thus focus specifically on semantic tasks, notably Word Sense Induction and Disambiguation, and Named Entity Recognition. We chose these two tasks as we focus on both of them for the rest of our contributions. Next, we introduce our model, how to build it  and its properties. 
+In order to contextualize our proposition, we begin with the state of the art on how linguistic networks are employed in the literature. We are interested on those networks previously covered: lexical, syntactical and semantic co-occurrence networks. We give emphasis to two aspects: how the inner structure is used to solve the tasks at hand, and what type of graph-based algorithm is used. The literature on graph-based approaches for NLP is vast, we thus focus specifically on semantic tasks, notably Word Sense Induction and Disambiguation, and Named Entity Recognition. We chose these two tasks as we focus on both of them for the rest of our contributions. Afterwards, we introduce our model, how to build it  and its properties. We focus on the description of hypergraphs and how they allow us to join together different linguistic networks. Next, we introduce the concept of fusion techniques used to combine the linguistic features and obtain an enriched representation.
+
+In that sense, this chapter presents a word representation model based on a generalization of graphs (we employ hypergraphs) that contains different types of linguistic data to characterize the terms (or words) contained within.  These representations are then combined with fusion techniques in order to ideally get an enriched and complementary feature space for each word. Finally, as a proof-of-concept, we describe the characteristics of the transformation of an English Wikipedia-based corpus into the framework we propose, a hypergraph model and its single enriched representation produced via fusion techniques. We show an example of the results produced by these fusion methods.
+
+%The materialization of the proposed model allows us to computationally test the advantages as well as to discover the limitations of the proposed framework
+%In the following chapter, we show in our experiments that this is indeed the case. 
+.
 
 \section{Linguistic Networks in Semantic NLP Tasks}
 
@@ -101,7 +125,7 @@ Even though this kind of structure seems to open new avenues of research in the 
 
 \subsection{Algorithms used in Linguistic Networks}
 
-We have discussed until now the different types of networks from a content point of view. In this subsection, we address the details of the graph-based algorithms used to solve semantic NLP tasks. In this section we will cover the details of four different types of graph algorithms.
+We have discussed until now the different types of networks from a content point of view. In this subsection, we address the details of the graph-based algorithms used to solve semantic NLP tasks. In this section we cover the details of four different types of graph algorithms.
 
 %\paragraph{Notation}
 %In this section we will be referring to a connected undirected graph, which we denote by $G = (V,E,W)$. The graph $G$ has vertex set $V$, edge set $E$ where $|V|=n$, $|E|=m$, and the matrix $W\in\mathbb{R}^{n\times n}$, with $w_{u,v} \geq 0$, defines any kind of weights in the graph.
@@ -173,7 +197,7 @@ Briefly, CW is a randomized graph-clustering method  which is time-linear with r
 
 \subsection{Discussion}\label{sec:disc_chap3}
 We have covered the network attributes of several approaches on semantic related NLP tasks. A summary of these strategies is shown in Table \ref{tab:survey_sum}.
-In this section we will shortly discuss the reviewed articles from a  modelization perspective as well as looking at the evolution of the approaches used to solve the word sense disambiguation and induction tasks.
+In this section we shortly discuss the reviewed articles from a  modelization perspective as well as looking at the evolution of the approaches used to solve the word sense disambiguation and induction tasks.
 
 
 Regarding WSD approaches, we see that the use of a lexical knowledge base, such as Wordnet, is pervasive in this task. Indeed, new resources, such as BabelNet, solves to some extent the fixed (no new senses are included automatically) nature of this type of resources by leveraging the always evolving knowledge of Wikipedia. Indeed, in the recent years, entity linking has emerged as a related task to WSD. It takes even more advantage from bases that combine both Wordnet and Wikipedia, such as BabelNet. On the other hand, WSI, while being a more flexible approach (language and word-usage independent, does not require human-made bases)  for solving WSD, its results are tightly linked to the quality of the clustering algorithm used. 
@@ -186,9 +210,13 @@ Taking into account the described opportunities of research, in the following se
 
 
  
-\section{Proposed Model: Hypergraph Linguistic Network}
+\section{Proposed Model: Fusion-Enriched Hypergraph Linguistic Network}
 
-We propose a model that holds different types of linguistic relations extracted from a corpus. We limit ourselves to lexical and syntactic information. In essence, there are two networks, one for each type of relation. They are both unified by means of a hypergraph structure.
+As stated before, our model consists on two parts (and two contributions). The first one, an hypergraph model that holds different types of linguistic relations extracted from a corpus. And the second one, the combination of linguistic features in order to generate a less sparse, enriched representation. 
+
+In this section we focus on the first part, the hypergraph model. We note that for the sake of simplicity we limit ourselves to lexical and syntactic information. The model in essence holds two different networks, one for each type of relations. They are both unified by means of a hypergraph structure. 
+
+\subsection{Hypergraph Linguistic Model}
 
  Formally, a hypergraph \cite{Berge1985} is a graph generalization  that allows more than two vertices to be linked by a single edge.  We call $\mathcal{H}=(V,E)$ a {hypergraph}
  with the {vertex} set $V$ and the hyperedge set $E$. Let $V$ denote a finite set of objects, and let $E$  (the hyperarcs or hyperedges) be a
@@ -215,13 +243,13 @@ Their single most important difference with regular graphs, being able to relate
 : a short range with dependency functions, a medium range with phrase constituency membership, and a longer range with sentence lexical co-occurrences. The intuition is that when solving NLP tasks, having direct access to these three semantic spaces will help to determine a more appropriate meaning's relation between words. 
 
  
-\subsection{Construction}
+\paragraph{Construction}
 In our case, the set of words in the corpus are the set of nodes  $V$, and the set of hyperedges  $E$ represent the relations between nodes according to different linguistic aspects.
 %
 We consider each word (i.e., each node) to exist in one of three types of hyperedges, two syntactic and one lexical co-occurrence contexts:
 \begin{enumerate}
 \item $\textsc{\textbf{NP}}$: noun phrase (NP)  constituents,
-\item $\textsc{\textbf{DEP}}$: dependency relations: we consider all types of dependency functions between nouns and verbs,
+\item $\textsc{\textbf{DEP}}$: dependency relations. We consider all types of dependency functions between nouns and verbs,
 \item  $\textsc{\textbf{SEN}}$: lexical context, in this case the window considered is the whole sentence
 \end{enumerate} 
 
@@ -238,12 +266,14 @@ dependency function $dep(h, \cdot)$, with $h$ being the head of the relation, we
 
 Each hyperedge is labeled according to an identifier that allows the hypergraph to be populated while reading words from a corpus. For example, the hyperedges of the set $\textsc{\textbf{SEN}}=\{h_{S_1}, h_{S_2}, h_{S_3}\}$ are indeed hyperedges that represent sentences, identified by an index in this case. Hyperedges $h_{S_1}, h_{S_2}, h_{S_3}$ contain each a set of words. Additionally, the hypergraph can be represented as a $n \times m$ incidence $H$ matrix with entries $h(i,j) = N(v_i, e_j)$ where $N(v_i, e_j)$ is the number of times $v_i \in e_j$ occurs in the corpus. This frequency values can be later converted into other weighting schemes as seen in Chapter \ref{chap:backgnd}. Indeed, the incidence matrix allows us to pass from the hypergraph-based model of representation into the vector-space model.
 
-\subsection{Running Example}
-We illustrate the process of creating a sample hypergraph model with the following example phrase: \textit{The report contains copies of the minutes of these meetings}.  We tokenize the phrase, keeping all the words, and we lemmatize and parse it to obtain both constituency and dependency trees. For clarity, we  only show nouns as well as only the first three noun phrases, and the nominal subject (\textit{nsubj}) and direct object (\textit{dobj}) dependency relations.
+\paragraph{Running Example}
+We illustrate the process of creating a sample hypergraph model with the following example phrase: \textit{The report contains copies of the minutes of these meetings}.  We tokenize the phrase, keeping all the words, and we lemmatize and parse it to obtain both constituency and dependency trees. 
 
-\paragraph{Constituency Tree} The constituency tree of the example phrase is shown in Figure \ref{fig:tree_constits}. The sentence, as well as each noun phrase (\textit{NP}) node is identified by a number, these numbers serve as an unique identifier of the phrase chunk within the whole sentence. We can observe that this phrase is composed by five noun phrases and one verb phrase. Meanwhile, some \textit{NP} are formed by other kind of phrases, depending on the grammar production rule used to build each one of them. Furthermore, as is usual in this kind of structures, there is a one to one relation between the number of tokens in the sentence  and the number of leaves in the tree. We see in total three hyperedges of this type: $NP_1, NP_2$ and $NP_3$, each corresponding to the noun phrases in the constituents tree.
+\subparagraph{Constituency Tree} The constituency tree of the example phrase is shown in Figure \ref{fig:tree_constits}. The sentence, as well as each noun phrase (\textit{NP}) node is identified by a number, these numbers serve as an unique identifier of the phrase chunk within the whole sentence. We can observe that this phrase is composed by five noun phrases and one verb phrase. Meanwhile, some \textit{NP} are formed by other kind of phrases, depending on the grammar production rule used to build each one of them. Furthermore, as is usual in this kind of structures, there is a one to one relation between the number of tokens in the sentence  and the number of leaves in the tree.
+
+For clarity,  in our example we  only consider nouns and the first three noun phrases (from left to right), as well as the nominal subject (\textit{nsubj}) and direct object (\textit{dobj}) dependency relations. Thus, in total, as described below, we have three hyperedges of noun phrase type: $NP_1, NP_2$ and $NP_3$. Each of them corresponding to the noun phrases in the constituents tree.
  
-\paragraph{Dependency Tree}
+\subparagraph{Dependency Tree}
 The dependencies of the example phrase are shown in Figure \ref{fig:tree_deps_report} as a tree structure. The relations can also be seen as tuples in Table \ref{tab:depends_report} In these relations' examples, the head is the first token to appear  followed by the dependent word. Two hyperedges are found: 
 $nsubj_{contains}$ and $dobj_{contains}$.
  \begin{figure}
@@ -284,7 +314,7 @@ $nsubj_{contains}$ and $dobj_{contains}$.
 
 
  
-\paragraph{Hyperdges Found}
+\subparagraph{Hyperdges Found}
 From both syntactic parses and the phrase itself we build a hypergraph representation as stated before.  We show below the hyperedges sets found for each type,  ($\textsc{\textbf{NP}}$, $\textsc{\textbf{SEN}}$, and $\textsc{\textbf{DEP}}$), and their members. Each hyperedge  is labeled  with a unique identifier:
 %todo imagen con el hypergrafo completo would be nice
 \begin{itemize}
@@ -306,7 +336,7 @@ From both syntactic parses and the phrase itself we build a hypergraph represent
 
 \end{itemize}
 
-\paragraph{Incidence Matrix}We can represent these hyperedges as an incidence matrix, illustrated in Figure \ref{fig:incidence_report}.  
+\subparagraph{Incidence Matrix}We can represent these hyperedges as an incidence matrix, illustrated in Figure \ref{fig:incidence_report}.  
 Looking at the table, we can   infer that the word \textit{copies} appears  in two hyperedges of type $\textsc{\textbf{NP}}$: first in \textit{NP$_2$}, which is built from a noun phrase  and two prepositional phrases (\textit{PP}). Secondly, we see that it is part of \textit{NP$_3$}, which  indicates a plural noun (\textit{NNS}).
 Regarding the syntactic dependency hyperedges, the word \textit{copies} appear in the \textit{dobj} \textit{contains} column which indicates that \textit{copies} was the direct object of the verb \textit{contains}. Concerning the sentence hyperedges, we see that the token \textit{copies} appeared in the same sentence S$_1$ as the other four noun words.
 
@@ -319,7 +349,7 @@ Regarding the syntactic dependency hyperedges, the word \textit{copies} appear i
 \end{figure}
 
 
-\subsection{Discussion}
+\paragraph{Discussion}
 With the short example we show the intuitive way in which we identify three different kinds of relations: lexical co-occurrence (at sentence level), dependency co-occurrence, and noun phrase co-occurrence. Looking at the incidence matrix we see the three levels of semantic relatedness we aim to represent with the three different types of context: sentence, dependency, and noun phrase level. At the same time, there is a structure within the hypergraphs. Groups of words are found to be together either directly or by means of paths traced by other nodes. 
 
 On the other hand, also looking a the matrix, we realize that it is sparse\footnote{Sparse for the  size of this example incidence matrix. Sparsity increases as more text is included in the hypergraph.}. Sparsity, as we saw previously, affects the performance of knowledge discovery techniques applied to NLP tasks. 
@@ -331,7 +361,7 @@ Just as the literature approaches covered before, we aim to solve semantic tasks
 
 
                                                                                             
-\section{Feature Fusion Techniques}\label{sec:fusion}
+\subsection{Representation Enrichment with Fusion Techniques}\label{sec:fusion}
  
 %We first describe below multimedia (or multimodal) fusion techniques  as well as relevant use cases where they have been employed. 
 %Then, we focus exclusively on fusion techniques applied to NLP tasks, which is the general domain of the two tasks (NER and WSI/WSD) we focus on.                   
@@ -340,7 +370,7 @@ Multimodal fusion is a set of popular techniques used in multimedia analysis tas
 
 
 In the multimodal fusion literature we can discern two main common types of techniques: early fusion and late fusion. 
-\subsection{Early Fusion}
+\paragraph{Early Fusion}
 This technique is the most widely used fusion method. The principle is simple: we take both modal features and concatenate them into a single representation matrix. More formally, we consider two matrices  that represent different modality features each  over the same set of individuals. To perform early fusion we concatenate them column-wise, such that we form a new matrix having the same number of lines but increasing the number of columns to the sum of the number of columns of both matrices. The matrices may also be weighted as to control the influence of each modality.
 
 Such trivial fusion can is showed in Figure \ref{fig:ef_diag}. Two matrices are used, $A$ and $B$. Each one represent a different feature space. They both have the same number of rows $n$, they have $m$ and $p$ columns, respectively. After an early fusion operation, the final matrix has $m+p$ features. We will use these matrix notations to exemplify the rest of fusions.
@@ -365,7 +395,7 @@ The main advantage of early fusion is that a single unique model is fitted while
 %where $||$ represents the column-wise concatenation operation and ? is the parameter that determines the contribution of each modality. 
 %
 %Early fusion has been employed in several multimodal tasks. For example, [?]. 
-\subsection{Late Fusion}
+\paragraph{Late Fusion}
 In contrast to early fusion, in late fusion the combination of multimodal features are generally performed at the decision level, i.e., using the output of independent knowledge discovery models trained  each with a unique set of features \cite{ClinchantAC11}. In this setting,  decisions produced by each model are combined into a single final result set. The diagram in Figure \ref{fig:lf1} shows this combination of matrices $A$ and $B$.
 %
 The methods used to combine preliminary decisions usually involve one of two types: rule-based (where modalities are combined according to domain-specific knowledge) or linear fusion (e.g., weighting and then adding or multiplying both matrices together). This type of fusion is very close to the so-called ensemble methods in the machine learning literature.
@@ -397,18 +427,18 @@ The advantages of late fusion include the combination of features at the same le
 
 
 %For example, in information retrieval (Ah-Pine et al., 2015), lexicon learning (Vulic et al., 2016), coreference resolution (Eisenstein and Davis, 2007); different types of representations (different modalities) can be combined in order to take advantage of the complementarity existing among them
-\subsection{Cross-media Similarity Fusion}
+\paragraph{Cross-media Similarity Fusion}
 %
 A third type of fusion technique, cross-media similarity fusion (or simply cross fusion),   introduced in \cite{Ah-PineCC15,ClinchantAC11}, is defined and employed to propagate a single similarity matrix into a second similarity matrix. In their paper, the authors propagated information from textual media towards visual media. In our case, we transfer information among textual features. For example, to perform a cross fusion between lexical and syntactical features, we perform the following steps: 
 \begin{enumerate}
-\item Compute the corresponding similarity matrices for each type of feature.
-\item Select only the $k$-nearest neighbor for each word within the lexical similarity matrix. These neighbors are to be used as lexical representatives to enrich the syntactical similarities.
+\item Compute the corresponding similarity matrices for each type of features.
+\item Select only the $k$-nearest neighbors for each word within the lexical similarity matrix. These neighbors are to be used as lexical representatives to enrich the syntactical similarities.
 \item Linearly combine both similarity matrices (lexical $k$-nearest lexical neighbors with the syntactical features) via a matrix product.
 \end{enumerate}  
 
 \begin{figure}
 \centering
-\includegraphics[width=0.9\linewidth]{images/Chapitre3/xf_diag.pdf}
+\includegraphics[width=0.8\linewidth]{images/Chapitre3/xf_diag.pdf}
 \caption{Cross fusion for matrices $A$ and $B$. Similarities are computed, the best similarities are selected for $A$ and finally a product is calculated between the similarities of $B$ and the top similarities of $A$.}
 \label{fig:xf_diag}
 \end{figure}
@@ -417,17 +447,14 @@ Figure \ref{fig:xf_diag} presents a cross fusion between matrices $A$ and $B$. T
 
 Cross fusion aims to bridge the semantic gap between two modalities by using the most similar neighbors as proxies to transfer valuable information  from one modality onto another one. Usually, the result of a cross fusion is combined with the previous techniques, early and late fusion. In this work we perform  experiment in that sense.
 
-\subsection{Hybrid Fusion}
-We may leverage the advantages of the previous two types of fusion techniques by combining them once more in a hybrid setting. As described in \cite{AtreyHEK10,yu2014informedia}, the main idea is to simultaneously combine features at the feature level, i.e., early fusion, and at the same semantic space or decision level. Nonetheless, they define a specific type of hybrid fusion. In this chapter, we adopt a looser definition of hybrid fusion. That is, we perform hybrid combination of features by leveraging the combination of the fusion strategies described before.
+\paragraph{Hybrid Fusion}
+We may leverage the advantages of the previous three types of fusion techniques by combining them once more in a hybrid setting. As described in \cite{AtreyHEK10,yu2014informedia}, the main idea is to simultaneously combine features at the feature level, i.e., early fusion, and at the same semantic space or decision level. Nonetheless, they define a specific type of hybrid fusion. In this chapter, we adopt a looser definition of hybrid fusion. That is, we perform a hybrid combination of features by leveraging the aggregation of the fusion strategies described before.
 
 
-
-
-
-\subsection{Discussion}
+\paragraph{Discussion}
 The fusion operators presented (early, late, and cross fusion) are simple and straight-forward. In total, they have two parameters to control: $a$ in late fusion, controlling the importance for each matrix $A$ and $B$; and $k$, controlling how many top similarities are kept in cross fusion.
 
-As we will ee in the experiments carried out in the next chapter, it is the aggregation of several of these operators that yields interesting results against the use of single features or independent fusion operators. This is in line with other relevant research \cite{Ah-PineCC15}. We consider early fusion, the simple concatenation, a baseline to the rest of fusion aggregations we perform. 
+As we will see in the experiments carried out in the next chapter, it is the aggregation of several of these operators that yields interesting results against the use of single features or independent fusion operators. This is in line with other relevant research \cite{Ah-PineCC15}. We consider early fusion, the simple concatenation, a baseline to the rest of fusion aggregations we perform. 
 
 Fusion techniques also have downsides. The operators densify the feature-space matrix but at the same time the number of dimensions grow considerably (with the early fusion operation). Additionally, to the increment of density, the number of features represent an important challenge computationally. We address these concerns on the following chapter.
 
@@ -435,10 +462,10 @@ Before getting into the experimentation details, in order to make our hypergraph
 
 
 
-\section{Wikipedia Syntactic Dump}
+\section{Proof of Concept: Wikipedia-based Corpus as Enriched Hypergraph Model}
 %In order to have a working dataset, we first built an application that process and parse any input corpus. We describe its properties, its inputs, the information extracted, as well as the output generated by the software.
 
-In order to materialize our proposed linguistic model, we need to first create a chain of applications that will extract text from a semi-structured body of text, tokenize it, parse it to extract the syntactic trees the model requires, and then store in order to be used by an NLP application. In this section we describe this process, implemented as an application that takes a corpus as input and outputs the linguistic resource we introduced in the previous sections. In this practical example, we use the English Wikipedia corpus as the source for our corpus.
+In order to materialize our proposed linguistic model, we need to first create a chain of applications that will extract text from a semi-structured body of text, tokenize it, parse it to extract the syntactic trees the model requires, and then store in order to be used by an NLP application. In this section we describe this process, implemented as an application that takes a corpus as input and outputs the linguistic resource we introduced in the previous section. In this practical example, we use the English Wikipedia corpus as the source for our corpus.
 
 \subsection{Related Parsed Dumps}
 %Today, the broad reach of Wikipedia in Text Mining (TM) and Natural Language Processing (NLP) research  is indisputable. Several recent approaches and tools have  been conducted based on the explicit and implicit knowledge contained in it. Certainly, Wikipedia provides a common ground for researchers and developers to test and compare their results.
