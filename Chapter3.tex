@@ -349,7 +349,7 @@ Regarding the syntactic dependency hyperedges, the word \textit{copies} appear i
 \end{figure}
 
 
-\paragraph{Discussion}
+%\paragraph{Discussion}
 With the short example we show the intuitive way in which we identify three different kinds of relations: lexical co-occurrence (at sentence level), dependency co-occurrence, and noun phrase co-occurrence. Looking at the incidence matrix we see the three levels of semantic relatedness we aim to represent with the three different types of context: sentence, dependency, and noun phrase level. At the same time, there is a structure within the hypergraphs. Groups of words are found to be together either directly or by means of paths traced by other nodes. 
 
 On the other hand, also looking a the matrix, we realize that it is sparse\footnote{Sparse for the  size of this example incidence matrix. Sparsity increases as more text is included in the hypergraph.}. Sparsity, as we saw previously, affects the performance of knowledge discovery techniques applied to NLP tasks. 
@@ -365,15 +365,38 @@ Just as the literature approaches covered before, we aim to solve semantic tasks
  
 %We first describe below multimedia (or multimodal) fusion techniques  as well as relevant use cases where they have been employed. 
 %Then, we focus exclusively on fusion techniques applied to NLP tasks, which is the general domain of the two tasks (NER and WSI/WSD) we focus on.                   
+The second part of our proposed method deals with the fusion of textual features. Namely, we combine the features that describe terms into a single representation space. This new space aims to address two issue that arise while working with textual data: effectively using information coming from different linguistic levels (e.g., lexical, syntactic, semantic) while alleviating the sparsity typical of textual representations.
 
 Multimodal fusion is a set of popular techniques used in multimedia analysis tasks. These methods integrate multiple media features, the affinities among these attributes or the decisions obtained from systems trained with said features, to obtain rich insights about the data being used and thus to solve a given analysis  task \cite{AtreyHEK10}. We note that these techniques come at the price of augmenting the complexity of a given system by increasing or reducing the sparsity of a given feature matrix.
 
 
-In the multimodal fusion literature we can discern two main common types of techniques: early fusion and late fusion. 
+In the multimodal fusion literature we can discern two main common types of techniques: early fusion and late fusion. A third and fourth type of fusion methods, cross-media fusion and hybrid fusion are also employed in multimedia analysis tasks. 
+
+These four fusion operators naturally address the issue of dealing with heterogeneous data as they all mix one way or another the feature columns from each of two representations. Regarding alleviating sparsity, the intuition is that by combining matrices either by summing or multiplying them, the resulting matrix will have a denser structure. For example, by summing two matrices with the same shape, such as two term-term similarity matrices, we  obtain a resulting matrix that contains the similarities of both feature spaces. In the same sense , when multiplying two matrices we combine them while also obtaining a denser output matrix. Nonetheless, both sum and multiplication result depends evidently on the nature of the matrices employed. Two of the fusion techniques mentioned above, late fusion and cross-media fusion use sum and multiplication as they  main matrix operator. What is more, both of them contemplate the use of similarity matrices as at least one of their inputs. Being similarity matrices, they tend to be dense and thus the resulting sum or product will be more dense than the original sparse representation, while complementing and enriching the space with other types of information. We present an example of this intuition in the following section.
+
+
+We describe the four of them in the following paragraphs, as well as formalize them by defining functions for three of the fusion techniques named above.
+The notation used is first introduced as follows: the fusion functions are binary, they all take two inputs: parameters $A$ and $B$ which define arbitrary term-feature matrices. For example, they may initially represent the lexical ($M^{LEX}$) or syntactical based ($M^{SYN}$) co-occurrence features matrix. They may also describe their  corresponding similarity matrices, $S^{LEX}$ and  $S^{SYN}$, respectively. In a broader sense, matrices $A$ and $B$ may represent any pair of valid\footnote{Valid in terms of having compatible shapes while computing a matrix sum or multiplication.} term-feature matrices.
+
+
+
 \paragraph{Early Fusion}
 This technique is the most widely used fusion method. The principle is simple: we take both modal features and concatenate them into a single representation matrix. More formally, we consider two matrices  that represent different modality features each  over the same set of individuals. To perform early fusion we concatenate them column-wise, such that we form a new matrix having the same number of lines but increasing the number of columns to the sum of the number of columns of both matrices. The matrices may also be weighted as to control the influence of each modality.
 
 Such trivial fusion can is showed in Figure \ref{fig:ef_diag}. Two matrices are used, $A$ and $B$. Each one represent a different feature space. They both have the same number of rows $n$, they have $m$ and $p$ columns, respectively. After an early fusion operation, the final matrix has $m+p$ features. We will use these matrix notations to exemplify the rest of fusions.
+
+
+
+The early fusion function is defined as:
+\begin{equation}
+E(A,B) = \mathbf{hstack}(A , B)
+\end{equation}
+As stated before, the matrices $A$ and $B$ are combined together via a concatenation function $\mathbf{hstack}$ which joins both of them column-wise.
+We also may use a weighted version of early fusion, defined as: 
+\begin{equation}
+wE_\alpha(A,B) = \mathbf{hstack}(\alpha\cdot A , (1-\alpha)\cdot B)
+\end{equation}
+Weighted early fusion  represents the same operation as before with an extra parameter: $\alpha$, which controls the relative importance of each matrix. In the following, we refer to both operations as early fusion. When $\alpha$ is determined, we refer to weighted early fusion.
 
 The main advantage of early fusion is that a single unique model is fitted while leveraging the correlations among the concatenated features. The method is also easy to integrate into an analysis system. The main drawback is that we increase the representation space and may make it harder to fit models over it.
 
@@ -403,7 +426,17 @@ The methods used to combine preliminary decisions usually involve one of two typ
 Late fusion combines both modalities in the same semantic space. In that sense,  we may also combine modalities via an affinity representation instead of final decision sets. In other words, we can combine two modality matrices by means of their respective similarities. A final representation is then usually obtained by adding the weighted similarity matrices, as in Figure \ref{fig:lf2}, where two such matrices are computed, $SIM(A)$, and $SIM(B)$ and then combined into a single weighted matrix (determined by the parameter $\alpha$).
 %
 
+More formally, we define the late fusion function as:
+\begin{equation} \label{eq:late-fusion}
+L_\beta(A,B) = \beta \cdot A + (1 - \beta)\cdot B
+\end{equation}
+
+In this late fusion function, the extra parameter $\beta$ affects the influence of matrix $A$,  and consequently also the relevance of matrix $B$.
+
+
 The advantages of late fusion include the combination of features at the same level of representation (either the fusion of decisions or similarity matrices). Also, given that independent models are trained separately, we can choose which algorithm is more adequate for each type of features. 
+
+
 
 \begin{figure}
 	\centering
@@ -427,9 +460,9 @@ The advantages of late fusion include the combination of features at the same le
 
 
 %For example, in information retrieval (Ah-Pine et al., 2015), lexicon learning (Vulic et al., 2016), coreference resolution (Eisenstein and Davis, 2007); different types of representations (different modalities) can be combined in order to take advantage of the complementarity existing among them
-\paragraph{Cross-media Similarity Fusion}
+\paragraph{Cross-media  Fusion}
 %
-A third type of fusion technique, cross-media similarity fusion (or simply cross fusion),   introduced in \cite{Ah-PineCC15,ClinchantAC11}, is defined and employed to propagate a single similarity matrix into a second similarity matrix. In their paper, the authors propagated information from textual media towards visual media. In our case, we transfer information among textual features. For example, to perform a cross fusion between lexical and syntactical features, we perform the following steps: 
+A third type of fusion technique, cross-media  fusion (or simply cross fusion),   introduced in \cite{Ah-PineCC15,ClinchantAC11}, is defined and employed to propagate a single similarity matrix into a second similarity matrix. In their paper, the authors propagated information from textual media towards visual media. In our case, we transfer information among textual features. For example, to perform a cross fusion between lexical and syntactical features, we perform the following steps: 
 \begin{enumerate}
 \item Compute the corresponding similarity matrices for each type of features.
 \item Select only the $k$-nearest neighbors for each word within the lexical similarity matrix. These neighbors are to be used as lexical representatives to enrich the syntactical similarities.
@@ -443,29 +476,70 @@ A third type of fusion technique, cross-media similarity fusion (or simply cross
 \label{fig:xf_diag}
 \end{figure}
 
-Figure \ref{fig:xf_diag} presents a cross fusion between matrices $A$ and $B$. The similarity matrices $SIM(A)$ and $SIM(B)$ are obtained. The $k$-nearest neighbor operation is applied to matrix $A$, yielding a matrix $SIM(A)'$ containing only the most representative similarities. Finally, cross fusion is represented by the product $SIM(A)' \times SIM(B)$.
+Figure \ref{fig:xf_diag} presents a cross fusion between matrices $A$ and $B$. The similarity matrices $SIM(A)$ and $SIM(B)$ are first obtained. Then, a  $k$-nearest neighbor operation is applied to matrix $A$, yielding a matrix $SIM(A)'$ which contains only the most representative similarities, determined by some parameter. Finally, cross fusion is represented by the product $SIM(A)' \times SIM(B)$.
+
+Formally, we define the cross fusion function as:
+\begin{equation}
+X_{\gamma}(A,B) = \mathbf{K}(A,\gamma) \times B
+\end{equation}
+
+In this case, the $\mathbf{K}(\cdot)$ function takes the top-$\gamma$ closest words (columns) to each word (lines) while the rest of the values are set to zero. As noted before, matrices $A$ and $B$ are usually similarity matrices. While $A$ is always required to be a square filtered similariy matrix, $B$ may be also a plain term-feature matrix, as we describe in the following paragraphs.
 
 Cross fusion aims to bridge the semantic gap between two modalities by using the most similar neighbors as proxies to transfer valuable information  from one modality onto another one. Usually, the result of a cross fusion is combined with the previous techniques, early and late fusion. In this work we perform  experiment in that sense.
 
 \paragraph{Hybrid Fusion}
-We may leverage the advantages of the previous three types of fusion techniques by combining them once more in a hybrid setting. As described in \cite{AtreyHEK10,yu2014informedia}, the main idea is to simultaneously combine features at the feature level, i.e., early fusion, and at the same semantic space or decision level. Nonetheless, they define a specific type of hybrid fusion. In this chapter, we adopt a looser definition of hybrid fusion. That is, we perform a hybrid combination of features by leveraging the aggregation of the fusion strategies described before.
+We may leverage the advantages of the previous three types of fusion techniques by combining them once more in a hybrid setting. As described in \cite{AtreyHEK10,yu2014informedia}, the main idea is to simultaneously combine features at the feature level, i.e., early fusion, and at the same semantic space or decision level. Nonetheless, they define a specific type of hybrid fusion. In this chapter, we adopt a looser definition of hybrid fusion. That is, we perform a hybrid combination of features by leveraging the aggregation of the fusion strategies described before. 
+
+Having said that, here we distinguish three levels of hybrid fusion that we employ in our experiments during the next chapter, Chapter \ref{chap:wsd}.  \begin{enumerate}
+\item \textbf{First Degree Fusion}: we  consider the  three elementary fusion techniques described before (early fusion, late fusion, cross fusion) by themselves.  This level of fusion serve as the baseline we set to surpass in order to show the efficacy of the representation feature space found through fusion techniques.
+As an example, we may obtain a first degree representation matrix by performing an early fusion between the lexical matrix and the syntactical features matrix: $E(M^{LEX}, M^{SYN})$. 
+
+We note that we distinguish two types of cross fusion operators: \textbf{Cross Early Fusion} (XEF) and \textbf{Cross Late Fusion} (XLF). The former combines a similarity matrix with a feature matrix, e.g., $X(\slex, \msyn)$. The latter joins a similarity matrix with a similarity matrix, for example $X(\ssyn, \slex)$. Indeed, XLF has the same configuration as the cross fusion presented before. We rename it to distinguish against the XEF configuration. The intuition of cross early fusion XEF is that the rich information from the first input matrix can be transferred directly to a representation without the need of obtaining its similarity matrix using a similarity matrix. We denote it \textit{early} and \textit{late} to refer to the fact that the first one uses simply a feature matrix and the second requires some knowledge from the data, in this case the similarity between terms.
+
+\item \textbf{Second Degree Fusion}:  we  begin with the hybrid recombination of the outputs of the previous two levels. Namely, this procedure  yields a recombination of "second-degree" among fusion methods. Furthermore, we introduce four types of second degree fusions employed in the following list. Each one is illustrated with an example:
+
+\begin{enumerate}
+
+\item \textbf{Cross Early Early Fusion} (XEEF): consists on the cross early fusion (XEF) of two inputs, a similarity matrix, and the output of an early fusion. For example the configuration $X(\sstd, E(\mlex, \msyn))$ implies the XEF of the similarity matrix $\sstd$ with the early fusion of matrices $\mlex$ and $\msyn$.
+
+% %
+\item \textbf{Cross Late Early Fusion} (XLEF): entails the cross early fusion of two elements, the output of a cross late fusion, and a term-feature matrix. For example, the operation $X(X(\sstd, \ssyn), \mstd)$ is the XEF of a XLF (itself having similarity matrices $\sstd$ and $\ssyn$ as inputs) and a standard features matrix $\mstd$.
+
+%
+\item \textbf{Early Cross Early Fusion} (EXEF):  this operation consists on the early fusion of a feature matrix with the output of a cross late fusion. As an example, the operation $E(\mstd,X(\slex, \mstd))$ computes the early fusion of matrix $\mstd$ with the result of the XEF with $\slex$ and $\mstd$ as operands. 
+%
+
+\item \textbf{Late Cross Early Fusion} (LXEF): this fusion implies the late fusion of a feature matrix with the output of a cross early fusion. For example, the fusion $L(\mstd, X(\sstd, \mstd))$ describes a late fusion between the feature matrix $\mstd$ and the cross early fusion among $\sstd$ and $\mstd$.
+\end{enumerate}
+
+% A second-degree fusion would be an early fusion of the lexical feature matrix with a cross fusion, expressed as $E(M^{LEX}, \allowbreak X(S^{STD}, M^{STD}))$.   
+\item \textbf{Higher-Degree Fusion}: in this last level we follow a similar approach to the previous level by combining the output of the second-degree fusion level multiple times (that is, more than two times) with other second-degree fusion outputs. In this level we test the following two fusion operations:
+\begin{enumerate}
+\item \textbf{Early Late Cross Early Fusion} (ELXEF): As an example for this fusion, the operation $E(\mstd, \allowbreak L(\msyn, X(\sstd, \mstd)))$ implies the combination of three fusion operations. From left to right, first we compute the early fusion (first operation) of  matrix $\mstd$, with the result of a late fusion (second operation) between feature matrix $msyn$ and the result of a cross early fusion, itself having as input matrices $\sstd$ and $\mstd$. Indeed, we perform three operations, an early fusion, a late fusion and a cross early fusion, thus the name Early Late Cross Early Fusion of this operator.
+\item \textbf{Early ELXEF} (EELXEF): this fusion scheme is basically the same as the one before, with the addition of an early fusion operator at the beginning of the fusion:  $E(\mlex, E(E(\mstd,  L(\mstd, X(\sstd, \mstd))),\allowbreak L(\mlex, X(\ssyn, \mlex))))$
+\end{enumerate}
 
 
-\paragraph{Discussion}
+%As an example, the equation $E(L(M^{STD}, \allowbreak X(S^{STD}, M^{STD})),  L(M^{LEX}, X(S^{SYN}, M^{LEX})))$  \allowbreak denotes the early fusion between two operations: (1) a late fusion between a lexical-features matrix and a cross fusion, and (2),  another late fusion consisting of a standard-features matrix (this matrix is detailed below)  and a cross fusion. In general, we determine a n-degree fusion empirically. That is to say, we look at the performance of second-degree fusions and try to improve the performance of the systems by recombining the fusion outputs via a n-degree combination. This process is in fact applied during the second-degree fusions also. 
+	\end{enumerate}   
+
+
+%\paragraph{Discussion}             
 The fusion operators presented (early, late, and cross fusion) are simple and straight-forward. In total, they have two parameters to control: $a$ in late fusion, controlling the importance for each matrix $A$ and $B$; and $k$, controlling how many top similarities are kept in cross fusion.
 
-As we will see in the experiments carried out in the next chapter, it is the aggregation of several of these operators that yields interesting results against the use of single features or independent fusion operators. This is in line with other relevant research \cite{Ah-PineCC15}. We consider early fusion, the simple concatenation, a baseline to the rest of fusion aggregations we perform. 
+As we will see in the experiments carried out in the next chapter, it is the aggregation of several of these fusion functions, as hybrid fusion operations, that yields interesting results against the use of single features or independent fusion operators. This is in line with other relevant research \cite{Ah-PineCC15}. We consider early fusion, the simple concatenation, a baseline to the rest of fusion aggregations we perform. 
 
-Fusion techniques also have downsides. The operators densify the feature-space matrix but at the same time the number of dimensions grow considerably (with the early fusion operation). Additionally, to the increment of density, the number of features represent an important challenge computationally. We address these concerns on the following chapter.
+Fusion techniques also have downsides. As said before, certain  operators densify the feature-space matrix but at the same time the number of dimensions grow considerably (with the early fusion operation). Additionally, to the increment of density, the number of features represent an important challenge computationally. 
+%We address these concerns on the following chapter.
 
-Before getting into the experimentation details, in order to make our hypergraph linguistic resource concrete, we present the process to obtain such representation from a raw corpus, namely the English Wikipedia. The method we describe first extracts text from the corpus and then analyses it to create a Syntactically Annotated English Wikipedia Dump (SAEWD). From there we detail the steps we carried out to store it as the proposed language network (represented as a hypergraph incidence matrix with its complementary metadata information about the meaning of each vertex and hyperedge). 
+Before getting into the experimentation details, in order to make our hypergraph linguistic resource concrete, we present the process to obtain such a representation from a raw corpus, namely the English Wikipedia. In other words, we instantiate our model with a Wikipedia-based corpus in order to better understant the characteristics proposed. To get there, we first need a syntactically parsed Wikipedia corpus. In the following section, the method we describe first extracts text from the corpus and then analyses it to create a Syntactically Annotated English Wikipedia Dump (SAEWD). From there, we detail the steps we carried out to store it as the proposed language network (represented as a hypergraph incidence matrix with its complementary metadata information about the meaning of each vertex and hyperedge). 
 
 
 
 \section{Proof of Concept: Wikipedia-based Corpus as Enriched Hypergraph Model}
 %In order to have a working dataset, we first built an application that process and parse any input corpus. We describe its properties, its inputs, the information extracted, as well as the output generated by the software.
 
-In order to materialize our proposed linguistic model, we need to first create a chain of applications that will extract text from a semi-structured body of text, tokenize it, parse it to extract the syntactic trees the model requires, and then store in order to be used by an NLP application. In this section we describe this process, implemented as an application that takes a corpus as input and outputs the linguistic resource we introduced in the previous section. In this practical example, we use the English Wikipedia corpus as the source for our corpus.
+In order to materialize our proposed linguistic model, we need to first create a chain of applications that will extract text from a semi-structured body of text, tokenize it, parse it to extract the syntactic trees the model requires, and then store in order to be used by a NLP application. In this section we describe this process, implemented as an application that takes a corpus as input and outputs the linguistic resource we introduced in the previous section. In this practical example, we use the English Wikipedia corpus as the source for our corpus.
 
 \subsection{Related Parsed Dumps}
 %Today, the broad reach of Wikipedia in Text Mining (TM) and Natural Language Processing (NLP) research  is indisputable. Several recent approaches and tools have  been conducted based on the explicit and implicit knowledge contained in it. Certainly, Wikipedia provides a common ground for researchers and developers to test and compare their results.
@@ -603,7 +677,7 @@ In this section we describe in detail the characteristics of SAEWD.
 \label{ref:incidence}
 \end{table*}
 
-\subsubsection{Constituency parse storage in detail}
+\paragraph{Constituency parse storage in detail}
 %The  result from the constituency parse is not as straightforward to store as the other kinds of parses, i.e., the output is  a deeper tree structure than that of a dependency parse. Thus, we believe that the storage of this information in SAEWD requires a more in detail explanation. 
 %In this subsection, we will describe how we stock the information concerning  the phrases' constituents. 
 
@@ -646,7 +720,7 @@ As another example, the noun \textit{Nation} has the following bottom-up constit
 
 
 
-\subsubsection{Annotation scheme}\label{section3.2}
+\paragraph{Annotation scheme}\label{section3.2}
 To store the parsed text we use a scheme  inspired by that used in \cite{ATSERIAS08}. The format can be considered as a regular tsv file (i.e., the entries are separated by tab spaces) with additional metadata tags. An extract from a parsed file can be observed in Table \ref{tab:parse}. 
 
 The file includes two headers: the first one simply indicates the name of the current parse file; the second one contains the names that describe each column. The tags and columns our parsed dump contains are the following:
@@ -672,10 +746,18 @@ The file includes two headers: the first one simply indicates the name of the cu
 
 Using the example phrase introduced before (Table \ref{tab:parse}), the token \textit{becomes} has \textit{become} as lemma, it is a verb, thus it has \textit{VBZ} as PoS tag, its constituency path is \textit{VP\_44,S\_97}, so it belongs to the verb phrase {VP44} which in turn comes from sentence {S97}. Finally, \textit{becomes}, being the main verb, is in this case the grammatical root of the sentence and its head is by convention determined as  zero. 
 
-\subsubsection{Discussion}
-Concerning the computation time, SAEWD takes around 40 hours to be produced using a general purpose laptop (Intel i7 4700MQ with 4 cores, 8 GB and Linux Mint 17 as operative system). Most of the time is taken by the parsing step. 
+\subsection{Enriching the Wikipedia Hypergraph with Fusion Techniques}
+%
 
-We verified the consistency of the corpus built by analyzing a sample of 20 Wikipedia articles. The output of CoreNLP and the information contained in the corpus match.
+Once the hypergraph model has been created, we focus on the combination of the linguistic features contained in the model. As stated before, we achieve this using fusion techniques. The goals of this example are two(1) to show how heterogeneous features get combined into a single enriched representation, and (2) how the sparsity is alleviated by joining two different matrices together. In order to show how feature fusion achieves these goals, we present the similarity neighborhood (i.e., the words that are the most similar) of the word \textit{field} according to different representation spaces. First by using the lexical features matrix, then the syntactic features matrix, then the early fusion matrix, the late fusion matrix and finally the cross media fusion. We report at each time the sparsity level of the matrix (percentage of zero values in the matrix). 
+
+ 
+
+
+%\paragraph{Discussion}
+%Concerning the computation time, SAEWD takes around 40 hours to be produced using a general purpose laptop (Intel i7 4700MQ with 4 cores, 8 GB and Linux Mint 17 as operative system). Most of the time is taken by the parsing step. 
+%
+%We verified the consistency of the corpus built by analyzing a sample of 20 Wikipedia articles. The output of CoreNLP and the information contained in the corpus match.
 
 
 

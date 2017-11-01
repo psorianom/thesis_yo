@@ -490,61 +490,8 @@ We formally describe the fusion techniques we employ in the next section. Also, 
 
 The experiments we carry on consist in generating fusion matrices that will serve as input to a learning algorithm in order to solve NER and WSI/WSD. These input feature matrices are based upon lexical, syntactical, or other types of representation. The procedure can be sen in Figure \ref{fig:diagmetodo}.
 
-\subsubsection{Fusion Strategies}
-We begin by presenting a  formal definition of the fusion techniques employed and described in the previous sections. We define (weighted) early fusion, late fusion and cross fusion as follows:
-\paragraph{Early Fusion}
-\begin{equation}
-E(A,B) = \mathbf{hstack}(A , B)
-\end{equation}
-\paragraph{Weighted Early Fusion}
-\begin{equation}
-wE_\alpha(A,B) = \mathbf{hstack}(\alpha\cdot A , (1-\alpha)\cdot B)
-\end{equation}
-\paragraph{Late Fusion}
-\begin{equation} \label{eq:late-fusion}
-L_\beta(A,B) = \beta \cdot A + (1 - \beta)\cdot B
-\end{equation}
-\paragraph{Cross fusion}
-\begin{equation}
-X_{\gamma}(A,B) = \mathbf{K}(A,\gamma) \times B
-\end{equation}
-
-%\vspace{.3cm}
-
-Parameters $A$ and $B$ are arbitrary input matrices. They may initially represent, for example,  the lexical ($M^{LEX}$) or syntactical based ($M^{SYN}$) features matrix, or their  corresponding similarity matrices, $S^{LEX}$ and  $S^{SYN}$, ~respectively. In a broader sense, matrices $A$ and $B$ may represent any pair of valid\footnote{Valid in terms of having compatible shapes while computing a matrix sum or multiplication.} fusion matrices. 
-
-In early fusion, $E(A,B)$, the matrices $A$ and $B$ are combined together via a concatenation function $\mathbf{hstack}$ which joins both of them column-wise. Weighted early fusion  represents the same operation as before with an extra parameter: $\alpha$, which controls the relative importance of each matrix. In the following, we refer to both operations as early fusion. When $\alpha$ is determined, we refer to weighted early fusion.
-
-Regarding late fusion $L_\beta(A,B)$, the  $\beta$ parameter determines again the importance of the  matrix $A$,  and consequently also the relevance of matrix $B$.
-
-In cross fusion $X_\gamma(A,B)$, the $\mathbf{K}(\cdot)$ function keeps the top-$\gamma$ closest words (columns) to each word (lines) while the rest of the values are set to zero. 
-
-Using the previously defined operators, we distinguish four levels of experiments: 
-\begin{enumerate}
-\item \textbf{Single Features}: in this phase we consider the modalities independently as input to the learning methods. For instance, we may train a model for NER using only the lexical features matrix $M^{LEX}$.
-\item \textbf{First Degree Fusion}: we  consider the  three elementary fusion techniques by themselves (early fusion, late fusion, cross fusion) without any recombination.  These experiments, as well as those from the previous level, serve as the baselines we set to surpass in order to show the efficacy of the rest of the fusion approaches.
-As an example, we may obtain a representation matrix by performing an early fusion between the lexical matrix and the syntactical features matrix: $E(M^{LEX}, M^{SYN})$. In this level we distinguish two types of cross fusion: Cross Early Fusion (XEF) and Cross Late Fusion (XLF). The first one combines a similarity matrix with a feature matrix: $X(\slex, \msyn)$. The second one joins a similarity matrix with a similarity matrix: $X(\ssyn, \slex)$.
-\item \textbf{Second Degree Fusion}:  we recombine the outputs of the previous two levels with the elementary techniques. This procedure then yields a recombination of "second-degree" among fusion methods. We introduce the four types of second degree fusions in the following list. Each one is illustrated with an example:
-
-\begin{enumerate}
-\item Cross Late Early Fusion (XLEF): $X(X(\sstd, \ssyn), \mstd)$
-\item Cross Early Early Fusion (XEEF: $X(\sstd, X(\sstd, \ssyn))$
-\item Early Cross Early Fusion (EXEF): $E(\mstd,X(\slex, \mstd))$
-\item Late Cross Early Fusion (LXEF): $L(\mstd, X(\sstd, \mstd))$
-\end{enumerate}
-
-% A second-degree fusion would be an early fusion of the lexical feature matrix with a cross fusion, expressed as $E(M^{LEX}, \allowbreak X(S^{STD}, M^{STD}))$.   
-\item \textbf{N-Degree Fusion}: in this last level we follow a similar approach to the previous level by combining the output of the second-degree fusion level multiple times (more than two times, or $N>2u$) with other second-degree fusion outputs. 
-Again, in this level we test the following two fusion operations:
-\begin{enumerate}
-\item Early Late Cross Early Fusion (ELXEF): $E(\mstd, \allowbreak L(\mstd, X(\sstd, \mstd)))$
-\item Early ELXEF (EELXEF): $E(\mlex, E(E(\mstd,  L(\mstd, X(\sstd, \mstd))),\allowbreak L(\mlex, X(\ssyn, \mlex))))$
-\end{enumerate}
-
-%As an example, the equation $E(L(M^{STD}, \allowbreak X(S^{STD}, M^{STD})),  L(M^{LEX}, X(S^{SYN}, M^{LEX})))$  \allowbreak denotes the early fusion between two operations: (1) a late fusion between a lexical-features matrix and a cross fusion, and (2),  another late fusion consisting of a standard-features matrix (this matrix is detailed below)  and a cross fusion. In general, we determine a n-degree fusion empirically. That is to say, we look at the performance of second-degree fusions and try to improve the performance of the systems by recombining the fusion outputs via a n-degree combination. This process is in fact applied during the second-degree fusions also. 
-	\end{enumerate}   
 \subsubsection{Feature Matrices}
-In the previous subsection we presented the fusion operators used in our experiments. Below we detail the three types of features used to describe the words of the corpus tested.
+In  Chapter \ref{chap:ling_net} we presented the fusion operators to be used in our experiments. Below we detail the three types of features matrices used to generate the fusion-enriched combinations that describe the words of the corpus tested.
 \paragraph{Lexical Matrix (LEX)}
 For each token in the corpus, we use a lexical window of two words to the left and two words to the right, plus the token itself. Specifically, for a target word $w$, its lexical context is $(w_{-2}, w_{-2}, w, w_{+1}, w_{+2})$. This type of context features is typical for most systems studying the surroundings of a word, i.e., using a distributional approach \cite{LevyG14}.
 % We retake the example phrase from \cite{LevyG14}, the lexical-based features of the phrase \textit{Australian scientist discovers start with telescope}, are shown in Table \ref{tab:lex-contexts}.
