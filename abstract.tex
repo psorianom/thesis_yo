@@ -1,29 +1,10 @@
+\chapter*{Abstract}
+Making sense of textual data is an essential requirement in order to make computers understand our language. To extract actionable information from text, we need to represent it by means of descriptors before using knowledge discovery techniques. The goal of this thesis is to shed light into heterogeneous representations of words and how to leverage them  while addressing their implicit sparse nature.
 
-\cleardoublepage
-\begin{vcenterpage}
-\noindent\rule[2pt]{\textwidth}{0.5pt}
-\begin{center}
-{\large\textbf{Design and Use of Numerical Anatomical Atlases for Radiotherapy\\}}
-\end{center}
-{\large\textbf{Abstract:}}
+First, we  propose a hypergraph network model that holds heterogeneous linguistic data in a single unified model. In other words, we introduce a model that represents words by means of different linguistic properties and links them together according to said properties. Our proposition differs to other types of linguistic networks in that we aim to provide a general structure that can hold several types of descriptive text features, instead of a single one as in most representations. This representation may be used to analyze the inherent properties of language from different points of view, or to be the departing point of an applied NLP task pipeline. Secondly, we employ feature fusion techniques to provide a final single enriched representation that exploits the heterogeneous nature of the model and alleviates the sparseness of each representation.
+These type of techniques are regularly used exclusively to combine multi-media data. In our approach, we consider different text representations as distinct sources of information which can be enriched by themselves. This approach has not been explored before, to the best of our knowledge.
+Thirdly, we propose an algorithm that exploits the characteristics of the network to identify and group semantically related words by exploiting the real-world properties of the networks. In contrast with similar methods that are also based on the structure of the network, our algorithm reduces the number of required parameters and more importantly, allows for the use of either lexical or syntactic networks to discover said groups of words, instead of the single type of features usually employed.
 
-The main objective of this thesis is to explore the 
+We perform our experiments and developments using open-access corpora. We focus on two different natural language processing tasks: Word Sense Induction and Disambiguation (WSI/WSD), and Named Entity Recognition (NER). In total, we test our propositions on three different datasets. The results obtained allow us to show the pertinence of our contributions and also give us some insights into the properties of heterogeneous features and their combinations with fusion methods. Specifically, our experiments are twofold: (1) we show that using fusion-enriched heterogeneous features, coming from our proposed linguistic network, we outperform the performance of single features' systems and other basic baselines. We analyze the fusion operators used to get to these improvements. In general, using single fusion operators is not as efficient as using a combination of them to arrive to a final space representation. We test on both WSI/WSD and NER tasks mentioned above. And (2), we address the WSI/WSD task with our network-based proposed method in order to demonstrate its relevancy to the task. We compare the performance of the algorithm we propose to determine a set of senses and then assign them against those related network-based methods. We show the different results obtained with either lexical or syntactic features, and discuss their characteristics on this task. Finally, we parse a corpus based on the English Wikipedia and then store it following the proposed network model. The parsed Wikipedia version serves as a linguistic resource to be used by other researchers. Contrary to other similar resources, instead of just storing its part of speech tag and its dependency relations,  we also take into account the constituency-tree information of each word analyzed. The hope is for this resource to be used on future developments without the need to compile such resource from zero.
 
-The main objective of this thesis is to provide radio-oncology specialists with automatic tools for delineating organs at risk of a patient undergoing a radiotherapy treatment of cerebral or head and neck tumors.
-\\
-To achieve this goal, we use an anatomical atlas, i.e. a representative anatomy associated to a clinical image representing it. The registration of this atlas allows to segment automatically the patient structures and to accelerate this process. Contributions in this method are presented on three axes.
-\\
-First, we want to obtain a registration method which is as independent as possible w.r.t. the setting of its parameters. This setting, done by the clinician, indeed needs to be minimal while guaranteeing a robust result. We therefore propose registration methods allowing to better control the obtained transformation, using outlier rejection techniques or locally affine transformations.
-\\
-The second axis is dedicated to the consideration of structures associated with the presence of the tumor. These structures, not present in the atlas, indeed lead to local errors in the atlas-based segmentation. We therefore propose methods to delineate these structures and take them into account in the registration.
-\\
-Finally, we present the construction of an anatomical atlas of the head and neck region and its evaluation on a database of patients. We show in this part the feasibility of the use of an atlas for this region, as well as a simple method to evaluate the registration methods used to build an atlas.
-\\
-All this research work has been implemented in a commercial software (Imago from DOSIsoft), allowing us to validate our results in clinical conditions.
-\\
-{\large\textbf{Keywords:}}
-Atlas-based Segmentation, non rigid registration, radiotherapy, atlas creation
-\\
-\noindent\rule[2pt]{\textwidth}{0.5pt}
-\end{vcenterpage}
-%\clearpage
+\paragraph{Keywords.} Natural Language Processing, Linguistic Network, Word Representation, Fusion Techniques, Word Sense Induction and Disambiguation, Named Entity Recognition
