@@ -10,12 +10,20 @@ Secondly, in the second section of the chapter, we explore the use of well-known
 \end{abstractchap}
 
 \minitoc
-\section{Leveraging the Network Structure}
+\section{Introduction}
+\begin{figure}
+\centering
+\includegraphics[width=\linewidth]{images/Chapitre4/main_diag2.pdf}
+\caption{Complete description of the three contributions of this work. In this chapter we focus on the third contribution, addressing WSD/WSI and NER with the model proposed in the previous chapter.}
+\label{fig:main_diag2}
+\end{figure}
+
+\section{Named Entity Recognition}
 \subsection{Introduction}
 \label{chap5:intro}
 In this chapter we employ the model introduced before to propose a solution to both Word Sense Disambiguation (WSD) and Induction  (WSI) tasks. The intuition of our method is not original, as we will see, but still we address concerns that are not very well studied, namely the use of heterogeneous context features to solve semantic tasks while reducing the number of parameters compared to similar approaches. Indeed, we also analyze the difference provided by different types of contexts. Our method is evaluated with two important datasets, that of Semeval 2007 and 2010.
 
-We begin by giving a description and and recalling the art for both tasks. Specifically, we identify what type of language network is used and how.
+We begin by giving a description and  recalling the art for both tasks. Specifically, we identify what type of language network is used and how.
 %from a linguistic-network point of view.
 We then present the characteristics of our proposed method. Finally we describe and discuss the obtained results.
 
@@ -366,7 +374,7 @@ Random & 57.3 & 51.5 & 65.7 \\ \bottomrule
 We proposed a WSI/WSD method based on the contexts from the hypergraph model presented in the previous chapter. We show how using the inner links within the hypergraph structure we can group words that represent senses and then assign them to target words. Our method distinguishes from similar works in two main aspects: the definition of similarity used, the reduced number of parameters that are needed, the use of diverse types of contexts to solve the task. 	We show that our method beats said similar approaches. Also, we discovered the behavior of syntactic contexts in comparison to lexical contexts at word-level. Indeed, lexical contexts seem to perform better. This is in line with other works on distributional representations \cite{kiela2014systematic}.
 
 
-\section{Combining Heterogeneous Features}
+\section{Word Sense Induction and Disambiguation}
 \label{chap:fusion}
 
 %\minitoc
@@ -567,8 +575,8 @@ The linguistic information we use are extracted with the Stanford's CoreNLP pars
 \paragraph{Test Datasets}We work with three corpus coming from different domains:
 \begin{itemize}
 \item [(1)] CoNLL-2003 (CONLL): This dataset was used in the language-independent named entity recognition CoNLL-2003 shared task \cite{SangM03}. It contains selected news-wire articles from the Reuters Corpus. Each article is annotated manually. It is divided in three parts:  training (\textit{train}) and two testing sets (\textit{testa} and \textit{testb}). The training part contains 219,554 lines, while the test sets contain 55,044 and 50,350 lines, respectively. The task was evaluated on the \textit{testb} file, as in the original task.
-\item [(2)]WikiNER (WNER): A more recent dataset \cite{Balasuriya2009} of selected English \allowbreak Wikipedia articles, all of them annotated automatically with the author's semi-supervised \allowbreak method. In total, it contains 3,656,439 words. 
-\item[(3)] Wikigold (WGLD): Also a corpus of Wikipedia articles, from the same authors of the previous corpus. Nonetheless, this was annotated manually. This dataset is the smaller, with 41,011 words. We used this corpus to validate human-tagged Wikipedia text. These three datasets are tagged with the same four types of entities: Location, Organization, Person and Miscellaneous.
+\item [(2)]WikiNER (WNER): A more recent dataset \cite{Nothman2009} of selected English \allowbreak Wikipedia articles, all of them annotated automatically with the author's semi-supervised \allowbreak method. In total, it contains 3.5 million words from an unspecified number of articles. 
+\item[(3)] Wikigold (WGLD): Also a corpus of Wikipedia articles \cite{Balasuriya2009}. Nonetheless, this one was annotated manually. This dataset is the smaller, using 149 articles and 41,011 words. We used this corpus to validate human-tagged Wikipedia text. These three datasets are tagged with the same four types of entities: Location, Organization, Person and Miscellaneous.
 
 %Otherwise, while it is faster to train models with this corpus, it may be the case that they are not able to properly fit the data given its size, and thus performance is lower than the other datasets.
 
