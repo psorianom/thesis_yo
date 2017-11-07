@@ -5,7 +5,7 @@ This chapter goes into detail about the notions of the theoretical our work is b
 \end{abstractchap}
 \minitoc
 
-\section{Distributional Hypothesis}
+\section{Distributional Hypothesis}\label{sec:disto_hyp}
 The work we present in this thesis is prominently based on the distributional hypothesis (DH). This is also the case for the large majority of semantic approaches in NLP today. This context-analysis insight is usually credited primarily to \cite{harris1954}. The hypothesis is simple yet powerful: it can be formulated as "You shall know a word by the company it keeps." \cite{firth57synopsis}. More formally, it states that the similarity of meaning correlates with the similarity of the word's context distribution. It follows that the meaning of a word can be determined by the set of contexts in which it occurs in a corpus. Consequently, for two target words, the larger the number of shared contexts, the semantically closer these words are. 
 
 \begin{figure}
@@ -256,7 +256,7 @@ Network\footnote{We will use the notion of \textit{network} and \textit{graph} i
 Furthermore, based on graph theory, we can conceive efficient and sophisticated solutions to NLP tasks, such as PoS tagging, role-labeling, word sense induction and disambiguation, chunk parsing \cite{Mihalcea2011}. Notably, NLP graph-based approaches are largely employed to solve unsupervised tasks, where we can expect to get insights from the data by looking at  the links existing between entities; and semi-supervised problems, again by leveraging relations to propagate across the network small quantities of hand-crafted tags \cite{nastase2015survey}. An additional non-negligible advantage of graph models are that they allow human interpretation and analysis through their visualization (nonetheless with relatively small samples of text). 
 
 
-Based on the  advantages just mentioned, in this thesis we base our linguistic\footnote{We will refer to a linguistic representation as an structure that holds textual units linked by their linguistic features, in this case, distributional co-occurrences.} model proposition on a graph-based structure. In the following paragraphs we discuss the types of networks used to represent textual data, which closely relates to the co-occurrence representations that we covered in the vector space model. Indeed, graph-based methods follow the same distributional principles as VSM. Thus, as we will see, the relationships among nodes on these networks are very similar to the types of contexts described in Section \ref{sec:contexts}.
+Based on the  advantages just mentioned, in this thesis we base our linguistic\footnote{We will refer to a linguistic representation as an structure that holds textual units linked by their linguistic features, in this case, distributional co-occurrences.} model proposition on a graph-based structure. In the following paragraphs we discuss the types of networks used to represent textual data, which closely relates to the co-occurrence representations that we covered in the vector space model. Indeed, graph-based methods follow the same distributional principles as VSM. Thus, as we will see, the relationships among nodes on these networks are very similar to the types of contexts described in Section \ref{sec:disto_hyp}.
 
 
 \subsection{Linguistic Networks}
