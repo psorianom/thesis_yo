@@ -8,13 +8,14 @@ Distributional models are based on several parameters, such as the size of the c
 
 On the other hand, text data representations, described through contexts in a distributional framework, are sparse by nature: the large majority of the entries in a co-occurrence matrix are zero. This translates to greatly sparse features' matrices which represent problems for knowledge discovery methods as they do not have much information about words because each one of them is has a very low number of features. We considered the lack of heterogeneity and data sparsity two open challenges in textual representations.
 
-To treat these concerns, on this thesis we proposed three contributions. The first one is a linguistic network. The second and third are practical: a method based on graph structure to find groups of related words. The third one, a method to generate denser matrix representations by combining different feature spaces.
+To treat these concerns, on this thesis we proposed three contributions. The first and second entail a fusion enriched linguistic network. The third is practical: a method based on graph structure to find groups of related words. The third one, a method to generate denser matrix representations by combining different feature spaces.
 
 The linguistic model we proposed unifies language networks by means of a hypergraph structure. We consider three different types of co-occurrence contexts in order to represent three distinct levels of semantic relatedness. These contexts are based on lexical and syntactic co-occurrences, which are unified with a hypergraph. This union yields words that are related by any of the three contexts and thus creating more links among words. 
 
-The second method leverages the structure of th hypergraph to find communities of words using contexts independently. These groups are found based on the intuition that words tend to group together around a single hub word which represents, broadly, the general semantic topic of these words.
+These heterogeneous features are important as they represent relations between words from different points of view. Nonetheless, they tend to generate sparse representations, as is common with text representations. In this sense, we proposed  as second contribution the use of fusion techniques to combine these features while reducing the sparsity of the representation space. 
 
-The third method deals with both sparsity while making use of the heterogeneous features at the same time. By using fusion techniques, we mix syntactic and lexical context to produce more dense feature matrices.
+Lastly, the third contribution entails a network-based method that leverages the structure of the hypergraph to find communities of words using contexts independently. These groups are found based on the intuition that words tend to group together around a single hub word which represents, broadly, the general semantic topic of these words.
+
 
 In order to evaluate the methods and intuitions proposed, we performed experiments on two semantic tasks: WSI/WSD and NER.
 
@@ -30,11 +31,12 @@ With regard to our fusion technique method, we tested it over both WSI/WSD and N
 The work we present still has several research paths to be explored.
 The hypergraph model itself could utilize different contexts, going further than syntactic or lexical contexts, for example using morphological or even phonological contexts for words or other utterances. Even more, the constituent-based contexts are surely open for improvement: trying more literature approaches or devising intelligent ways to leverage the information provided by this syntactic parse.
 
-The choice of weights and similarity measures is also open for exploration. While in my research experience, no great improvement comes from changing for one or the other, it is still interesting to understand in which task what parameters are the most appropriate. This is still an open research question in the domain. The hypergraph could be better leveraged by using hypergraph-specific methods, mainly through spectral analysis.
-
-Regarding the network-based algorithm for WSI/WSD, a deeper errors' analysis would deep a larger glimpse on the behavior of nouns and verbs according to the context.
+%The choice of weights and similarity measures is also open for exploration. While in my research experience, no great improvement comes from changing from one to another, it is still interesting to understand in which task what parameters are the most appropriate. This is still an open research question in the domain.
 
 Concerning fusion techniques, a more principled way to determine what type of context with what type of fusion operation would indeed reduce the need for exploring the whole space of possibilities. Finally,  comparing said methods with other well-established dimension reduction approaches would be interesting to understand the trade-offs of lower performance versus dimension reduction, while focusing on not-so-large corpora. Indeed, if the new wave of distributional representations, or word embeddings, has a shortcoming is that empirically it does not perform as well on smaller corpus. This may represent an avenue of opportunity to methods such as feature fusion functions.
 
 
+Regarding the network-based algorithm for WSI/WSD, a deeper errors' analysis would deep a larger glimpse on the behavior of nouns and verbs according to the context. Understanding what is the syntactic or lexical difference among contexts, which induce the good or bad performance of each type of feature could make the system more flexible to other text domains. Also, the hypergraph could be better leveraged by using hypergraph-specific methods, mainly through spectral analysis.
+
+Lastly, we built a enriched hypergraph resource based on a very large corpus such as Wikipedia. The relations between words contained within could be leveraged to generate more powerful representations as the one created in this work. Indeed, we explored this avenue but was put aside given the size of a matrix extracted from a very large corpus. Furthermore, a comparison with other distributional representations may signal other advantages of our proposed model. Specially for smaller corpora. 
 
