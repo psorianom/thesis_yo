@@ -1,4 +1,4 @@
-\chapter{Linguistic Model Applications: NLP Semantic Tasks} 
+\chapter{Linguistic Model Applications: NER and WSI/WSD} 
 \label{chap:wsd}
 \begin{abstractchap}
 This chapter contains the experiments we performed as applications of the proposed model. We address the use of the heterogeneous contexts, the structure of the network and the sparsity of textual data.
@@ -24,7 +24,7 @@ There are two main sections in this chapter, first, we address NER
 
 
 
- NER goal is to automatically discover, within a text, mentions that belong to a well-defined semantic category. The classic task of NER involves detecting entities of type Location, Organization, Person and Miscellaneous. The task is of great importance for more complex NLP systems, e.g, relation extraction, opinion mining.  As is usual with other NLP tasks, NER  requires textual features to represent words in order to determine their role within a phrase (or generally within a text).
+ NER goal is to automatically discover, within a text, mentions that belong to a well-defined semantic category. The classic task of NER involves detecting entities of type Location (LOC), Organization (ORG), Person (PER) and Miscellaneous (MISC). The task is of great importance for more complex NLP systems, e.g, relation extraction, opinion mining.  As is usual with other NLP tasks, NER  requires textual features to represent words in order to determine their role within a phrase (or generally within a text).
  
  Two common solutions to NER are via matching patterns, created manually or extracted in a semi-automatically fashion\cite{gupta2015distantly}; or more popularly, by training a supervised machine learning algorithm with large quantities of annotated text \cite{mining12Book} . The latter being the currently more popular solution to this task.
 
@@ -402,102 +402,145 @@ In the following, we discuss how each type of feature affects the performance of
 %\subsubsection{WSI/WSD}
 %\subsubsection{NER}
 \subsection{Fusion Analysis}
-In this subsection we present an analysis on the results obtained with the combination fusion operators shown in above. Namely, we set to understand how each addition of fusion operators helps to improve the result of the task at hand. We focus on the most successful fusion combination found for the three tested corpora. For simplicity, we focus on the Wikigold corpus. Thismost performing fusion combination is indeed shown in Table \ref{tab:ner-nf1} and it is expressed as:    
+In this subsection we present an analysis on the results obtained with the combination fusion operators shown  above. Namely, we set to understand how each addition of fusion operators helps to improve the result of the NER task. For simplicity,  we focus on the most successful fusion combination found for the three tested corpora. While the procedure to build the models analysed herein is the same as before, we do have certain dissimilarities due to the need to explain said models in an effective way. Namely, there are two changes in the methodology presented before: (1) we focus exclusively on the Wikigold corpus, and more importantly (2), we change the learning method from a structured perceptron to a multinomial logistic regression with L1 regularization. The main reason is that the regression is somewhat easier to interpret as it fits a sparse vector of weights for each feature and for each possible class. While the structured perceptron, also fits a matrix of feature weights, its interpretation is complex as these weights are then used to decode the best combination of tags given a complete phrase, considering the preceding and following words for each term in the corpus. In other words, in the logistic regression we can explain each word prediction independently based on a sparse vector of fitted weights for each feature and the vector that represent the word itseld. On the other hand, while using the structured perceptron, we need to look at whole phrases  while considering precedent and subsequent words at each time, making the interpretation quite complex. While the performance is considerably lower with the logistic regression, we note that there exists a sequential improvement  by enriching the feature space as shown in the results above (with the structured perceptron).
+
+The most performing fusion combination is shown in the second to last line in Table \ref{tab:ner-nf1} and it is fully expressed as:    
 \begin{equation}\label{eq:big_fusion}
 E_{\alpha=0.95}(\mlex,  E(E(\mstd, 	 L(\mstd, X(\ssyn, \mstd))), L(\mlex, X(\ssyn, \mlex))))
 \end{equation}
 
-This fusion is principally base on early fusion operators. While we defined them in Chapter \ref{chap:ling_net} as a binary function, we can also write it as a $n$-ary function which concatenates all the input values\footnote{The parameter $\alpha$ applies exclusively between the first input and the rest of them.}. Thus, equation \ref{eq:big_fusion} can be written as:
+This fusion is principally base on early fusion operators. While we defined them in Chapter \ref{chap:ling_net} as  binary functions, we may also express it as a $n$-ary function which concatenates all the input values into a single representation\footnote{The parameter $\alpha$ still applies exclusively to the first input and the set of all the following.}. Thus, equation \ref{eq:big_fusion} can be written as:
 \begin{equation}\label{eq:big_fusion2}
 %wE_{\alpha=0.95}(\underbrace{\mlex}_{\circled{1}},\overbrace{\mstd}^{\circled{2}},\underbrace{L(\mstd, X(\ssyn, \mstd))}_{\circled{3}}, \overbrace{L(\mlex, X(\ssyn, \mlex))}^{\circled{4}})
 \overbrace{E_{\alpha=0.95}(\underbrace{\overbrace{\underbrace{\mlex}_{\circled{1}},\mstd}^{\circled{2}},L(\mstd, X(\ssyn, \mstd))}_{\circled{3}}, L(\mlex, X(\ssyn, \mlex))}^{\circled{4}})
 \end{equation}
 
-As can be seen, the operation is a concatenation of four elements, the feature matrices $\mlex$ and $\mstd$, and two late fusions, each containing a cross early fusion. The analysis we make tries to elucidate the role of each numbered fusion combination. To this end, we analyze these elements cumulatively, i.e., we begin studying element \circled{1}, that is, the matrix $\mlex$ individually, then the early fusion between \circled{1} and \circled{2}, and eventually parts \circled{3} and \circled{4}. Explicitly, these numbered operations are:
+Explicitly, these numbered operations are below. We associate to each operations a model, which is trained using the representation obtained with the corresponding fusion operation.
 \begin{enumerate}
-\item[\circled{1}] $\mlex$
-\item[\circled{2}] $E_{\alpha=0.95}(\mlex, \mstd)$
-\item[\circled{3}] $E_{\alpha=0.95}(\mlex, \mstd, L(\mstd, X(\ssyn, \mstd)))$
-\item[\circled{4}] $E_{\alpha=0.95}(\mlex, \mstd, L(\mstd, X(\ssyn, \mstd)), L(\mlex, X(\ssyn, \mlex)))$
+\item[\circled{1}] $\mlex$ \label{eq:f1} used to train model $M_1$.
+\item[\circled{2}] $E_{\alpha=0.95}(\mlex, \mstd)$ \label{eq:f2} used to train model $M_2$.
+\item[\circled{3}] $E_{\alpha=0.95}(\mlex, \mstd, L(\mstd, X(\ssyn, \mstd)))$ used to train model $M_3$. \label{eq:f3}
+\item[\circled{4}] $E_{\alpha=0.95}(\mlex, \mstd, L(\mstd, X(\ssyn, \mstd)), L(\mlex, X(\ssyn, \mlex)))$ used to train model $M_4$. \label{eq:f4}
 \end{enumerate}
-\paragraph{Per Entity Performance}
-First, we are interested into discovering what is the contribution, in terms of improving the recognition of a specific type of named entity, of each of the operations included in the complete fusion operation of Equation \ref{eq:big_fusion2}. The Table 
+
+As can be seen, the operation in Equation \ref{eq:big_fusion2} is a concatenation of four elements, the feature matrices $\mlex$ and $\mstd$, and two late fusions, each one containing a cross early fusion. The analysis we make tries to elucidate the role of each numbered fusion combination. To this end, we analyze the models $M_1$ to $M_4$ and their corresponding predictions given to certain word instances. 
+
+\paragraph{Per-Entity Performance Gain}
+First, we are interested into discovering what is the contribution of each model to  the F-measure metric overall and for each specific type of named entity. In that sense,  Table \ref{tab:4ops} identifies the gains in performance due to the incremental addition of  fusion operations. In the first line  we see the results using the $M_1$. As said before, the results are lower than those obtained with the structured perceptron. On the second line, it is shown that the increment in F-measure (shown in parentheses) for all classes obtained by using $M_2$ is considerable and in fact the largest (17.50) of them all. Also, while all the classes improve, the most important gain is obtained for the class I-PER (person), shown in bold letters. In the same sense, on the third line, for model $M_3$, the best improvement is found for the class I-ORG (organization). Finally, the last mode $M_4$, improves I-LOC (location) class among the rest of the classes.
+
+
 
 
 % Please add the following required packages to your document preamble:
 % \usepackage{booktabs}
 \begin{table}[]
 \centering
-\caption{My caption}
-\label{my-label}
+\caption{Results and improvements between four multinomial linear regression (L1 normalization) models. The performance is lower than before but the improvement trend with more fusion enrichment is kept.   }
+\label{tab:4ops}
 \begin{tabular}{@{}llllll@{}}
 \toprule
-  & ALL           & LOC                   & MISC         & ORG                   & PER                    \\ \midrule
-1 & 38.03         & 49.02                 & 30.24        & 27.49                 & 41.52                  \\
-2 & 55.53 (17.50) & 65.04 (16.02)         & 40.03 (9.79) & 39.46 (11.97)         & \textbf{69.19 (27.67)} \\
-3 & 56.11 (0.58)  & 65.75 (0.71)          & 40.26 (0.23) & \textbf{41.13 (1.67)} & 68.99 (-0.20)          \\
-4 & 56.28 (0.17)  & \textbf{66.08 (0.33)} & 40.49 (0.23) & 41.07 (-0.06)         & 69.31 (0.32)           \\ \bottomrule
+& \multicolumn{5}{c}{\textbf{NER Tags}} \\ \cline{2-6}
+ \textbf{Model} & \textbf{All Tags}           & \textbf{I-LOC}                   & \textbf{I-MISC}         & \textbf{I-ORG}                   & \textbf{I-PER}                    \\ \midrule
+$M_1$ & 38.03         & 49.02                 & 30.24        & 27.49                 & 41.52                  \\
+$M_2$ & 55.53 (17.50) & 65.04 (16.02)         & 40.03 (9.79) & 39.46 (11.97)         & \textbf{69.19 (27.67)} \\
+$M_3$ & 56.11 (0.58)  & 65.75 (0.71)          & 40.26 (0.23) & \textbf{41.13 (1.67)} & 68.99 (-0.20)          \\
+$M_4$& 56.28 (0.17)  & \textbf{66.08 (0.33)} & 40.49 (0.23) & 41.07 (-0.06)         & 69.31 (0.32)           \\ \bottomrule
 \end{tabular}
 \end{table}
 
-\begin{figure}
+In summary, the second element of the fusion operator we analyze improves on the I-PER class, the third on class I-ORG and the fourth and last on class I-LOC. This knowledge allows us to frame more easily our next analysis. In the following, we are interested in determining which are the features that most likely make each model take  a decision towards one class or another. To that end, we look at three different words that were wrongly classified in a first model and correctly classified in the next fusion enriched model. We study words whose correct tags match the tag of the enriched model with the best improvement (see Table \ref{tab:4ops}). For example, we are interested in the word \textit{Kory}, which is wrongly classified by model $M_1$ (it is assigned a tag O) but it is correctly classified as I-PER in model $M_2$, since I-PER is the class with the largest improvement in regard to $M_1$.
+
+To determine which features are the most relevant, we look into the words non-zero-valued feature columns and match them to the logistic regression  coefficients' vectors (corresponding to the model's fitted decision function). In this way we can infer which features contribute or deter  the model from selecting a given class according to whether these values are negative or positive. The words we study are:
+\begin{itemize}
+\item \textit{Kory}: wrongly classified as O (out of an named entity) by $M_1$ and correctly classified as I-PER by $M_2$.
+\item \textit{A-League}: wrongly classified as O by $M_2$ and correctly classified as I-ORG by $M_3$.
+\item \textit{Green}: wrongly classified as  I-ORG by $M_3$ and correctly classified as I-LOC by $M_4$.
+\end{itemize}
+
+In what follows we are interested in determining which features help to determine the correct classification of the words discussed.
+                                                                                                                         
+\paragraph{Per-Model Feature Importance}
+In Figures \ref{fig:trans_M1_M2}, \ref{fig:trans_M2_M3}, and \ref{fig:trans_M3_M4} we present six heatmaps showing the features that contribute and prevent words from being classified as one of the five tags available according (broadly) to the weights fitted for each feature during training. Specifically, there is a line for each possible class and a column for each feature that has a non-zero fitted coefficient and a non-zero value on the representation space of its corresponding word. In parentheses, next to the classes, we see the product of  the feature vector of the studied word times the coefficients' matrix of the corresponding model. These values serve as an indicator\footnote{Indeed, these values are used to obtain the  probability of each class by applying to them a logistic function, namely a softmax function.} of the class predicted by the model. Color wise,  white indicates zero values, red indicates positive values and blue indicates negative values. The color intensity is directly associated with the absolute value of the coefficient.
+
+\subparagraph{From $M_1$ to $M_2$} In the analysis from model $M_1$ to model $M_2$, we consider the word $Kory$, which changes from being ill classified in model $M1$ as O to being well classified in $M2$ as I-PER. We consider this last tag since its the class model $M2$ improves the most. 
+
+In model $M_1$ (Figure \ref{fig:trans_M1}) we see it is wrongly classified as not a named entity, or tag O, as the feature \textit{word-1:senior}, i.e., the previous word was \textit{senior}, drives this decision. The tag I-PER is also supported by the features \textit{word+2:and} and \textit{word-2:,} but it is not enough to drive the decision towards it considering the features' coefficients  of the O class.
+
+On the other hand, regarding the model $M_2$ (Figure \ref{fig:trans_M2}), \textit{Kory} is correctly classified  as person, since we added features from the $\mstd$ representation space. Specifically, its PoS tag (NNP), contributes towards the selection of I-PER by the regression decision function. At the same time, the feature CAP which determines whether the word is in upper case or not, contributes against the word being tagged as O.
+
+\begin{figure}[h!]
 	\centering
+	
 	\begin{subfigure}[t]{.5\textwidth}
 	\centering
+	\captionsetup{width=0.7\textwidth}
 	\includegraphics[width=0.9\linewidth]{images/Chapitre4/M1_383.pdf}
-	\caption{Fusion of decisions.}
-	\label{fig:lf1}
+	\captionof{figure}{The word \textit{Kory} is predicted to be class O by model $M_1$ given the coefficients of the features indicated.}
+	\label{fig:trans_M1}
 	\end{subfigure}% 
 	\begin{subfigure}[t]{.5\textwidth}
 	\centering
+	\captionsetup{width=0.7\textwidth}
 	\includegraphics[width=0.9\linewidth]{images/Chapitre4/M2_383.pdf}
-	\caption{Fusion of similarity matrices.}
-	\label{fig:lf2}	
+	\captionof{figure}{The same word is correctly predicted to be class I-PER by model $M_2$ given the new features in the model.}
+	\label{fig:trans_M2}	
 	\end{subfigure}
-	\caption{Late fusion possibilities. To the left, fusion of knowledge discovery models' decisions. To the right, fusion of similarity matrices.}
-	\label{fig:lf_diag}
+	\caption{Non-zero coefficients heatmaps for models  $M_1$ and $M_2$ corresponding to the word \textit{Kory}. On the left, $M_1$ fitted using the feature matrix $\mlex$. On the right, model $M_2$ trained using the term $E_{\alpha=0.95}(\mlex, \mstd)$. Red colors are positive, blue are negative. The color intensity varies according to the magnitude of the value.}
+	\label{fig:trans_M1_M2}
 \end{figure}
-
-
 \begin{figure}
 	\centering
-	\begin{subfigure}[t]{.5\textwidth}
+	\begin{subfigure}[t]{.9\textwidth}
+	\captionsetup{width=\textwidth}
 	\centering
-	\includegraphics[width=0.9\linewidth]{images/Chapitre4/M2_1140.pdf}
-	\caption{Fusion of decisions.}
-	\label{fig:lf1}
-	\end{subfigure}% 
-	\begin{subfigure}[t]{.5\textwidth}
+	\includegraphics[width=1\linewidth]{images/Chapitre4/M2_1140.pdf}
+	\captionof{figure}{The word \textit{A-League} is predicted to be class O by model $M_2$ given the coefficients of the features indicated.}
+	\label{fig:trans_M22}
+	\end{subfigure}\\%  
+	\begin{subfigure}[t]{.9\textwidth}
+	\captionsetup{width=\textwidth}
 	\centering
-	\includegraphics[width=0.9\linewidth]{images/Chapitre4/M3_1140.pdf}
-	\caption{Fusion of similarity matrices.}
-	\label{fig:lf2}	
+	\includegraphics[width=1\linewidth]{images/Chapitre4/M3_1140.pdf}
+	\captionof{figure}{The same word is correctly predicted to be class I-ORG by model $M_3$ given the new features in the model.}
+	\label{fig:trans_M3}
 	\end{subfigure}
-	\caption{Late fusion possibilities. To the left, fusion of knowledge discovery models' decisions. To the right, fusion of similarity matrices.}
-	\label{fig:lf_diag}
+	\caption{Non-zero coefficients heatmaps   for models $M_2$ and $M_3$ corresponding to the word \textit{A-League}. On top, $M_2$ fitted using the term $E_{\alpha=0.95}(\mlex, \mstd)$. On the bottom, model  $M_2$ trained using the  $E_{\alpha=0.95}(\mlex, \mstd, L(\mstd, X(\ssyn, \mstd)))$ combination. Red colors are positive, blue are negative. The color intensity varies according to the magnitude of the value.}
+	\label{fig:trans_M2_M3}
 \end{figure}
 
 
 
-\begin{figure}
+\subparagraph{From $M_3$ to $M_4$} Going from model $M_2$ to $M_3$, we focus on the word \textit{A-League}. In the first model, $M_3$ (Figure \ref{fig:trans_M22}), \textit{A-League} is classified as O, since it being a  noun\footnote{The PoS tagger identified it as a noun. It is expected that the taggers are not perfect.} (and not a proper noun) seems to be a good indication of a noun not being part of named entity, among other features, such as \textit{suf+2:r}, i.e., the last letter of the second word to the right of \textit{A-League}, in this case \textit{r}. 
+
+With respect to model $M_3$ (see Figure \ref{fig:trans_M3}), \textit{A-League} is correctly tagged as I-ORG. While the largest coefficients are assigned to the features of the model $M2$ (namely CAP and NN), we can see that the enriched features \textit{CAP\_M3}\footnote{Features added with the third fusion are labeled with a \textit{\_M3} suffix. The same is done for the fourth fusion with the suffix \textit{\_M4}} and \textit{suf-1:the\_M3} play a decisive role into the assignation of the class I-ORG, as most of the values corresponding to the newly added features are positive for this class.
+
+
+
+\begin{figure}[h!]
 	\centering
-	\begin{subfigure}[t]{.5\textwidth}
+	\begin{subfigure}[t]{.9\textwidth}
 	\centering
-	\includegraphics[width=0.9\linewidth]{images/Chapitre4/M3_31756.pdf}
-	\caption{Fusion of decisions.}
-	\label{fig:lf1}
-	\end{subfigure}% 
-	\begin{subfigure}[t]{.5\textwidth}
+	\captionsetup{width=\textwidth}
+	\includegraphics[width=1\linewidth]{images/Chapitre4/M3_16029.pdf}
+	\captionof{figure}{The word \textit{Green} is predicted to be class I-ORG by model $M_3$ given the coefficients of the features indicated.}
+	\label{fig:trans_M33}
+	\end{subfigure}\\% 
+	\begin{subfigure}[t]{.9\textwidth}
 	\centering
-	\includegraphics[width=0.9\linewidth]{images/Chapitre4/M4_31756.pdf}
-	\caption{Fusion of similarity matrices.}
-	\label{fig:lf2}	
+	\captionsetup{width=\textwidth}	
+	\includegraphics[width=1\linewidth]{images/Chapitre4/M4_16029.pdf}
+	\captionof{figure}{The same word is correctly predicted to be class I-LOC by model $M_4$ given the new features in the model.}
+	\label{fig:trans_M4}
 	\end{subfigure}
-	\caption{Late fusion possibilities. To the left, fusion of knowledge discovery models' decisions. To the right, fusion of similarity matrices.}
-	\label{fig:lf_diag}
+	\caption{Non-zero coefficients heatmaps for  models $M_3$ and $M_4$ corresponding to the word \textit{Green}. On top, $M_3$ fitted using the term $E_{\alpha=0.95}(\mlex, \mstd, L(\mstd, X(\ssyn, \mstd)))$. On the bottom, model $M_4$ trained using   $E_{\alpha=0.95}(\mlex, \mstd, L(\mstd, X(\ssyn, \mstd)), L(\mlex, X(\ssyn, \mlex)))$ as fusion operator. Red colors are positive, blue are negative. The color intensity varies according to the magnitude of the value.}
+	\label{fig:trans_M3_M4}
 \end{figure}
 
-\subsection{Conclusion}
+\subparagraph{From $M_2$ to $M_3$} Finally, going from model $M3 $ to model $M4$, in Figure \ref{fig:trans_M3_M4} we have an incorrect I-ORG classification to a correct I-LOC classification after the application of the last fusion operation. The chosen word is \textit{Green}. Both coeffiecients' values are quite similar  to each other (see Figures \ref{fig:trans_M33} and \ref{fig:trans_M4}). In fact, the score in parentheses for both I-LOC and I-ORG are quite close in both models. This is expected as their difference in performance is small (see Table \ref{tab:4ops}). Not surprisingly, there are only two features coming from the last fusion (the last two columns, indicated with a \textit{\_M4} suffix. Nonetheless, it seems that one of these enriched features, \textit{word-1:in\_M4} determines the model decision towards the I-LOC class, thus making the correct classification.
+
+In general in these experiments, we see that the added enriched features are not the highest valued in the fitted coefficients vectors, nonetheless, they  provide the extra information needed to bias the model towards the correct prediction, by enriching the features through cross and late fusion and by providing more descriptors for each word and consequently reducing the sparsity of the representation matrices.
+
+\subsection{NER Conclusion}
 \label{chap6:conclusion}
 We presented  a comparative study of multimedia fusion techniques applied to two NLP tasks: Named Entity Recognition and Word Sense Induction and Disambiguation. We also proposed new fusion recombinations in order to complement the information contained in the single representation matrices. In order to accomplish this goal, we built upon basic fusion techniques such as early and late fusion, as well as cross media fusion to transfer quality information from one set of features to another. 
 
@@ -508,7 +551,7 @@ While there is an improvement, we do note that fusion techniques augment the com
 In that sense, more intelligent ways of finding the most appropriate fusion must be researched. This is indeed one of our future work paths: determining an optimal fusion path from single features to a N-degree fusion recombination. Coupled with this, the automatic determination of the parameters is still ongoing research in the multimedia fusion community. Consequently, we believe that efficiently determining both parameters and fusion combinations is the general domain of our future work. Another route we would like to explore is testing these techniques on other tasks and with datasets from different domains, in order to assert its effectiveness.
 
 
-\section{WSD/WSI}
+\section{Word Sense Induction and Disambiguation}
 
 %\subsection{Introduction}
 In this chapter we employ the model introduced before to propose a solution to both Word Sense Disambiguation (WSD) and Induction  (WSI) tasks. The intuition of our method is not original, as we will see, but still we address concerns that are not very well studied, namely the use of heterogeneous context features to solve semantic tasks while reducing the number of parameters compared to similar approaches. Indeed, we also analyze the difference provided by different types of contexts. Our method is evaluated with two important datasets, that of Semeval 2007 and 2010.
