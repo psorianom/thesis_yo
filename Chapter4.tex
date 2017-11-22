@@ -1,4 +1,4 @@
-\chapter{ Applications to named entity recognition and word sense disambiguation} 
+\chapter{Applications to named entity recognition and word sense disambiguation} 
 \label{chap:wsd}
 \begin{abstractchap}
 This chapter presents the experiments we performed as applications of the proposed model. On the first subsection, we use well-known methods to solve named entity recognition while using fusion enriched representation spaces. We show that these kinds of representations, leveraging heterogeneous information and alleviating its data sparsity, are useful to improve the performance of the task. Indeed, our results on three different datasets using enriched representations are better than those of the baselines we propose, and more importantly, our results show that the combination of textual features indeed improves the performance compared to single feature and the trivial feature concatenation. We also give a detailed analysis into how the fusion operations get to improve the performance of the task at hand.
@@ -37,7 +37,7 @@ At the end of the chapter we conclude by discussing the experiments performed, t
 \end{figure}
 
 \section{First Application: Named Entity Recognition}
-
+\label{sec:ner}
 
 
  NER goal is to automatically discover, within a text, mentions that belong to a well-defined semantic category. The classic task of NER involves detecting, within a text, entities of type Location (LOC), Organization (ORG), Person (PER), Miscellaneous (MISC), or if the term is not an even an entity, assigning them a (O) label. The task is of great importance for more complex NLP systems, e.g, relation extraction, opinion mining \cite{nadeau2007survey}.  
@@ -79,8 +79,8 @@ The experiments we carry on consist in generating fusion matrices that will serv
 
 \paragraph{Representation Spaces}\label{sec:rep_spaces}
 In  Chapter \ref{chap:ling_net} we presented the fusion operators to be used in our experiments. Below we detail the three types of features matrices used to generate the fusion-enriched combinations that describe the words of the corpus tested.
-\subparagraph{Lexical Matrix (LEX)}
-For each token in the corpus, we use a lexical window of two words to the left and two words to the right, plus the token itself. Specifically, for a target word $w$, its lexical context is $(w_{-2}, w_{-2}, w, w_{+1}, w_{+2})$. This type of context features is typical for general systems studying the surroundings of a word and in particular for the named entity recognition task \cite{Daume2006,Nothman2009,RatinovR09}. 
+\subparagraph{Lexical Matrix (L)}
+For each token in the corpus, we use a lexical window of two words to the left and two words to the right, plus the token itself. Specifically, for a target word $w$, its lexical context is $(w_{-2}, w_{-1}, w, w_{+1}, w_{+2})$. This type of context features is typical for general systems studying the surroundings of a word and in particular for the named entity recognition task \cite{Daume2006,Nothman2009,RatinovR09}. 
  We retake the example phrase from \cite{LevyG14}, the lexical-based features of the phrase \textit{Australian scientist discovers start with telescope}, are shown in Table \ref{tab:lex-contextos}.
  
 \begin{table}[ht]
@@ -102,11 +102,11 @@ telescope  &  word-2:star, word-1:with, word:telescope \\
 \label{tab:lex-contextos}
 \end{table} 
 
-\subparagraph{Syntactical Matrix (SYN)}
+\subparagraph{Syntactical Matrix (S)}
 Based on the syntactic features used in   \cite{LevyG14,Panchenko2017}, we derive contexts based on the syntactic relations a word participates in, as well as including the part of speech (PoS) of the arguments of these relations. Formally, for a word $w$ with modifiers $m_1, \dots, m_k$ and their corresponding PoS tags $p^m_1, \dots, p^m_k$; a head $h$ and its corresponding PoS tag $p_h$, we consider the context features $(m_1, p_{m_1}, lbl_1), \dots, \allowbreak (m_k, p_{m_k}, lbl_k), \allowbreak (h,p_h,lbl\_inv_h)$. In this case, $lbl$ and $lbl_{inv}$ indicate the label of the dependency relation and its inverse, correspondingly. Using syntactic dependencies as features should yield more specific similarities, closer to synonymy, instead of the broader topical similarity found through lexical contexts.
 
 For the phrase \textit{Australian scientist discovers start with telescope} the dependency-based context is shown in Table \ref{tab:syn-contexts}.
-\subparagraph{NER Standard Features Matrix (STD)}
+\subparagraph{NER Standard Features Matrix (T)}
 The features used for NER are based roughly on the same as those used in \cite{Daume2006,Balasuriya2009}. The feature set consists of: the word itself, whether the word begins with capital letter, prefix and suffix up to three characters (also within a window of two words to the left and two words to the right), and the PoS tag of the current word. These features are considered to be standard in the literature. We note that the matrix generated with these features is exclusively used in the experiments regarding NER.	
 
 \begin{table*}
@@ -459,7 +459,7 @@ In the next subsection we present a series of analogous experiments, this time s
 
 
 \section{Second Application: Word Sense Induction and Disambiguation}
-
+\label{sec:wsd_wsi}
 Word Sense Induction and Disambiguation entails two closely related tasks\footnote{Even though these tasks are closely related, they are independent from one another. Still,  we consider them to be a single one: WSI/WSD.}. WSI aims to automatically discover the set of possible senses for a target word given a text corpus containing several occurrences of said target word. Meanwhile, WSD takes a set of possible senses and determines the most appropriate sense for each instance of the target word according to the instance's context. WSI is usually approached as an unsupervised learning task, i.e., a cluster method is applied to the words occurring in the instances of a target word. The groups found are interpreted as the senses of the target word. The WSD task is usually solved with knowledge-based approaches, based on WordNet; or more recently with supervised models which require annotated data. It can be also solved reasonably well by comparing the words surrounding each target word and the words belonging to the induced senses (or clusters) found during the WSI step.
 
 We believe that in order to solve WSD in a truly end-to-end unsupervised way, one would need to first automatically find a list of senses for a word without the help of pre-built semantic networks. In other words, solve WSI. Word sense induction is usually solved as follows:

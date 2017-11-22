@@ -211,6 +211,7 @@ Taking into account the described opportunities of research, in the following se
 
  
 \section{Proposed Model: Fusion Enriched Hypergraph Linguistic Network}
+\label{sec:enriched_hypergraph}
 
 As stated before, our model consists on two parts (and two contributions). The first one, an hypergraph model that holds different types of linguistic relations extracted from a corpus. And the second one, the combination of linguistic features in order to generate a less sparse, enriched representation. 
 
@@ -238,7 +239,7 @@ $v \in e$.
 
 Building upon previous linguistic representations \cite{2007.Klapaftis.UOY,2011.Haishan.AHypergraphbased,2014.Tao.Qian.LexicalChainHypergraphWSI}, our model is indeed based on the use of a hypergraph.
 % As stated before, hypergraphs have been employed in the literature to model complex systems. 
-Their single most important difference with regular graphs, being able to relate more than two vertices at the same type, allows for a better characterization of interactions within a set of individual elements (in our case, words) \cite{heintz2014beyond}. Indeed, our hypergraph modelization initially integrates four types of relations between tokens: sentence co-occurrence, part-of-speech tags, words' constituents data and dependency relations in a single linguistic structure. These relationships were chosen because it is relatively easy to obtain them for high-resource languages. These features can be seen as building blocks for NLP models. Extracting deeper language features would implicate relying even more on general domain systems. In any case, our goal is to arrive to more complex annotations (e.g., named entities) from the selected features and relations. Indeed, as we discussed before, different types of contexts gives us different types of similarities. Recall that a shorter lexical window approximates us to a syntactical context. That is why we decided to keep a lexical context at sentence level, so that it may complement the distributional semantic information provided by the dependency functions context as well as the phrase-constituency syntactic context. In short, we  aim to cover three levels of possible semantic relatedness via  three levels (in terms of the size of the neighborhood of a target word) of distributional co-occurrences 
+Their single most important difference with regular graphs, being able to relate more than two vertices at the same type, allows for a better characterization of interactions within a set of individual elements (in our case, words) \cite{heintz2014beyond}. Indeed, our hypergraph modelization initially integrates four types of relations between tokens: sentence co-occurrence, part-of-speech tags, words' constituents data and dependency relations in a single linguistic structure. These relationships were chosen because it is relatively easy to obtain them for high-resource languages. These features can be seen as building blocks for NLP models. Extracting deeper language features would implicate relying even more on general domain systems. In any case, our goal is to arrive to more complex annotations (e.g., named entities) from the selected features and relations. Indeed, as we discussed before, different types of contexts gives us different types of similarities. Recall that a  smaller lexical window  gives us co-occurrence relations that approach functional relatedness, such as those found with syntactic contexts. That is why we decided to keep a lexical context at sentence level, so that it may complement the distributional semantic information provided by the dependency functions context as well as the phrase-constituency syntactic context. In short, we  aim to cover three levels of possible semantic relatedness via  three levels (in terms of the size of the neighborhood of a target word) of distributional co-occurrences 
 %todo (see Figure \ref{})
 : a short range with dependency functions, a medium range with phrase constituency membership, and a longer range with sentence lexical co-occurrences. The intuition is that when solving NLP tasks, having direct access to these three semantic spaces will help to determine a more appropriate meaning's relation between words. 
 
@@ -259,7 +260,7 @@ To populate the hypergraph, given a token $v$, a noun phrase $p$, a sentence $s$
 dependency function $dep(h, \cdot)$, with $h$ being the head of the relation, we consider the following rules:
 
 \begin{itemize}
-\item $v$ is incident (or belongs to a hyperedge $e_j$ of type $\textsc{\textbf{NP}}$ if  $v$ appears in the same noun phrase $p$.
+\item $v$ is incident (or belongs) to a hyperedge $e_j$ of type $\textsc{\textbf{NP}}$ if  $v$ appears in the same noun phrase $p$.
 \item The same condition is used with sentence hyperedges $\textsc{\textbf{SEN}}$: if  $v$ appears in a sentence $s$, it will be located in a hyperedge $e_j$ of type $\textsc{\textbf{SEN}}$. 
 \item If $v$ participates in a dependency function $dep(h,v)$ as a dependent, it belongs to a hyperedge $e_j$ of type $\textsc{\textbf{DEP}}$.
 \end{itemize}
@@ -372,31 +373,27 @@ Multimodal fusion is a set of popular techniques used in multimedia analysis tas
 
 In the multimodal fusion literature we can discern two main common types of techniques: early fusion and late fusion. A third and fourth type of fusion methods, cross-media fusion and hybrid fusion are also employed in multimedia analysis tasks. 
 
-These four fusion operators naturally address the issue of dealing with heterogeneous data as they all mix one way or another the feature columns from each of two representations. Regarding alleviating sparsity, the intuition is that by combining matrices either by summing or multiplying them, the resulting matrix will have a denser structure. For example, by summing two matrices with the same shape, such as two term-term similarity matrices, we  obtain a resulting matrix that contains the similarities of both feature spaces. In the same sense , when multiplying two matrices we combine them while also obtaining a denser output matrix. Nonetheless, both sum and multiplication result depends evidently on the nature of the matrices employed. Two of the fusion techniques mentioned above, late fusion and cross-media fusion use sum and multiplication as they  main matrix operator. What is more, both of them contemplate the use of similarity matrices as at least one of their inputs. Being similarity matrices, they tend to be dense and thus the resulting sum or product will be more dense than the original sparse representation, while complementing and enriching the space with other types of information. We present an example of this intuition in the following section.
+These four fusion operators naturally address the issue of dealing with heterogeneous data as they all mix one way or another the feature columns from each of two representations. Regarding alleviating sparsity, the intuition is that by combining matrices either by element-wise summing or multiplying them, the resulting matrix will have a denser structure. For example, by summing two matrices with the same shape, such as two term-term similarity matrices, we  obtain a resulting matrix that contains the similarities of both feature spaces. In the same sense , when multiplying two matrices we combine them while also obtaining a denser output matrix. Nonetheless, both sum and multiplication result depends evidently on the nature of the matrices employed. Two of the fusion techniques mentioned above, late fusion and cross-media fusion use sum and multiplication as they  main matrix operator. What is more, both of them contemplate the use of similarity matrices as at least one of their inputs. Being similarity matrices, they tend to be dense and thus the resulting sum or product will be more dense than the original sparse representation, while complementing and enriching the space with other types of information. We present an example of this intuition in the following section.
 
 
-We describe the four of them in the following paragraphs, as well as formalize them by defining functions for three of the fusion techniques named above.
-The notation used is first introduced as follows: the fusion functions are binary, they all take two inputs: parameters $A$ and $B$ which define arbitrary term-feature matrices. For example, they may initially represent the lexical ($M^{LEX}$) or syntactical based ($M^{SYN}$) co-occurrence features matrix. They may also describe their  corresponding similarity matrices, $S^{LEX}$ and  $S^{SYN}$, respectively. In a broader sense, matrices $A$ and $B$ may represent any pair of valid\footnote{Valid in terms of having compatible shapes while computing a matrix sum or multiplication.} term-feature matrices.
+We describe the four of them in the following paragraphs. The notation used is first introduced as follows: the fusion functions are binary, they all take two inputs, parameters $A$ and parameter $B$ which define arbitrary single-modality matrices. For example, both matrices $A$ and $B$ may represent the lexical $M^{L}$ or syntactical based $M^{S}$ representation spaces. On the other hand, they may also describe their  respective similarity (square) matrices, $S^{L}$ and  $S^{S}$. In a broader sense, matrices $A$ and $B$ may represent any pair of valid\footnote{Valid in terms of having compatible shapes while computing a matrix sum or multiplication.} term-feature matrices.
 
 
 
 \paragraph{Early Fusion}
 This technique is the most widely used fusion method. The principle is simple: we take both modal features and concatenate them into a single representation matrix. More formally, we consider two matrices  that represent different modality features each  over the same set of individuals. To perform early fusion we concatenate them column-wise, such that we form a new matrix having the same number of lines but increasing the number of columns to the sum of the number of columns of both matrices. The matrices may also be weighted as to control the influence of each modality.
 
-Such trivial fusion can is showed in Figure \ref{fig:ef_diag}. Two matrices are used, $A$ and $B$. Each one represent a different feature space. They both have the same number of rows $n$, they have $m$ and $p$ columns, respectively. After an early fusion operation, the final matrix has $m+p$ features. We will use these matrix notations to exemplify the rest of fusions.
-
-
-
-The early fusion function is defined as:
+Such trivial fusion  is shown in Figure \ref{fig:ef_diag}. In this example, two  matrices are used, $\mlex$ and $\msyn$. They both have the same number of rows $n$, they have $m$ and $p$ columns, respectively. After an early fusion operation, the final matrix  has $m+p$ features. Formally, the early fusion function is defined as:
 \begin{equation}
 E(A,B) = \mathbf{hstack}(A , B)
 \end{equation}
-As stated before, the matrices $A$ and $B$ are combined together via a concatenation function $\mathbf{hstack}$ which joins both of them column-wise.
-We also may use a weighted version of early fusion, defined as: 
+As stated before, the matrices $A$ and $B$ are combined together via a concatenation function $\mathbf{hstack}$ which joins both of them column-wise. In order for this operator to work, both matrices must have the same $n$ number of rows.
+
+During the concatenation, we may also apply a weight to matrices $A$ and $B$ such as: 
 \begin{equation}
-wE_\alpha(A,B) = \mathbf{hstack}(\alpha\cdot A , (1-\alpha)\cdot B)
+E_\alpha(A,B) = \mathbf{hstack}(\alpha\cdot A , (1-\alpha)\cdot B)
 \end{equation}
-Weighted early fusion  represents the same operation as before with an extra parameter: $\alpha$, which controls the relative importance of each matrix. In the following, we refer to both operations as early fusion. When $\alpha$ is determined, we refer to weighted early fusion.
+Indeed, this weighted early fusion  represents the same operation as before with an extra parameter: $\alpha$, which controls the relative importance of each matrix. In the following, we refer to both operations simply as early fusion. When $\alpha$ is determined (and indicated as a subscript), we refer to weighted early fusion. Otherwise, there is no weighting scheme applied to the operation.
 
 The main advantage of early fusion is that a single unique model is fitted while leveraging the correlations among the concatenated features. The method is also easy to integrate into an analysis system. The main drawback is that we increase the representation space and may make it harder to fit models over it.
 
@@ -421,9 +418,10 @@ The main advantage of early fusion is that a single unique model is fitted while
 \paragraph{Late Fusion}
 In contrast to early fusion, in late fusion the combination of multimodal features are generally performed at the decision level, i.e., using the output of independent knowledge discovery models trained  each with a unique set of features \cite{ClinchantAC11}. In this setting,  decisions produced by each model are combined into a single final result set. The diagram in Figure \ref{fig:lf1} shows this combination of matrices $A$ and $B$.
 %
-The methods used to combine preliminary decisions usually involve one of two types: rule-based (where modalities are combined according to domain-specific knowledge) or linear fusion (e.g., weighting and then adding or multiplying both matrices together). This type of fusion is very close to the so-called ensemble methods in the machine learning literature.
+The methods used to combine preliminary decisions usually involve one of two types: rule-based (where modalities are combined according to domain-specific knowledge) or linear fusion (e.g., weighting and then adding or multiplying both matrices together). This particular type of fusion is very close to machine learning  ensemble methods.
 %
-Late fusion combines both modalities in the same semantic space. In that sense,  we may also combine modalities via an affinity representation instead of final decision sets. In other words, we can combine two modality matrices by means of their respective similarities. A final representation is then usually obtained by adding the weighted similarity matrices, as in Figure \ref{fig:lf2}, where two such matrices are computed, $SIM(A)$, and $SIM(B)$ and then combined into a single weighted matrix (determined by the parameter $\alpha$).
+
+Indeed, late fusion combines both modalities in the same semantic space. In that sense,  we may also combine modalities via an affinity representation instead of final decision sets. In other words, we may combine two modalities  by means of their respective similarity matrices. In this case, a  representation is  obtained by adding  two similarity matrices, as in Figure \ref{fig:lf2}. In the figure, we use the equal-sized matrices $A\prime$ and $B\prime$, which in this case are the similarity matrices of inputs $A$ and $B$. Both matrices are then summed to produce a single $n \times n$ weighted matrix (determined by a parameter $\beta$). 
 %
 
 More formally, we define the late fusion function as:
@@ -431,7 +429,7 @@ More formally, we define the late fusion function as:
 L_\beta(A,B) = \beta \cdot A + (1 - \beta)\cdot B
 \end{equation}
 
-In this late fusion function, the extra parameter $\beta$ affects the influence of matrix $A$,  and consequently also the relevance of matrix $B$.
+In this function, the extra parameter $\beta$ affects the influence of matrix $A$,  and consequently also the relevance of matrix $B$. As we are summing two matrices, for this operator both $A$ and $B$ must be of the same size.
 
 
 The advantages of late fusion include the combination of features at the same level of representation (either the fusion of decisions or similarity matrices). Also, given that independent models are trained separately, we can choose which algorithm is more adequate for each type of features. 
@@ -462,10 +460,10 @@ The advantages of late fusion include the combination of features at the same le
 %For example, in information retrieval (Ah-Pine et al., 2015), lexicon learning (Vulic et al., 2016), coreference resolution (Eisenstein and Davis, 2007); different types of representations (different modalities) can be combined in order to take advantage of the complementarity existing among them
 \paragraph{Cross-media  Fusion}
 %
-A third type of fusion technique, cross-media  fusion (or simply cross fusion),   introduced in \cite{Ah-PineCC15,ClinchantAC11}, is defined and employed to propagate a single similarity matrix into a second similarity matrix. In their paper, the authors propagated information from textual media towards visual media. In our case, we transfer information among textual features. For example, to perform a cross fusion between lexical and syntactical features, we perform the following steps: 
+A third type of fusion technique, cross-media  fusion (or simply cross fusion),   introduced in \cite{ClinchantAC11,Ah-PineCC15}, is defined and employed to propagate a single similarity matrix into a second similarity matrix. In their paper, the authors propagated information from textual media towards visual media. In our case, we transfer information among textual features. For example, to perform a cross fusion between lexical and syntactical features, we perform the following steps: 
 \begin{enumerate}
 \item Compute the corresponding similarity matrices for each type of features.
-\item Select only the $k$-nearest neighbors for each word within the lexical similarity matrix. These neighbors are to be used as lexical representatives to enrich the syntactical similarities.
+\item Keep only the $k$-nearest neighbors for each word within the lexical similarity matrix while assigning zero to the rest.  These selected neighbors are to be used as lexical representatives to enrich the syntactical similarities.
 \item Linearly combine both similarity matrices (lexical $k$-nearest lexical neighbors with the syntactical features) via a matrix product.
 \end{enumerate}  
 
@@ -476,7 +474,7 @@ A third type of fusion technique, cross-media  fusion (or simply cross fusion), 
 \label{fig:xf_diag}
 \end{figure}
 
-Figure \ref{fig:xf_diag} presents a cross fusion between matrices $A$ and $B$. The similarity matrices $SIM(A)$ and $SIM(B)$ are first obtained. Then, a  $k$-nearest neighbor operation is applied to matrix $A$, yielding a matrix $SIM(A)'$ which contains only the most representative similarities, determined by some parameter. Finally, cross fusion is represented by the product $SIM(A)' \times SIM(B)$.
+Figure \ref{fig:xf_diag} shows this cross fusion example, between matrices $\mlex$ and $\msyn$. First, their corresponding similarity matrices $\slex$ and $\ssyn$ are first obtained. Secondly, a  top-nearest neighbors operation is applied, $\mathbf{K}(\slex, \gamma)$, yielding a matrix which contains only the most representative similarities, determined by the parameter $\gamma$. Finally, the cross fusion representation is obtained by computing the product $\mathbf{K}(\slex, \gamma) \times \ssyn$.
 
 Formally, we define the cross fusion function as:
 \begin{equation}\label{eq:xfusion}
@@ -484,15 +482,18 @@ X_{\gamma}(A,B) = \mathbf{K}(A,\gamma) \times B
 \end{equation}
 
 In this case, the $\mathbf{K}(\cdot)$ function takes the top-$\gamma$ closest words (columns) to each word (lines) while the rest of the values are set to zero. As noted before, matrices $A$ and $B$ are usually similarity matrices. While $A$ is always required to be a square filtered similarity matrix, $B$ may be also a plain term-feature matrix, as we describe in the following paragraphs.
+The sole requirement is that the number of columns of $\mathbf{K}(\cdot)$ should be equal to the number of rows of $B$.
 
 Cross fusion aims to bridge the semantic gap between two modalities by using the most similar neighbors as proxies to transfer valuable information  from one modality onto another one. Usually, the result of a cross fusion is combined with the previous techniques, early and late fusion. In this work we perform  experiment in that sense.
 
 \paragraph{Hybrid Fusion}
 We may leverage the advantages of the previous three types of fusion techniques by combining them once more in a hybrid setting. As described in \cite{AtreyHEK10,yu2014informedia}, the main idea is to simultaneously combine features at the feature level, i.e., early fusion, and at the same semantic space or decision level. Nonetheless, they define a specific type of hybrid fusion. In this chapter, we adopt a looser definition of hybrid fusion. That is, we perform a hybrid combination of features by leveraging the aggregation of the fusion strategies described before. 
 
-Having said that, here we distinguish three levels of hybrid fusion that we employ in our experiments during the next chapter, Chapter \ref{chap:wsd}.  \begin{enumerate}
+Having said that, here we distinguish three levels of hybrid fusion that we employ in our experiments during the Chapter \ref{chap:wsd}. 
+
+ \begin{enumerate}
 \item \textbf{First Degree Fusion}: we  consider the  three elementary fusion techniques described before (early fusion, late fusion, cross fusion) by themselves.  This level of fusion serve as the baseline we set to surpass in order to show the efficacy of the representation feature space found through fusion techniques.
-As an example, we may obtain a first degree representation matrix by performing an early fusion between the lexical matrix and the syntactical features matrix: $E(M^{LEX}, M^{SYN})$. 
+As an example, we may obtain a first degree representation matrix by performing an early fusion between the lexical matrix and the syntactical features matrix: $E(M^{L}, M^{S})$. 
 
 We note that we distinguish two types of cross fusion operators: \textbf{Cross Early Fusion} (XEF) and \textbf{Cross Late Fusion} (XLF). The former combines a similarity matrix with a feature matrix, e.g., $X(\slex, \msyn)$. The latter joins a similarity matrix with a similarity matrix, for example $X(\ssyn, \slex)$. Indeed, XLF has the same configuration as the cross fusion presented before. We rename it to distinguish against the XEF configuration. The intuition of cross early fusion XEF is that the rich information from the first input matrix can be transferred directly to a representation without the need of obtaining its similarity matrix using a similarity matrix. We denote it \textit{early} and \textit{late} to refer to the fact that the first one uses simply a feature matrix and the second requires some knowledge from the data, in this case the similarity between terms.
 
@@ -512,15 +513,15 @@ We note that we distinguish two types of cross fusion operators: \textbf{Cross E
 \item \textbf{Late Cross Early Fusion} (LXEF): this fusion implies the late fusion of a feature matrix with the output of a cross early fusion. For example, the fusion $L(\mstd, X(\sstd, \mstd))$ describes a late fusion between the feature matrix $\mstd$ and the cross early fusion among $\sstd$ and $\mstd$.
 \end{enumerate}
 
-% A second-degree fusion would be an early fusion of the lexical feature matrix with a cross fusion, expressed as $E(M^{LEX}, \allowbreak X(S^{STD}, M^{STD}))$.   
+% A second-degree fusion would be an early fusion of the lexical feature matrix with a cross fusion, expressed as $E(M^{L}, \allowbreak X(S^{T}, M^{T}))$.   
 \item \textbf{Higher-Degree Fusion}: in this last level we follow a similar approach to the previous level by combining the output of the second-degree fusion level multiple times (that is, more than two times) with other second-degree fusion outputs. In this level we test the following two fusion operations:
 \begin{enumerate}
 \item \textbf{Early Late Cross Early Fusion} (ELXEF): As an example for this fusion, the operation $E(\mstd, \allowbreak L(\msyn, X(\sstd, \mstd)))$ implies the combination of three fusion operations. From left to right, first we compute the early fusion (first operation) of  matrix $\mstd$, with the result of a late fusion (second operation) between feature matrix $msyn$ and the result of a cross early fusion, itself having as input matrices $\sstd$ and $\mstd$. Indeed, we perform three operations, an early fusion, a late fusion and a cross early fusion, thus the name Early Late Cross Early Fusion of this operator.
 \item \textbf{Early ELXEF} (EELXEF): this fusion scheme is basically the same as the one before, with the addition of an early fusion operator at the beginning of the fusion:  $E(\mlex, E(E(\mstd,  L(\mstd, X(\sstd, \mstd))),\allowbreak L(\mlex, X(\ssyn, \mlex))))$
 \end{enumerate}
 
-
-%As an example, the equation $E(L(M^{STD}, \allowbreak X(S^{STD}, M^{STD})),  L(M^{LEX}, X(S^{SYN}, M^{LEX})))$  \allowbreak denotes the early fusion between two operations: (1) a late fusion between a lexical-features matrix and a cross fusion, and (2),  another late fusion consisting of a standard-features matrix (this matrix is detailed below)  and a cross fusion. In general, we determine a n-degree fusion empirically. That is to say, we look at the performance of second-degree fusions and try to improve the performance of the systems by recombining the fusion outputs via a n-degree combination. This process is in fact applied during the second-degree fusions also. 
+	
+%As an example, the equation $E(L(M^{T}, \allowbreak X(S^{T}, M^{T})),  L(M^{L}, X(S^{S}, M^{L})))$  \allowbreak denotes the early fusion between two operations: (1) a late fusion between a lexical-features matrix and a cross fusion, and (2),  another late fusion consisting of a standard-features matrix (this matrix is detailed below)  and a cross fusion. In general, we determine a n-degree fusion empirically. That is to say, we look at the performance of second-degree fusions and try to improve the performance of the systems by recombining the fusion outputs via a n-degree combination. This process is in fact applied during the second-degree fusions also. 
 	\end{enumerate}   
 
 
