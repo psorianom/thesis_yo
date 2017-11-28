@@ -175,19 +175,66 @@ In \cite{2013.Saluja.Graph-BasedUnsupervisedLearning}, they also employ PPR to f
 
 With regard to other CMs, there are  more elementary alternatives to determine the importance of a node. For example, the approaches of  \cite{2004.Veronis,2007.Klapaftis.UOY,2011.Haishan.AHypergraphbased,2013.Bronselaer.TextAnalysisWithGraphs,2014.Moro.Navigli.EntityLinking_WSD} successfully use the degree of a node, or other metric, to determine its importance in a network.
 
-\paragraph{NER supervised prediction}
+\paragraph{Graph Clustering/Partitioning}
 
-In order to determine the correct set of tags that identify the words within a phrase, NER is usually solved by using supervised structured algorithms. In particular, we focus on the  structured perceptron by \cite{Collins2002} sequence labeling algorithm. The general intuition of this method is introduced below. We chose this method as it is relatively simple and performs as well as more complex probabilistic approaches (e.g., conditional random fields, hidden markov models)  \cite{Daume2006,daume2012course}. 
+Graph clustering is defined as the task of grouping the vertices of a graph into clusters while taking into consideration its edge structure \cite{Schaeffer2007}. As previously mentioned, graph-based word sense induction relies most importantly in the graph clustering step where the actual senses of a word are inferred. 
+
+In this subsection we also consider  subgraph extracting techniques which are exploited to find separated groups of words and thus induce senses. In this context we found the approaches of \cite{2004.Veronis,2010.Siberer.GraphCooccurrenceWSD}. These systems make use of both the Minimum and Maximum Spanning Trees algorithms (MinST and MaxST, respectively) as a final step to  disambiguate a target word given its context.  Meanwhile, both \cite{2011.Haishan.AHypergraphbased,2014.Tao.Qian.LexicalChainHypergraphWSI}  use the Hypergraph Normalized Cut (HCT) approach, a hypergraph clustering method based on minimum cuts, to induce senses.
+
+Most of the reviewed approaches employ state of the art techniques \cite{2008.Klapaftis.WSIUsingCollocations,2010.Klapaftis.WSD.WSD.HierarchicalGraphs,2011.Jurgens.WSICommunityDetection,2013.Hope.GradedWSI}. Specifically, they utilize Chinese Whispers (CW) \cite{biemann2006chinese}, Hierarchical Random Graphs (HRG) \cite{clauset2008hierarchical}, Link Clustering (LC) \cite{ahn2010link}, and MaxMax (MM) \cite{hope2013maxmax} respectively. 
+
+Briefly, CW is a randomized graph-clustering method  which is time-linear with respect to the number of edges and does not need a fixed number of clusters as input. It only requires a maximum amount of iterations to perform. HRG, being a hierarchical clustering algorithm, groups words into a binary tree representation, which allows to have more in-detail information about the similarity among words when compared to flat clustering algorithms. Regarding LC, instead of clustering nodes, this procedure groups edges. Thus it can identify contexts related to certain senses, instead of finding groups of words as most approaches do. Finally, MM, is able to assemble words into a fixed cluster (hard clustering) or allow them to be in several groups at the same time (soft clustering). It shares certain characteristics with CW:  they are both methods that exploit similarity within the local neighborhood of nodes and both are time-linear. Nonetheless, a key difference is that CW is not deterministic, while MM is, thus MM will find always the same clustering result for the same input graph.
+
+Another popoular clustering approach to automatically induce word senses is spectral clustering \cite{Shi2000}. Some advantages of this method include that it is simple to implement and often outperforms other clustering methods as well as being able to work directly with graph and non-graph data \cite{Luxburg2007}.
+%
+The algorithm consists in projecting the normalized Laplacian of an affinity (or similarity) matrix (adjacency matrix in the case of graph data) on its $k$ first eigenvectors. The lower-space projection allows for an easier separation, for example with $k$-means, in order to find the  group membership of each original data point. 
+
+%  The adjacency matrix is used to compute a normalized graph Laplacian
+%    whose spectrum (especially the eigenvectors associated to the
+%    smallest eigenvalues) has an interpretation in terms of minimal
+%    number of cuts necessary to split the graph into comparably sized
+%    components.
+%
+%    This embedding can also 'work' even if the ``adjacency`` variable is
+%    not strictly the adjacency matrix of a graph but more generally
+%    an affinity or similarity matrix between samples (for instance the
+%    heat kernel of a euclidean distance matrix or a k-NN matrix).
+
+Indeed, the Laplacian of an affinity matrix can be used to represent several properties of the inherent structure within the data. Specifically, in the case of a graph, it tells us about the number of connected components through its  set of eigenvalues, specially the eigenvectors associated to the smallest eigenvalues, which synthetically represent the data.
+
+The normalized Laplacian of an affinity (symmetric and positive) matrix $W\in \mathbb{R}^{n\times n}$, with $w_{ij} = w_{ji} \geq 0$, is defined as: 
+\begin{equation}\label{eq:norm_laplacian}
+\mathcal{L} = I - D^{-1/2}WD{-1/2}
+\end{equation}
+
+where $I$ is the identity matrix and $D$ is the degree matrix of $W$. $D$ is defined as the diagonal matrix with the degrees $d_1 ,\dots,d_n$ on the diagonal. As $W$ may not be an adjacency matrix, we define the degrees of each row in the matrix as: $d_i=\sum_{j=1}^{n}{w_{ij}}$.
+
+Given a  symmetric and positive similarity matrix $W \in \mathbb{R}^{n \times n}$, and a number of desired clusters $k$, the steps required to perform spectral clustering are:
+
+\begin{enumerate}
+\item Obtain the normalized Laplacian $\mathcal{L}$ as indicated in Equation \ref{eq:norm_laplacian}.
+\item Obtain the first $k$ eigenvectors $u_{1\dots k}$ of $\mathcal{L}$.
+\item Store said eigenvectors as columns in a matrix $V \in \mathbb{R}^{n \times k}$. This matrix is akin to a lower-dimension projection of the original similarity matrix $W$.
+\item Cluster the points in $V_i$ with $k$-means. The clusters found and their members correspond to the cluster of the spectral algorithm.
+\end{enumerate}
+
+Special attention must be given to the input matrix $W$ as it must be indeed a symmetric affinity matrix in order to ensure the proper behavior of this method \cite{Luxburg2007,GoyalH14}.
+
+\input{network_soa_table.tex}
+
+\paragraph{Supervised Sequential Classification}\label{sec:perceptron}
+
+In order to determine the correct set of tags that identify the words within a phrase, sequential NLP tasks such as NER, are usually solved by using supervised structured algorithms. In particular, we focus on the  structured perceptron by \cite{Collins2002} sequence labeling algorithm. The general intuition of this method is introduced below. We chose this method as it is relatively simple and performs as well as more complex probabilistic approaches (e.g., conditional random fields, hidden markov models)  \cite{Daume2006,daume2012course}. 
 
 
 
 
-Like  the well-known perceptron algorithm, the structured perceptron is an online method that learns to classify one example at a time. The goal of this algorithm is to determine a label for each structured input. Formally, for an input $x \in \mathbb{X}$, we want to predict a class $\hat{y} \in \mathbb{Y}$ that maximizes the following product: 
+Like  the well-known perceptron algorithm, the structured perceptron is an online method that learns to classify one example at a time. The goal of this algorithm is to determine a label for each structured input. Formally, for an input $x \in \mathcal{X}$, we want to predict a class $\hat{y} \in \mathcal{Y}$ that maximizes the following product: 
 
 \begin{equation}
-\hat{y}= \argmax_{\hat{y}\in \mathbb{Y}}w\cdot \Phi(x,\hat{y})
+\hat{y}= \argmax_{\hat{y}\in \mathcal{Y}}w\cdot \Phi(x,\hat{y})
 \end{equation}
-where $\Phi(x,\hat{y})$ is the vector of representing  the feature space of input  $x$ with respect to each of the  possible labels $\mathbb{Y}=\{1,\dots,\textit{K}\}$. Indeed,  $\Phi(x,\hat{y})$ indicates a certain level of compatibility between input $x$ and each label $y$. 
+where $\Phi(x,\hat{y})$ is the vector of representing  the feature space of input  $x$ with respect to each of the  possible labels $\mathcal{Y}=\{1,\dots,\textit{K}\}$. Indeed,  $\Phi(x,\hat{y})$ indicates a certain level of compatibility between input $x$ and each label $y$. 
 
 We learn $w$ as a weight vector which considers each feature in regard to each class. As with the classic perceptron, $w$ is updated if the predicted $\hat{y}$ is different to the true label $y$, as follows: 
 
@@ -195,19 +242,20 @@ We learn $w$ as a weight vector which considers each feature in regard to each c
 w \leftarrow w+\Phi(x,y) - \Phi(x,\hat{y})
 \end{equation}
 
-The pseudocode for the structured perceptron is shown in Algorithm \ref{alg:struct_perc}.  For each input, we obtain its predicted class and determine whether it is qual to the true label. If it is not the case, we update the weight vector.
+The algorithm for the structured perceptron is shown in Algorithm \ref{alg:struct_perc}.  For each input, we obtain its predicted class and determine whether it is equal to the true label. If it is not the case, we update the weight vector.
 
-\begin{algorithm}[!htp]
+\begin{algorithm}[htp]
 \SetAlgoLined
-\KwIn{Examples $x \in \mathbb{X}$}
-\KwIn{True labels  $y \in \mathbb{Y}$ }
+\KwIn{Data $x \in \mathcal{X}$}
+\KwIn{True labels  $y \in \mathcal{Y}$ }
 \KwIn{Max number of iterations $MaxIteration$}
 \KwOut{A vector of lerned weights $w$}
 \For{$Iteration=1\dots MaxIterations$}
 {
-	\ForEach{$(x,y) \in \mathbb{X},\mathbb{Y}$}
+	\ForEach{$(x,y) \in \mathcal{X},\mathcal{Y}$}
 	{
-		$\hat{y}= \argmax_{\hat{y}\in \mathbb{Y}}w\cdot \Phi(x,\hat{y})$
+	
+		$\hat{y}= \argmax_{\hat{y}\in \mathcal{Y}}w\cdot \Phi(x,y)$
 		
 		\If{$\hat{y}\neq y$}
 		{	
@@ -224,26 +272,12 @@ The pseudocode for the structured perceptron is shown in Algorithm \ref{alg:stru
 \end{algorithm}
 
 
-The main issue with this algorithm is the computation of $\argmax_{\hat{y}\in \mathbb{Y}}w\cdot \Phi(x,\hat{y})$ in line 3 of Algorithm \ref{alg:struct_perc}. As said before, we are looking for the sequence of labels $\hat{y}$  that maximize this product. This implies a very large search over all the possibilities that grows exponentially with the number of possible tags $\mathbb{Y}$. If we consider a phrase with $L$ words, and a tagset of $k$ labels, the total number of possibilities to explore would be $L^k$. For example, for a phrase with 10 words, and 5 labels, we would need to explore a space of $10^5=100,000$ possibilities. This exploration then tends to be computationally unfeasible for a large number of phrases and/or larger number of words per phrase.
+The main issue with this algorithm is the computation of $\argmax_{\hat{y}\in \mathcal{Y}}w\cdot \Phi(x,\hat{y})$ in line 3 of Algorithm \ref{alg:struct_perc}. As said before, we are looking for the sequence of labels $\hat{y}$  that maximize this product. This implies a very large search over all the possibilities that grows exponentially with the number of possible tags $\mathcal{Y}$. If we consider a phrase with $L$ words, and a tagset of $k$ labels, the total number of possibilities to explore would be $L^k$. For example, for a phrase with 10 words, and 5 labels, we would need to explore a space of $10^5=100,000$ possibilities. This exploration then tends to be computationally unfeasible for a large number of phrases and/or larger number of words per phrase.
 
 In order to address this problem, another familiar  algorithm is employed: the Viterbi decoder. Briefly, this method calculates the optimal set of labels for each input, by determining the maximum path (or sequence of labels) through a lattice of tags' possibilities, one step at a time. As we search the maximum path of labels taking into account only the current word and the last at a time, we reduce the search space to $LK^2$. Again, for a phrase of 10 words and 5 labels as before, we would be searching over $10\times 5^2=250$ possible sequences of tags.
 
 
-\paragraph{Graph Clustering/Partitioning}
 
-Graph clustering is defined as the task of grouping the vertices of a graph into clusters while taking into consideration its edge structure \cite{Schaeffer2007}. As previously mentioned, graph-based word sense induction relies most importantly in the graph clustering step where the actual senses of a word are inferred. 
-
-In this subsection we also consider  subgraph extracting techniques which are exploited to find separated groups of words and thus induce senses. In this context we found the approaches of \cite{2004.Veronis,2010.Siberer.GraphCooccurrenceWSD}. These systems make use of both the Minimum and Maximum Spanning Trees algorithms (MinST and MaxST, respectively) as a final step to  disambiguate a target word given its context.  Meanwhile, both \cite{2011.Haishan.AHypergraphbased,2014.Tao.Qian.LexicalChainHypergraphWSI}  use the Hypergraph Normalized Cut (HCT) approach, a hypergraph clustering method based on minimum cuts, to induce senses.
-
-Most of the reviewed approaches employ state of the art techniques \cite{2008.Klapaftis.WSIUsingCollocations,2010.Klapaftis.WSD.WSD.HierarchicalGraphs,2011.Jurgens.WSICommunityDetection,2013.Hope.GradedWSI}. Specifically, they utilize Chinese Whispers (CW) \cite{biemann2006chinese}, Hierarchical Random Graphs (HRG) \cite{clauset2008hierarchical}, Link Clustering (LC) \cite{ahn2010link}, and MaxMax (MM) \cite{hope2013maxmax} respectively. 
-
-Briefly, CW is a randomized graph-clustering method  which is time-linear with respect to the number of edges and does not need a fixed number of clusters as input. It only requires a maximum amount of iterations to perform. HRG, being a hierarchical clustering algorithm, groups words into a binary tree representation, which allows to have more in-detail information about the similarity among words when compared to flat clustering algorithms. Regarding LC, instead of clustering nodes, this procedure groups edges. Thus it can identify contexts related to certain senses, instead of finding groups of words as most approaches do. Finally, MM, is able to assemble words into a fixed cluster (hard clustering) or allow them to be in several groups at the same time (soft clustering). It shares certain characteristics with CW:  they are both methods that exploit similarity within the local neighborhood of nodes and both are time-linear. Nonetheless, a key difference is that CW is not deterministic, while MM is, thus MM will find always the same clustering result for the same input graph.
-
-Another popoular clustering approach to automatically induce word senses is spectral clustering. This approach is generally interesting as the data does not necesseraly need the input data to be expressed as a graph structure. The algorithm consists in projecting the
- 
- 
-
-\input{network_soa_table.tex}
 
 \subsection{Discussion}\label{sec:disc_chap3}
 We have covered the network attributes of several approaches on semantic related NLP tasks. A summary of these strategies is shown in Table \ref{tab:survey_sum}.
