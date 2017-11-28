@@ -185,9 +185,9 @@ In respect of the $\gamma$ parameter, used in cross fusion $X_{\gamma}(A,B) = \m
 \toprule
 $A$                           & \multicolumn{3}{c}{\textbf{Single Features}} \\ \midrule
                 & \textbf{CONLL}    & \textbf{WNER}     & \textbf{WGLD}    \\ \cmidrule{2-4}
-$M^{\scriptscriptstyle STD}$                        & 77.41    & 77.50    & 59.66   \\
-$M^{\scriptscriptstyle LEX}$                       & 69.40    & 69.17    & 52.34   \\
-$M^{\scriptscriptstyle SYN}$                        & 32.95    & 28.47    & 25.49   \\ \bottomrule
+$\mstd$                        & 77.41    & 77.50    & 59.66   \\
+$\mlex$                       & 69.40    & 69.17    & 52.34   \\
+$\msyn$                        & 32.95    & 28.47    & 25.49   \\ \bottomrule
 \end{tabular}
 
 \end{table}
@@ -200,39 +200,40 @@ While we expected better results from the syntactical features $\msyn$, as they 
 \centering
 \setlength\tabcolsep{2pt}
 
-\caption{NER F-measure results using first degree fusion (1F). $B$ is either indicated on the table or specified as follows. Looking at EF,  $\hat{b}_{EF} = E(\msyn, \mstd)$. In XEF, ${b}^*_{\scriptscriptstyle XEF}$ takes the matrix from the set $\{M^{\scriptscriptstyle LEX}, M^{\scriptscriptstyle STD} \}$ which yields the best performing result. In XLF, $\hat{b}_{\scriptscriptstyle XLF}^{*}$ corresponds to the best performing matrix in $\{S^{\scriptscriptstyle LEX},S^{\scriptscriptstyle SYN}\}$. These configurations serve as the main set of baseline results.}
+\caption{NER F-measure results using first degree fusion (1F). Operators $B$ are either indicated on the table or specified as follows. In $X_FF$, depending on the dataset tested,  ${b}^*_{\scriptscriptstyle X_FF}$ takes the matrix from the set $\{\mlex, \mstd\}$ which yields the best performing result. In $X_SF$, $\hat{b}_{\scriptscriptstyle X_SF}^{*}$ corresponds to the best performing matrix in $\{\slex,\ssyn\}$. These configurations serve as the main set of baseline results.}
 \label{tab:ner-1d}
 \centering
 %\tablewidth=\textwidth
 \begin{tabular}{@{}llccc@{}}
 \toprule
-    $A$      &    $B$       & \multicolumn{3}{r}{\textbf{Early Fusion} }                                            \\ \midrule
+    $A$      &    $B$       & \multicolumn{3}{r}{\textbf{Early Fusion (EF)} }                                            \\ \midrule
           &           & \textbf{CONLL}                      & \textbf{WNER}                      & \textbf{WGLD}                      \\ \cmidrule{3-5}
-$M^{\scriptscriptstyle LEX}$ & $M^{\scriptscriptstyle SYN}$ & 72.01                      & 70.59                     & 59.38                     \\
-$M^{\scriptscriptstyle LEX}$ & $M^{\scriptscriptstyle STD}$ & 78.13                      & 79.78                     & 61.96                     \\
-$M^{\scriptscriptstyle SYN}$ & $M^{\scriptscriptstyle STD}$ & 77.70                      & 78.10                     & 60.93                     \\
-$M^{\scriptscriptstyle LEX}$ & $\hat{b}_{EF}$ & \textbf{78.90}                      & \textbf{80.04}                     & \textbf{63.20}                   \\
+          
+$\mlex$ & $\msyn$ & 72.01                      & 70.59                     & 59.38                     \\
+$\mlex$ & $\mstd$ & 78.13                      & 79.78                     & 61.96                     \\
+$\msyn$ & $\mstd$ & 77.70                      & 78.10                     & 60.93                     \\
+$\mlex$ & $E(M^S, M^T)$ & \textbf{78.90}                      & \textbf{80.04}                     & \textbf{63.20}                   \\
 \midrule
-          &           & \multicolumn{3}{r}{\textbf{Late Fusion} }                                             \\
+          &           & \multicolumn{3}{r}{\textbf{Late Fusion (LF)} }                                             \\
 \midrule     
           &           & \textbf{CONLL}                      & \textbf{WNER}                      & \textbf{WGLD}                      \\ \cmidrule{3-5}
-$S^{\scriptscriptstyle LEX}$ & $S^{\scriptscriptstyle SYN}$ & \textbf{61.65}                      & 58.79                     & 44.29                     \\
-$S^{\scriptscriptstyle LEX}$ & $S^{\scriptscriptstyle STD}$ & 55.64                      & \textbf{67.70}                     & 48.00                     \\
-$S^{\scriptscriptstyle SYN}$ & $S^{\scriptscriptstyle STD}$ & 50.21                      & 58.41                     & \textbf{49.81}                     \\
+$\slex$ & $\ssyn$ & \textbf{61.65}                      & 58.79                     & 44.29                     \\
+$\slex$ & $\sstd$ & 55.64                      & \textbf{67.70}                     & 48.00                     \\
+$\ssyn$ & $\sstd$ & 50.21                      & 58.41                     & \textbf{49.81}                     \\
 \midrule
-          &           & \multicolumn{3}{r}{\textbf{Cross Early Fusion}} \\
-\midrule
-          &           & \textbf{CONLL}                      & \textbf{WNER}                      & \textbf{WGLD}                      \\ \cmidrule{3-5}
-$S^{\scriptscriptstyle LEX}$ &$M^{\scriptscriptstyle STD}$        & 49.90                      & \textbf{70.27}                     & \textbf{62.69}                    \\
-$S^{\scriptscriptstyle SYN}$ & $M^{\scriptscriptstyle STD}$ & 47.27                      & 51.38                     & 48.53                     \\
-$S^{\scriptscriptstyle STD}$ & ${b}^*_{\scriptscriptstyle XEF}$        & \textbf{52.89}                      & 62.21                     & 50.15                     \\
-\midrule
-          &           & \multicolumn{3}{r}{\textbf{Cross Late Fusion}}  \\
+          &           & \multicolumn{3}{r}{\textbf{Cross Feature Fusion ($\mathbf{X_FF}$)}} \\
 \midrule
           &           & \textbf{CONLL}                      & \textbf{WNER}                      & \textbf{WGLD}                      \\ \cmidrule{3-5}
-$S^{\scriptscriptstyle LEX}$ & $S^{\scriptscriptstyle STD}$ & 27.75                      & \textbf{59.12}                     & 38.35                     \\
-$S^{\scriptscriptstyle SYN}$ & ${b}_{\scriptscriptstyle XLF}^{*}$       & 36.87                      & 40.92                     & 39.62                     \\
-$S^{\scriptscriptstyle STD}$ & ${b}_{\scriptscriptstyle XLF}^{*}$        & \textbf{41.89}                      & 52.03                     & \textbf{39.92}                     \\ \bottomrule
+$\slex$ &$\mstd$        & 49.90                      & \textbf{70.27}                     & \textbf{62.69}                    \\
+$\ssyn$ & $\mstd$ & 47.27                      & 51.38                     & 48.53                     \\
+$\sstd$ & ${b}^*_{\scriptscriptstyle X_FF}$        & \textbf{52.89}                      & 62.21                     & 50.15                     \\
+\midrule
+          &           & \multicolumn{3}{r}{\textbf{Cross Similarity Fusion ($\mathbf{X_SF}$)}}  \\
+\midrule
+          &           & \textbf{CONLL}                      & \textbf{WNER}                      & \textbf{WGLD}                      \\ \cmidrule{3-5}
+$\slex$ & $\sstd$ & 27.75                      & \textbf{59.12}                     & 38.35                     \\
+$\ssyn$ & ${b}_{\scriptscriptstyle X_SF}^{*}$       & 36.87                      & 40.92                     & 39.62                     \\
+$\sstd$ & ${b}_{\scriptscriptstyle X_SF}^{*}$        & \textbf{41.89}                      & 52.03                     & \textbf{39.92}                     \\ \bottomrule
 \end{tabular}
 \end{table}
 
@@ -246,33 +247,35 @@ In Table \ref{tab:ner-1d} we present the First Degree fusion level. The best per
 \begin{table}[t!]
 \centering
 
-\caption{NER F-measure results using second degree fusion operations (2F). In XLEF, ${a^*}$ corresponds to the best performing matrix in the set $\{ X(S^{\scriptscriptstyle STD}, S^{\scriptscriptstyle LEX}),X(S^{\scriptscriptstyle LEX}, S^{\scriptscriptstyle STD}), \allowbreak X(S^{\scriptscriptstyle STD}, S^{\scriptscriptstyle SYN})\}$. For XEEF,  $\hat{b}_{\scriptscriptstyle XEEF}=E(\mlex, \mstd)$. In EXEF, $b^*_{\scriptscriptstyle EXEF}$  takes the best performing matrix from $\{X(\ssyn, \mlex), \allowbreak X(\slex, \mlex), X(\slex, \mstd), \allowbreak X(\ssyn, \mlex), X(\ssyn, \mstd) \}$. Finally, in LXEF, $\hat{b}_{\scriptscriptstyle LXEF}$ takes the best possible matrix from $\{X(\slex, \mstd), X(\ssyn, \mstd), \allowbreak X(\ssyn, \mlex) \}$.}
+\caption{NER F-measure results using second degree fusion operations (2F). In $X_FX_SF$, $\hat{a}$ corresponds to the best performing matrix in the set $\{ X_S(\sstd, \slex),X_S(\slex, \sstd), \allowbreak X_S(\sstd, \ssyn)\}$. In $EX_FF$, depending on the dataset, $b^*_{\scriptscriptstyle EXEF}$  takes the best performing matrix from $\{X_F(\ssyn, \mlex), \allowbreak X_F(\slex, \mlex), X_F(\slex, \mstd), \allowbreak X_F(\ssyn, \mlex), X_F(\ssyn, \mstd) \}$. Finally, in $LX_FF$, $\hat{b}_{\scriptscriptstyle LX_FF}$ takes the best possible matrix from $\{X_F(\slex, \mstd), X_F(\ssyn, \mstd), \allowbreak X_F(\ssyn, \mlex) \}$.}
 \label{tab:ner_2d}
 \begin{tabular}{@{}llccc@{}}
 	\toprule
-	$A$                      & $B$            & \multicolumn{3}{r}{\textbf{Cross Late Early Fusion}}  \\ \midrule
+	$A$                      & $B$            & \multicolumn{3}{r}{\textbf{Cross Feature Cross Similarity Fusion ($\mathbf{X_FX_SF}$)}}  \\ \midrule
 	                         &                & \textbf{CONLL} & \textbf{WNER}  &             \textbf{WGLD}             \\
 	\cmidrule{3-5}
-$\hat{a}$ & $M^{\scriptscriptstyle STD}$      & 37.69 & 59.44 &            \textbf{41.71}             \\
-	$\hat{a}$                & $M^{\scriptscriptstyle LEX}$      & \textbf{38.31} & \textbf{58.73} &            41.56             \\
-	$\hat{a}$                & $M^{\scriptscriptstyle SYN}$      & 29.31 & 52.06 &            34.91             \\ \midrule
-	                         &                & \multicolumn{3}{r}{\textbf{Cross Early Early Fusion}} \\ \midrule
+$\hat{a}$ & $\mstd$      & 37.69 & 59.44 &            \textbf{41.71}             \\
+	$\hat{a}$                & $\mlex$      & \textbf{38.31} & \textbf{58.73} &            41.56             \\
+	$\hat{a}$                & $\msyn$      & 29.31 & 52.06 &            34.91             \\ \midrule
+	                         &                &
+	                         
+	                        \multicolumn{3}{r}{\textbf{Cross Feature Early Fusion ($\mathbf{X_FEF}$)}} \\ \midrule
 	                         &                & \textbf{CONLL} & \textbf{WNER}  &             \textbf{WGLD}             \\
 	\cmidrule{3-5}
-$S^{\scriptscriptstyle STD}$ & $\hat{b}_{\scriptscriptstyle XEEF}$          &   \textbf{54.34}    &    \textbf{64.20}   & 39.59 \\
-	$S^{\scriptscriptstyle LEX}$                &$\hat{b}_{\scriptscriptstyle XEEF}$         &  49.71     &   71.84    &  \textbf{45.14}\\
-	$S^{\scriptscriptstyle SYN}$                & $\hat{b}_{\scriptscriptstyle XEEF}$         &  47.54     &   53.77    & 43.32 \\ \midrule
-	                         &                & \multicolumn{3}{r}{\textbf{Early Cross Early Fusion}} \\ \midrule
+$\sstd$ & $E(\mlex, \mstd)$          &   \textbf{54.34}    &    \textbf{64.20}   & 39.59 \\
+	$\slex$                &$E(\mlex, \mstd)$         &  49.71     &   71.84    &  \textbf{45.14}\\
+	$\ssyn$                & $E(\mlex, \mstd)$         &  47.54     &   53.77    & 43.32 \\ \midrule
+	                         &                & \multicolumn{3}{r}{\textbf{Early Cross Feature Fusion ($\mathbf{EX_FF}$)}} \\ \midrule
 	                         &                & \textbf{CONLL} & \textbf{WNER}  &             \textbf{WGLD}             \\
 	\cmidrule{3-5}
-$M^{\scriptscriptstyle STD}$ & $b^*_{\scriptscriptstyle EXEF}$          & 49.58 & \textbf{77.32} &            \textbf{61.69}             \\
-	$M^{\scriptscriptstyle LEX}$                & $b^*_{\scriptscriptstyle EXEF}$      & 49.79 & 66.22 &            53.54             \\
-	$M^{\scriptscriptstyle SYN}$                & $b^*_{\scriptscriptstyle EXEF}$           & \textbf{51.53} & 70.94 &            53.70             \\ \midrule
-	                         &                & \multicolumn{3}{r}{\textbf{Late Cross Early Fusion}}  \\ \midrule
+$\mstd$ & $b^*_{\scriptscriptstyle EX_FF}$          & 49.58 & \textbf{77.32} &            \textbf{61.69}             \\
+	$\mlex$                & $b^*_{\scriptscriptstyle EX_FF}$      & 49.79 & 66.22 &            53.54             \\
+	$\msyn$                & $b^*_{\scriptscriptstyle EX_FF}$           & \textbf{51.53} & 70.94 &            53.70             \\ \midrule
+	                         &                & \multicolumn{3}{r}{\textbf{Late Cross Feature Fusion ($\mathbf{LX_FF}$)}}  \\ \midrule
 	                         &                & \textbf{CONLL} & \textbf{WNER}  &             \textbf{WGLD}             \\
 	\cmidrule{3-5}
-$M^{\scriptscriptstyle STD}$ &$\hat{b}_{\scriptscriptstyle LXEF}$           &  54.82   & \textbf{75.70} &            \textbf{54.73}             \\
-	$M^{\scriptscriptstyle LEX}$                & $\hat{b}_{\scriptscriptstyle LXEF}$  & \textbf{56.53} & 62.27 &            52.39             \\ \bottomrule
+$\mstd$ &$\hat{b}_{\scriptscriptstyle LX_FF}$           &  54.82   & \textbf{75.70} &            \textbf{54.73}             \\
+	$\mlex$                & $\hat{b}_{\scriptscriptstyle LX_FF}$  & \textbf{56.53} & 62.27 &            52.39             \\ \bottomrule
 \end{tabular}
 \end{table}
            
@@ -284,24 +287,24 @@ The second degree fusion techniques presented in Table \ref{tab:ner_2d} show tha
 \begin{table}[t]
 \centering
 
-\caption{F-measure results using high degree  (HF) fusion operators. In ELXEF, $ \hat{b}_{\scriptscriptstyle ELXEF}=L(\mlex, X(\ssyn, \mlex))$. For EELXEF, $\hat{b}_{\scriptscriptstyle EELXEF} =  E(E(\mstd, 	 L(\mlex, X(\ssyn, \mlex))), \allowbreak L(\mlex, X(\sstd, \mlex)))$ for CONLL and $\hat{b}_{\scriptscriptstyle EELXEF} =  E(E(\mstd, 	 L(\mstd, X(\ssyn, \mstd))), L(\mlex, X(\ssyn, \mlex)))$ for WNER and WGLD. The best result is obtained in EELXEF when $\alpha=0.95$.}
+\caption{F-measure results using high degree  (HF) fusion operators. In $EEELX_FLX_F$, $\hat{b}_{\scriptscriptstyle EEELX_FLX_F} =  E(E(\mstd, 	 L(\mlex, X_F(\ssyn, \mlex))), \allowbreak L(\mlex, X_F(\sstd, \mlex)))$ for CONLL and $\hat{b}_{\scriptscriptstyle EEELX_FLX_F} =  E(E(\mstd, 	 L(\mstd, X_F(\ssyn, \mstd))), L(\mlex, X_F(\ssyn, \mlex)))$ for WNER and WGLD. The best result is obtained in $EEELX_FLX_F$  when $\alpha=0.95$. If $\alpha$ is not indicated there is no weighting on EF.}
 
 \label{tab:ner-nf1}
 \begin{tabular}{@{}llccc@{}}
 \toprule
-    $A$      &    $B$      & \multicolumn{3}{r}{\makecell{\textbf{Early Late} \\ \textbf{Cross Early Fusion}}}                                            \\ \midrule
+    $A$      &    $B$      & \multicolumn{3}{r}{\makecell{\textbf{Early Late} \\ \textbf{Cross Feature Fusion ($\mathbf{ELX_FF}$)}}}                                            \\ \midrule
           &      &      \textbf{CONLL}                     & \textbf{WNER}                      & \textbf{WGLD}                      \\ \cmidrule{3-5}
-$M^{\scriptscriptstyle STD}$ & $ \hat{b}_{\scriptscriptstyle ELXEF}$ & 67.16                      & 79.45                     & 62.37                     \\
+$\mstd$ & $L(\mlex, X_F(\ssyn, \mlex))$ & 67.16                      & 79.45                     & 62.37                     \\
 \midrule
-          &        &   \multicolumn{3}{r}{\makecell{\textbf{Early Early} \\ \textbf{Late Cross Early Fusion}}}                                             \\
+          &        &   \multicolumn{3}{r}{\makecell{\textbf{Triple Early} \\ \textbf{Double Late Cross Feature Fusion} \\ \textbf{($\mathbf{EEELX_FLX_F}$)}}}                                             \\
 \midrule     
           &          & \textbf{CONLL}                      & \textbf{WNER}                      & \textbf{WGLD}                      \\ \cmidrule{3-5}
 %&& EF & EF & EF \\        
 %\cmidrule(l){3-3}\cmidrule(l){4-4}\cmidrule(l){5-5}
 
   
-$M^{\scriptscriptstyle LEX}$ & $ \hat{b}_{\scriptscriptstyle EELXEF}$ & 65.01                      & 78.02                     & 62.34                    \\
-$M^{\scriptscriptstyle LEX}_{\alpha=0.95}$ & $ \hat{b}_{\scriptscriptstyle EELXEF}$  & \textbf{79.67}                      & \textbf{81.79}                     & \textbf{67.05	}                     \\ \midrule
+$\mlex$ & $ \hat{b}_{\scriptscriptstyle EEELX_FLX_F}$ & 65.01                      & 78.02                     & 62.34                    \\
+$\mlex_{\alpha=0.95}$ & $ \hat{b}_{\scriptscriptstyle EEELX_FLX_F}$  & \textbf{79.67}                      & \textbf{81.79}                     & \textbf{67.05	}                     \\ \midrule
 \multicolumn{2}{l}{EF Baseline} & 78.90                      & 80.04                     & 63.20                     \\ 
 \bottomrule
 \end{tabular}
@@ -316,14 +319,14 @@ $M^{\scriptscriptstyle LEX}_{\alpha=0.95}$ & $ \hat{b}_{\scriptscriptstyle EELXE
 Finally, the last set of experiments are shown in Table \ref{tab:ner-nf1}. Using a recombination of fusion techniques, a so-called hybrid approach, we finally beat the baselines (single features and early fusion) for each dataset. We note that the best configuration made use of a weighted early fusion with $\alpha=0.95$. This indicates that the single feature matrix, $\mlex$ is enriched a small amount by the fusion recombination, which is enough to improve the results of said baselines. In CONLL, the early fusion (see Table \ref{tab:ner-1d}) baseline being 78.13, we reached 78.69, the lowest improvement of the three datasets. Regarding the Wikipedia corpus, in WNER, we passed from 79.78 to 81.75; and in WGLD, from 61.96 to 67.29, the largest improvement of all. It is important that we tried the weighted Early Fusion operator with different $\alpha$ and the best result does not beat these fusion results.
 
 \subsection{Fusion Analysis}
-In this subsection we present an analysis on the results obtained with the combination fusion operators shown  above. Namely, we set to understand how each addition of fusion operators helps to improve the result of the NER task. For simplicity,  we focus on the most successful fusion combination found for the three tested corpora. While the procedure to build the models analyzed herein is the same as before, we do have certain dissimilarities due to the need to explain said models in an effective way. Namely, there are two important changes in the methodology presented before: (1) we focus exclusively on the Wikigold corpus, and more importantly (2), we change the learning method from a structured perceptron to a multinomial logistic regression with L1 regularization. The main reason is that the regression is somewhat easier to interpret as it fits a sparse vector of weights for each feature and for each possible class. While the structured perceptron, also fits a matrix of feature weights, its interpretation is complex as these weights are then used to decode the best combination of tags given a complete phrase, considering the preceding and following words for each term in the corpus. In other words, in the logistic regression we can explain each word prediction independently based on a sparse vector of fitted weights for each feature and the vector that represent the word itself On the other hand, while using the structured perceptron, we need to look at whole phrases  while considering precedent and subsequent words at each time, making the interpretation quite complex. While the performance is considerably lower with the logistic regression, we note that there exists a sequential improvement  by enriching the feature space as shown in the results above (with the structured perceptron).
+In this subsection we present an analysis on the results obtained with the combination fusion operators shown  above. Namely, we want to understand how each addition of fusion operators helps to improve the result of the NER task. For simplicity,  we focus on the most successful fusion combination found for the three tested corpora. While the procedure to build the models analyzed herein is the same as before, we do have certain dissimilarities due to the need to explain said models in an effective way. Namely, there are two important changes in the methodology presented before: (1) we focus exclusively on the Wikigold corpus, and more importantly (2), we change the learning method from a structured perceptron to a multinomial logistic regression with L1 regularization. The main reason is that the regression is somewhat easier to interpret as it fits a sparse vector of weights for each feature and for each possible class. While the structured perceptron, also fits a matrix of feature weights, its interpretation is complex as these weights are then used to decode the best combination of tags given a complete phrase, considering the preceding and following words for each term in the corpus. In other words, in the logistic regression we can explain each word prediction independently based on a sparse vector of fitted weights for each feature and the vector that represent the word itself. On the other hand, while using the structured perceptron, we need to look at whole phrases  while considering precedent and subsequent words at each time, making the interpretation quite complex. We note that the performance is considerably lower using the logistic regression. Still, using the logistic regression also yields a sequential performance improvement  by using enriched feature spaces, similarly to those experiments shown in the previous results tables (results with the structured perceptron).
 
-The most performing fusion combination is shown in the second to last line in Table \ref{tab:ner-nf1} and it is fully expressed as:    
+The most performing fusion combination found during the previous experiments is reported in the second to last line in Table \ref{tab:ner-nf1}. We will use this fusion operator to investigate the characteristics of the feature space, which yields improved results. We note that, experimentally, this operator gave the best results for both the structured perceptron and the logistic regression learning methods (as can be seen in Table \ref{tab:4ops}. This operator is fully expressed as:    
 \begin{equation}\label{eq:big_fusion}
 E_{\alpha=0.95}(\mlex,  E(E(\mstd, 	 L(\mstd, X(\ssyn, \mstd))), L(\mlex, X(\ssyn, \mlex))))
 \end{equation}
 
-This fusion is principally base on early fusion operators. While we defined them in Chapter \ref{chap:ling_net} as  binary functions, we may also express it as a $n$-ary function which concatenates all the input values into a single representation\footnote{The parameter $\alpha$ still applies exclusively to the first input and the set of all the following.}. Thus, equation \ref{eq:big_fusion} can be written as:
+This fusion is principally based on early fusion operators. While we defined them in Chapter \ref{chap:ling_net} as  binary functions, we may also express it as a $n$-ary function which concatenates all the input values into a single representation\footnote{The parameter $\alpha$ still applies exclusively to the first input and the set of all the following.}. Thus, equation \ref{eq:big_fusion} can be written as:
 \begin{equation}\label{eq:big_fusion2}
 \overbrace{\underbrace{\overbrace{E_{\alpha=0.95}(\underbrace{\mlex}_{\circled{1}},\mstd}^{\circled{2}},L(\mstd, X(\ssyn, \mstd))}_{\circled{3}}, L(\mlex, X(\ssyn, \mlex))}^{\circled{4}})
 \end{equation}
@@ -358,7 +361,7 @@ First, we are interested into discovering what is the contribution of each model
 $M_1$ & 38.03         & 49.02                 & 30.24        & 27.49                 & 41.52                  \\
 $M_2$ & 55.53 (17.50) & 65.04 (16.02)         & 40.03 (9.79) & 39.46 (11.97)         & \textbf{69.19 (27.67)} \\
 $M_3$ & 56.11 (0.58)  & 65.75 (0.71)          & 40.26 (0.23) & \textbf{41.13 (1.67)} & 68.99 (-0.20)          \\
-$M_4$& 56.28 (0.17)  & \textbf{66.08 (0.33)} & 40.49 (0.23) & 41.07 (-0.06)         & 69.31 (0.32)           \\ \bottomrule
+$M_4$& 56.28 (0.17)  & \textbf{66.08 (0.33)} & 40.49 (0.23) & 41.07 (-0.06)         & \textbf{69.31 (0.32)}           \\ \bottomrule
 \end{tabular}
 \end{table}
 
