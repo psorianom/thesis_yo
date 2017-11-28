@@ -175,9 +175,58 @@ In \cite{2013.Saluja.Graph-BasedUnsupervisedLearning}, they also employ PPR to f
 
 With regard to other CMs, there are  more elementary alternatives to determine the importance of a node. For example, the approaches of  \cite{2004.Veronis,2007.Klapaftis.UOY,2011.Haishan.AHypergraphbased,2013.Bronselaer.TextAnalysisWithGraphs,2014.Moro.Navigli.EntityLinking_WSD} successfully use the degree of a node, or other metric, to determine its importance in a network.
 
+\paragraph{NER supervised prediction}
+
+In order to determine the correct set of tags that identify the words within a phrase, NER is usually solved by using supervised structured algorithms. In particular, we focus on the  structured perceptron by \cite{Collins2002} sequence labeling algorithm. The general intuition of this method is introduced below. We chose this method as it is relatively simple and performs as well as more complex probabilistic approaches (e.g., conditional random fields, hidden markov models)  \cite{Daume2006,daume2012course}. 
 
 
 
+
+Like  the well-known perceptron algorithm, the structured perceptron is an online method that learns to classify one example at a time. The goal of this algorithm is to determine a label for each structured input. Formally, for an input $x \in \mathbb{X}$, we want to predict a class $\hat{y} \in \mathbb{Y}$ that maximizes the following product: 
+
+\begin{equation}
+\hat{y}= \argmax_{\hat{y}\in \mathbb{Y}}w\cdot \Phi(x,\hat{y})
+\end{equation}
+where $\Phi(x,\hat{y})$ is the vector of representing  the feature space of input  $x$ with respect to each of the  possible labels $\mathbb{Y}=\{1,\dots,\textit{K}\}$. Indeed,  $\Phi(x,\hat{y})$ indicates a certain level of compatibility between input $x$ and each label $y$. 
+
+We learn $w$ as a weight vector which considers each feature in regard to each class. As with the classic perceptron, $w$ is updated if the predicted $\hat{y}$ is different to the true label $y$, as follows: 
+
+\begin{equation}
+w \leftarrow w+\Phi(x,y) - \Phi(x,\hat{y})
+\end{equation}
+
+The pseudocode for the structured perceptron is shown in Algorithm \ref{alg:struct_perc}.  For each input, we obtain its predicted class and determine whether it is qual to the true label. If it is not the case, we update the weight vector.
+
+\begin{algorithm}[!htp]
+\SetAlgoLined
+\KwIn{Examples $x \in \mathbb{X}$}
+\KwIn{True labels  $y \in \mathbb{Y}$ }
+\KwIn{Max number of iterations $MaxIteration$}
+\KwOut{A vector of lerned weights $w$}
+\For{$Iteration=1\dots MaxIterations$}
+{
+	\ForEach{$(x,y) \in \mathbb{X},\mathbb{Y}$}
+	{
+		$\hat{y}= \argmax_{\hat{y}\in \mathbb{Y}}w\cdot \Phi(x,\hat{y})$
+		
+		\If{$\hat{y}\neq y$}
+		{	
+			$w \leftarrow w+\Phi(x,y) - \Phi(x,\hat{y})$
+		}
+	}
+}
+
+\Return{$w$}
+
+
+\caption{Training phase of the Structured Perceptron}
+\label{alg:struct_perc}
+\end{algorithm}
+
+
+The main issue with this algorithm is the computation of $\argmax_{\hat{y}\in \mathbb{Y}}w\cdot \Phi(x,\hat{y})$ in line 3 of Algorithm \ref{alg:struct_perc}. As said before, we are looking for the sequence of labels $\hat{y}$  that maximize this product. This implies a very large search over all the possibilities that grows exponentially with the number of possible tags $\mathbb{Y}$. If we consider a phrase with $L$ words, and a tagset of $k$ labels, the total number of possibilities to explore would be $L^k$. For example, for a phrase with 10 words, and 5 labels, we would need to explore a space of $10^5=100,000$ possibilities. This exploration then tends to be computationally unfeasible for a large number of phrases and/or larger number of words per phrase.
+
+In order to address this problem, another familiar  algorithm is employed: the Viterbi decoder. Briefly, this method calculates the optimal set of labels for each input, by determining the maximum path (or sequence of labels) through a lattice of tags' possibilities, one step at a time. As we search the maximum path of labels taking into account only the current word and the last at a time, we reduce the search space to $LK^2$. Again, for a phrase of 10 words and 5 labels as before, we would be searching over $10\times 5^2=250$ possible sequences of tags.
 
 
 \paragraph{Graph Clustering/Partitioning}
@@ -190,6 +239,7 @@ Most of the reviewed approaches employ state of the art techniques \cite{2008.Kl
 
 Briefly, CW is a randomized graph-clustering method  which is time-linear with respect to the number of edges and does not need a fixed number of clusters as input. It only requires a maximum amount of iterations to perform. HRG, being a hierarchical clustering algorithm, groups words into a binary tree representation, which allows to have more in-detail information about the similarity among words when compared to flat clustering algorithms. Regarding LC, instead of clustering nodes, this procedure groups edges. Thus it can identify contexts related to certain senses, instead of finding groups of words as most approaches do. Finally, MM, is able to assemble words into a fixed cluster (hard clustering) or allow them to be in several groups at the same time (soft clustering). It shares certain characteristics with CW:  they are both methods that exploit similarity within the local neighborhood of nodes and both are time-linear. Nonetheless, a key difference is that CW is not deterministic, while MM is, thus MM will find always the same clustering result for the same input graph.
 
+Another popoular clustering approach to automatically induce word senses is spectral clustering. This approach is generally interesting as the data does not necesseraly need the input data to be expressed as a graph structure. The algorithm consists in projecting the
  
  
 
@@ -518,10 +568,10 @@ The intuition behind cross feature fusion $X_F$ is that the rich information fro
 % A second-degree fusion would be an early fusion of the lexical feature matrix with a cross fusion, expressed as $E(M^{L}, \allowbreak X(S^{T}, M^{T}))$.   
 \item \textbf{Higher-Degree Fusion}: in this last level we follow a similar approach to the previous level by combining the output of the second-degree fusion level multiple times (that is, more than two times) with other second-degree fusion outputs. In this level we test the following two fusion operations:
 \begin{enumerate}
-\item \textbf{Early Late Cross Feature Fusion} ($ELX_FF$): As an example for this fusion, the operation $E(\mstd, \allowbreak L(\msyn, X(\sstd, \mstd)))$ implies the combination of three fusion operations. From left to right, first we compute the early fusion (first operation) of  matrix $\mstd$, with the result of a late fusion (second operation) between feature matrix $msyn$ and the result of a cross feature fusion, itself having as input matrices $\sstd$ and $\mstd$. Indeed, we perform three operations, an early fusion, a late fusion and a cross feature fusion, thus the name Early Late cross feature fusion of this operator.
+\item \textbf{Early Late Cross Feature Fusion} ($ELX_FF$): As an example for this fusion, the operation $E(\mstd, \allowbreak L(\msyn, X_F(\sstd, \mstd)))$ implies the combination of three fusion operations. From left to right, first we compute the early fusion (first operation) of  matrix $\mstd$, with the result of a late fusion (second operation) between feature matrix $msyn$ and the result of a cross feature fusion, itself having as input matrices $\sstd$ and $\mstd$. Indeed, we perform three operations, an early fusion, a late fusion and a cross feature fusion, thus the name Early Late cross feature fusion of this operator.
 \item \textbf{Triple Early Double Late Cross Feature Fusion\footnote{We adopted the \textit{double} and \textit{triple} notation to lighten the explicit name of this fusion operation: Early Early Early Late Cross Feature Late Cross Feature Fusion}}
 %Early Early Early Late Cross Feature Late Cross Feature Fusion
- ($EEELX_FLX_F$): althoug it seems complex, this fusion scheme merely consists on the early fusion of the last two operators: $LX_FF$ and $ELX_FF$, with another feature matrix. As an example, the operator  $E(\mlex, E(E(\mstd,  L(\mstd, X(\sstd, \mstd))),\allowbreak L(\mlex, X(\ssyn, \mlex))))$ entails the early fusion of matrix $\mlex$ with the result of the early fusion of $ELX_FF$ with $LX_FF$.
+ ($EEELX_FLX_F$): althoug it seems complex, this fusion scheme merely consists on the early fusion of the last two operators: $LX_FF$ and $ELX_FF$, with another feature matrix. As an example, the operator  $E(\mlex, E(E(\mstd,  L(\mstd, X_F(\sstd, \mstd))),\allowbreak L(\mlex, X_F(\ssyn, \mlex))))$ entails the early fusion of matrix $\mlex$ with the result of the early fusion of $ELX_FF$ with $LX_FF$.
 \end{enumerate}
 
 	
@@ -761,7 +811,7 @@ We focus now on the combination of the linguistic features contained in the mode
 
 The goals of this example are to show how the type of context affects the semantic relatedness of a given word, to get a glimpse of how heterogeneous features get combined into a single enriched representation ideally allowing us to get more knowledge about a given term, and finally, discover how the sparsity is alleviated by combining two different matrices together, especially using the late and cross fusion techniques. 
 
-The example consists in presenting the top 5 most similar words of the word \textit{priest} according to different representation spaces. These representation spaces are obtained using five representation matrices: the lexical features matrix ($\mlex$),  the syntactic features matrix ($\msyn$), the early fusion matrix $E(\msyn,\mlex)$, the late fusion matrix ($L_{0.5}(\ssyn,\slex)$), and finally two cross fusion matrices ($X_F(\ssyn,\mlex)$ and $X_F(\slex,\msyn)$). We  report the sparsity level of each matrix (percentage of zero values in the matrix) obtained. 
+The example consists in presenting the top 5 most similar words of the target word \textit{priest} according to different representation spaces. These representation spaces are obtained using five representation matrices: the lexical features matrix ($\mlex$),  the syntactic features matrix ($\msyn$), the early fusion matrix $E(\msyn,\mlex)$, the late fusion matrix ($L_{0.5}(\ssyn,\slex)$), and finally two cross fusion matrices ($X_F(\ssyn,\mlex)$ and $X_F(\slex,\msyn)$). We  report the sparsity level of each matrix (percentage of zero values in the matrix) obtained. 
 
 The procedure to obtain said similar words consist in calculating a cosine-similarity matrix for each of the five fusion representations. In some cases, as in late fusion and cross fusion, this step is implicit as in this example, these operators already require the computation of similarity matrices (see Equations \ref{eq:late-fusion} and \ref{eq:xfusion}).
 
@@ -770,27 +820,58 @@ The  most similar terms to the target word can be seen in Table \ref{tab:priest}
 As discussed by \cite{LevyG14}, lexical features seem to give words that are semantically related in a larger sense, in this example, religion related terms. On the other hand, dependency based relations similarities tend to discover functional words or words that are of the same \textit{semantic type}.
 With respect to early and late fusion, while the similar words found are already known, we discover new terms that were until now unknown which seem to be semantically related, such as \textit{relic} and \textit{seer}. Concerning the cross fusion, in this case cross feature fusion, both transferring from the syntactic to the lexical similarity matrix and the other way around, we see that we also found previously seen words while discovering yet another couple of related words: \textit{monk} and \textit{chorus}. It is also clear how by selecting to transfer information from the syntactic matrix (fifth column) we get functionally related terms (occupations in the church or in a power structure) while on the sixth column (transfer from lexical to syntactic), we get mostly words that correspond to a broader similarity domain.
 
-With regard to alleviating the data sparsity (indicated below the header of each column as the percentage of non-zero values in the matrix) it is quite obvious that by using a similarity matrix we densify the space by means of a matrix multiplication, which is the case of late fusion and cross fusion: we pass from a sparsity of {5.49}\% in the lexical matrix and {4.97}\% in the syntactic matrix to {83.17}\%, {16.75}\% and {13.45}\% in the late fusion and cross fusion matrices, respectively. The large increment of density in the late fusion representation is obviously due to the use of similarity matrices in this operation, which usually tend to be dense matrices.
+In Table \ref{tab:priestSims} we present again the top 5 similar terms to the word \textit{priest}.  This time using similarity matrices as representation spaces. The overall behavior described above regarding the nature of the semantic relations is also kept in this representation spaces.
 
-Furthermore, for the cross feature fusions, while we also employ a similarity matrix, we stay in the same space (same number of dimensions) of the feature matrix, while more than doubling the density of the space at the same time. 
+With regard to alleviating the data sparsity (indicated below the header of each column as the percentage of non-zero values in the matrix) it is quite obvious that by using a similarity matrix we densify the space by means of a matrix multiplication, which is the case of both cross fusion operators (columns four and five of Table \ref{tab:priest}): we pass from a sparsity of {5.49}\% in the lexical matrix and {4.97}\% in the syntactic matrix to  {16.75}\% and {13.45}\% in the cross fusion matrices, respectively. 
+%The large increment of density in the late fusion representation is obviously due to the use of similarity matrices in this operation, which usually tend to be dense matrices.
+%
+Furthermore, for the cross feature fusions $X_F$, while we also employ a similarity matrix, we stay in the same space (same number of dimensions) of the feature matrix, while more than doubling the density of the space at the same time. 
+
+
+On the other hand, the same reduction of sparsity is achieved while using similarity matrices, (in Table \ref{tab:priestSims}). Originally having 75.25\% and 60.64\% sparsity using the lexical and syntactic similarity matrices respectively, we get to a maximum of 87.22\% using cross similarity fusion going from syntactic to lexical information $X_S(S^S, S^L)$.
+
 
 % Please add the following required packages to your document preamble:
 % \usepackage{booktabs}
 \begin{table}[]
 \centering
 
-\begin{tabular}{@{}lllllll@{}}
+\begin{tabular}{@{}llllll@{}}
 \toprule
-                           & \textbf{\begin{tabular}[c]{@{}l@{}}Lexical\\ Features\\(5.49\%)\end{tabular}}              & \textbf{\begin{tabular}[c]{@{}l@{}}Syntactic\\ Features\\(4.97\%)\end{tabular}}        & \textbf{\begin{tabular}[c]{@{}l@{}}Early\\ Fusion\\(5.23\%)\end{tabular}}                & \textbf{\begin{tabular}[c]{@{}l@{}}Late\\ Fusion\\(83.17\%)\end{tabular}}                 & \textbf{\begin{tabular}[c]{@{}l@{}}Cross\\Early\\ Fusion\\(16.75\%)\\$X(\ssyn, \mlex)$\end{tabular}}   &
-                           \textbf{\begin{tabular}[c]{@{}l@{}}Cross\\ Early\\Fusion\\(13.45\%) \\$X(\slex, \msyn)$\end{tabular}}                 \\ \midrule
-\multicolumn{1}{c}{priest} & \begin{tabular}[c]{@{}l@{}}priests\\ nun\\ canton\\ sailor\\ burial\end{tabular} & \begin{tabular}[c]{@{}l@{}}monk\\ regent\\ aedile\\ seer\\ meek\end{tabular} & \begin{tabular}[c]{@{}l@{}}sailor\\ regent\\ nuclei\\ nun\\ relic\end{tabular} & \begin{tabular}[c]{@{}l@{}}regent\\ slang\\ seer\\ tutor\\ cradle\end{tabular} & \begin{tabular}[c]{@{}l@{}}vassal\\ regent\\ nun\\ sailor\\ monk\end{tabular} & \begin{tabular}[c]{@{}l@{}}sailor\\ fluent\\ dean\\ nuclei\\ chorus\end{tabular} \\
+                           & \textbf{\begin{tabular}[c]{@{}l@{}}Lexical\\ Features\\(5.49\%)\\$\mlex$\end{tabular}}              
+                           & \textbf{\begin{tabular}[c]{@{}l@{}}Syntactic\\ Features\\(4.97\%)\\$\msyn$\end{tabular}}        
+                           & \textbf{\begin{tabular}[c]{@{}l@{}}Early\\ Fusion\\(5.23\%)\\$E(\mlex, \msyn)$\end{tabular}}                
+                           & \textbf{\begin{tabular}[c]{@{}l@{}}$X_F$\\Fusion\\(16.75\%)\\$X_F(\ssyn, \mlex)$\end{tabular}}   &
+                           \textbf{\begin{tabular}[c]{@{}l@{}}$X_F$\\Fusion\\ (13.45\%) \\$X_F(\slex, \msyn)$\end{tabular}}                 \\ \midrule
+\multicolumn{1}{c}{priest} & \begin{tabular}[c]{@{}l@{}}priests\\ nun\\ canton\\ sailor\\ burial\end{tabular} & \begin{tabular}[c]{@{}l@{}}monk\\ regent\\ aedile\\ seer\\ meek\end{tabular} & \begin{tabular}[c]{@{}l@{}}sailor\\ regent\\ nuclei\\ nun\\ relic\end{tabular} & \begin{tabular}[c]{@{}l@{}}vassal\\ regent\\ nun\\ sailor\\ monk\end{tabular} & \begin{tabular}[c]{@{}l@{}}sailor\\ fluent\\ dean\\ nuclei\\ chorus\end{tabular} \\
 
  \bottomrule
 
 \end{tabular}
-\caption{Target word \textit{priest} and its top 5 most similar words using different feature matrices. The sparsity level (percentage of non-zero values) of each representation is shown below the header of each column.}
+\caption{Target word \textit{priest} and its top 5 most similar words using different representation matrices. The sparsity level (percentage of non-zero values) of each representation is shown below the header of each column.}
 \label{tab:priest}
 \end{table}
+
+\begin{table}[]
+\centering
+
+\begin{tabular}{@{}lllllll@{}}
+\toprule
+                           & \textbf{\begin{tabular}[c]{@{}l@{}}Lexical\\ Similarity\\(75.25\%)\\$S^L$\end{tabular}}              & \textbf{\begin{tabular}[c]{@{}l@{}}Syntactic\\ Similarity\\(60.64\%)\\$S^S$\end{tabular}}        & \textbf{\begin{tabular}[c]{@{}l@{}}Early\\ Fusion\\(67.94\%)\\$E(S^L, S^S)$\end{tabular}}                & \textbf{\begin{tabular}[c]{@{}l@{}}Late\\ Fusion\\(83.17\%)\\$L(S^L, S^S)$\end{tabular}}                 & \textbf{\begin{tabular}[c]{@{}l@{}}$X_S$\\ Fusion\\(87.22\%)\\$X_S(\ssyn, \slex)$\end{tabular}}  &
+                           \textbf{\begin{tabular}[c]{@{}l@{}}$X_S$\\
+                           Fusion\\(79.69\%)\\$X_S(\slex,\ssyn)$\end{tabular}}                 
+                           \\ \midrule
+\multicolumn{1}{c}{priest} 
+& \begin{tabular}[c]{@{}l@{}}wholly\\burial\\monk\\lingua\\nuclei\end{tabular} &
+\begin{tabular}[c]{@{}l@{}}regent\\ coach\\ broker\\ dream\\tailor\end{tabular} & \begin{tabular}[c]{@{}l@{}}regent\\slang\\ broker\\rebel\\tiger\end{tabular} & \begin{tabular}[c]{@{}l@{}}regent\\slang\\ seer\\ tutor\\cradle\end{tabular} & \begin{tabular}[c]{@{}l@{}}regent\\vassal\\vizier\\leader\\result\end{tabular} & \begin{tabular}[c]{@{}l@{}}sailor\\nuclei\\nun\\canton\\burial\end{tabular} \\
+
+ \bottomrule
+
+\end{tabular}
+\caption{Target word \textit{priest} and its top 5 most similar words using different representation similarity matrices. The sparsity level (percentage of non-zero values) of each representation is shown below the header of each column.}
+\label{tab:priestSims}
+\end{table}
+
 
 %\paragraph{Discussion}
 %Concerning the computation time, SAEWD takes around 40 hours to be produced using a general purpose laptop (Intel i7 4700MQ with 4 cores, 8 GB and Linux Mint 17 as operative system). Most of the time is taken by the parsing step. 

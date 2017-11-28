@@ -48,7 +48,7 @@ At the end of the chapter we conclude by discussing the experiments performed, t
 Usually, representations employed for NER are obtained from the surrounding context of the words in the  input corpus. Mainly,  two types of representations are used: lexical and syntactic. As we know, the first type requires no extra information than that contained already in the analyzed text itself. The second type, syntactic features  are based on part of speech tags, phrase constituents information, and syntactical functionality between words, the later portrayed by syntactical dependencies. Likewise, there are specific features that are particular to one task are also be employed.
 
 
-The main intuition of these experiments is that word similarities may be found at different levels according to the type of features employed. In order to exploit these similarities, we leverage our fusion enriched framework. Specifically, in our experiments, we try to mutually complement independent representations by utilizing said fusion techniques to generate a single feature space that improves the performance of NER, specially compared to the using features independently and the trivial feature concatenation (early fusion). Consequently, the main goal is to assess the effectiveness of simple, yet untested (as far as we know) fusion techniques and their combination.
+The main intuition of these experiments is that word similarities may be found at different levels according to the type of features employed. In order to exploit these similarities, we leverage our fusion enriched framework. Specifically, in our experiments, we try to mutually complement independent representations by utilizing said fusion techniques to generate a single feature space that improves the performance of NER, specially compared to the using features independently and the trivial feature concatenation (early fusion). Consequently, the main goal is to assess the effectiveness of simple, yet untested fusion techniques and their combination.
 
 %The rest of the chapter is organized as follows: in section \ref{chap6:back}, we go into further details about fusion techniques. 
 %%as well as its application in the NLP domain. 
@@ -57,7 +57,8 @@ The main intuition of these experiments is that word similarities may be found a
 
 We consider the first three types of fusion techniques described in subsection \ref{sec:fusion} (early fusion, late fusion and cross fusion) as the building blocks to the experiments we conduct.  While we work with a single modality, i.e., textual data, we consider the different kinds of features extracted from it as distinct modalities. Our intuition being that the semantic similarities among words in these different spaces can be combined in order to exploit the latent complementarity between the lexical and syntactical representations. We also find new combinations empirically. Nonetheless, as we will show, their effectiveness replicates to different datasets and NLP tasks. 
 
-As it will be clear in the next sections, the methods used to solve both NER and WSI/WSD (in the following subsection) are mostly not original. We first focus specially on the generation of new representation spaces. We use well-proven methods to solve both WSI/WSD and NER, so that the learning part of our experiments is known to be robust.
+The specific methods used to solve both NER and WSI/WSD (in the following subsection) are already known to be robust. Our work focus specially on the generation of new representation spaces.
+% Using well-proven methods to solve both WSI/WSD and NER, so that the learning part of our experiments is known to be robust.
 %The fusion should therefore improve the performance of the NLP tasks at hand, first NER and later on WSI/WSD
 
 \subsection{Fusion Enriched Representations}
@@ -191,7 +192,7 @@ $M^{\scriptscriptstyle SYN}$                        & 32.95    & 28.47    & 25.4
 
 \end{table}
 \paragraph{Single Features}
-Looking at Table \ref{tab:ner-blines}, we see that the best independent features, in terms of F-measure come from the standard representation matrix $\mstd$. This is not surprising as these features, simple as they may be, have been used and proved extensively in the NER community. On the other hand, $\mlex$ performs relatively well, considering it only includes information contained in the dataset itself. Nevertheless, this representation that this kind of lexical context features are the foundation of most word embedding techniques used nowadays.
+Looking at Table \ref{tab:ner-blines}, we see that the best independent features, in terms of F-measure come from the standard representation matrix $\mstd$. This is not surprising as these features, simple as they may be, have been used and proved extensively in the NER community. On the other hand, $\mlex$ performs relatively well, considering it only includes information contained in the dataset itself. Nevertheless, this kind of representation is the foundation of most word embedding techniques used nowadays.
 While we expected better results from the syntactical features $\msyn$, as they are able to provide not only general word similarity, but also functional, getting close to synonymy-level \cite{LevyG14},  we believe that the relatively small size of the datasets do not provide enough information to generalize 
 
 
