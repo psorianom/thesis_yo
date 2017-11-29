@@ -137,7 +137,7 @@ NER being a supervised learning task, we use an averaged structured perceptron  
 \subsection{Experiments and Evaluation}
 \label{chap6:expes}
 
-We experiment with the four levels of fusion discussed before: Single Features (SF), First-degree Fusion (1F), Second-degree Fusion (2F) and Higher-degree Fusion (HF). The representation matrices for NER come from lexical context features $M^{LEX}$, syntactical context features $M^{SYN}$ or standard features $M^{STD}$.  On the other hand, experiments on WSI/WSD exclusively employ matrices $M^{LEX}$ and $M^{SYN}$.
+We experiment with the four levels of fusion discussed before: Single Features (SF), First-degree Fusion (1F), Second-degree Fusion (2F) and Higher-degree Fusion (HF). The representation matrices for NER come from lexical context features $\mlex$, syntactical context features $\msyn$ or standard features $\mstd$.  On the other hand, experiments on WSI/WSD exclusively employ matrices $\mlex$ and $\msyn$.
 
 We recall that our first goal is to compare the efficiency of the primary  fusion techniques applied to   named entity recognition. Then, we empirically determine a fusion combination operator able to leverage the complementarity of the features used.
 
@@ -148,10 +148,10 @@ To this end, we evaluate the aforementioned 4 fusion levels. We note that the fu
 
 \paragraph{Preprocessing}
 
-As is usual when preprocessing text before performing named entity recognition, \cite{RatinovR09}, we normalize tokens that include numbers. For example, the token 1980 becomes *DDDD* and 212-325-4751 becomes *DDD*-*DDD*-*DDDD* . This allows a degree of abstraction to tokens that contain years, phone numbers, etc. We do not normalize punctuation marks.
+As is usual when preprocessing text before performing named entity recognition, \cite{RatinovR09}, we normalize tokens that include numbers. For example, the token 1980 becomes *DDDD* and 212-325-4751 becomes *DDD*-*DDD*-*DDDD*. This allows a degree of abstraction to tokens that contain years, phone numbers, etc. We do not normalize punctuation marks.
 
 \paragraph{Features}
-The linguistic information we use is again extracted with the Stanford's CoreNLP parser. We recall that the features used for these experiments on NER are those described before: lexical, syntactic and standard features, i.e., $M^{LEX}$, $M^{SYN}$, and $M^{STD}$, respectively. 
+The linguistic information we use is again extracted with the Stanford's CoreNLP parser. We recall that the features used for these experiments on NER are those described before: lexical, syntactic and standard features, i.e., $\mlex$, $\msyn$, and $\mstd$, respectively. 
 
 \paragraph{Test Datasets}We work with three corpus coming from different domains:
 \begin{itemize}
@@ -173,13 +173,13 @@ We present in this subsection the results obtained in the named entity recogniti
 
 In contrast to other related fusion works \cite{Ah-PineCC15,ClinchantAC11,GialampoukidisM16}, we do not focus our analysis on the impact of the parameters of the fusion operators. Instead, we focus our analysis on the effect of the type of linguistic data being used and how, by transferring information from one feature type to another, they can be experimentally recombined to generate more complete representations.
 
-Regarding the fusion operators' parameters, we empirically found the best configuration for $\beta$, from late fusion $L_\beta(A,B) = \beta \cdot A + (1 - \beta)\cdot B$, is $\beta=0.5$. This implies that an equal combination is the best linear fusion for two different types of features.
+Regarding the fusion operators' parameters, we empirically found the best configuration for $\beta$, from late fusion $L_\beta(A,B) = \beta \cdot A + (1 - \beta)\cdot B$, to be $\beta=0.5$. This implies that an equal combination is the best linear fusion for two different types of features.
 
 In respect of the $\gamma$ parameter, used in cross fusion $X_{\gamma}(A,B) = \mathbf{K}(A,\gamma) \times B$, we set $\gamma=5$. This indicates that just few high quality similarities attain better results than utilizing a larger quantity of lower quality similarities.
 
 \begin{table}[!tbp]
 \centering
-\caption{NER F-measure results using the Single Features over the three datasets. These values serve as a first set of baselines. }
+\caption{NER F-measure results using the Single Features over the three datasets. These values serve as a first set of baselines. Results obtained with the structured perceptron algorithm.}
 \label{tab:ner-blines}
 \begin{tabular}{@{}lccc@{}}
 \toprule
@@ -200,7 +200,7 @@ While we expected better results from the syntactical features $\msyn$, as they 
 \centering
 \setlength\tabcolsep{2pt}
 
-\caption{NER F-measure results using first degree fusion (1F). Operators $B$ are either indicated on the table or specified as follows. In $X_FF$, depending on the dataset tested,  ${b}^*_{\scriptscriptstyle X_FF}$ takes the matrix from the set $\{\mlex, \mstd\}$ which yields the best performing result. In $X_SF$, $\hat{b}_{\scriptscriptstyle X_SF}^{*}$ corresponds to the best performing matrix in $\{\slex,\ssyn\}$. These configurations serve as the main set of baseline results.}
+\caption{NER F-measure results using first degree fusion (1F). Operators $B$ are either indicated on the table or specified as follows. In $X_FF$, depending on the dataset tested,  ${b}^*_{\scriptscriptstyle X_FF}$ takes the matrix from the set $\{\mlex, \mstd\}$ which yields the best performing result. In $X_SF$, $\hat{b}_{\scriptscriptstyle X_SF}^{*}$ corresponds to the best performing matrix in $\{\slex,\ssyn\}$. These configurations serve as the main set of baseline results. Results obtained with the structured perceptron algorithm.}
 \label{tab:ner-1d}
 \centering
 %\tablewidth=\textwidth
@@ -238,7 +238,7 @@ $\sstd$ & ${b}_{\scriptscriptstyle X_SF}^{*}$        & \textbf{41.89}           
 \end{table}
 
 \paragraph{First Degree Fusion }
-In Table \ref{tab:ner-1d} we present the First Degree fusion level. The best performance is obtained by trivially concatenating the representation matrices. This baseline proved to be the toughest result to beat. Late fusion does not perform well in this setting, still, we see further on that by linearly combining weighted representation matrices, we can add information to an already strong representation. Finally, regarding the cross fusion techniques, cross early and late fusion, we see that they depend directly on the information contained in the similarity matrices. We note that, as is the case on single features, the combinations with matrix $\sstd$ yield almost always the best results. While these fusion techniques by themselves may not offer the best results, we see below that by recombining them with other types of fusion we can improve the general performance of a representation.
+In Table \ref{tab:ner-1d} we present the First Degree fusion level. The best performance is obtained by trivially concatenating the representation matrices. This baseline proved to be the toughest result to beat. Late fusion does not perform well in this setting, still, we see further on that by linearly combining weighted representation matrices, we can add information to an already strong representation. Finally, regarding the cross fusion techniques, cross feature and similarity fusion, we see that they depend directly on the information contained in the similarity matrices. We note that, as is the case on single features, the combinations with matrix $\sstd$ yield almost always the best results. While these fusion techniques by themselves may not offer the best results, we see below that by recombining them with other types of fusion we can improve the general performance of a representation.
 
 
 
@@ -247,7 +247,7 @@ In Table \ref{tab:ner-1d} we present the First Degree fusion level. The best per
 \begin{table}[t!]
 \centering
 
-\caption{NER F-measure results using second degree fusion operations (2F). In $X_FX_SF$, $\hat{a}$ corresponds to the best performing matrix in the set $\{ X_S(\sstd, \slex),X_S(\slex, \sstd), \allowbreak X_S(\sstd, \ssyn)\}$. In $EX_FF$, depending on the dataset, $b^*_{\scriptscriptstyle EXEF}$  takes the best performing matrix from $\{X_F(\ssyn, \mlex), \allowbreak X_F(\slex, \mlex), X_F(\slex, \mstd), \allowbreak X_F(\ssyn, \mlex), X_F(\ssyn, \mstd) \}$. Finally, in $LX_FF$, $\hat{b}_{\scriptscriptstyle LX_FF}$ takes the best possible matrix from $\{X_F(\slex, \mstd), X_F(\ssyn, \mstd), \allowbreak X_F(\ssyn, \mlex) \}$.}
+\caption{NER F-measure results using second degree fusion operations (2F). In $X_FX_SF$, $\hat{a}$ corresponds to the best performing matrix in the set $\{ X_S(\sstd, \slex),X_S(\slex, \sstd), \allowbreak X_S(\sstd, \ssyn)\}$. In $EX_FF$, depending on the dataset, $b^*_{\scriptscriptstyle EXEF}$  takes the best performing matrix from $\{X_F(\ssyn, \mlex), \allowbreak X_F(\slex, \mlex), X_F(\slex, \mstd), \allowbreak X_F(\ssyn, \mlex), X_F(\ssyn, \mstd) \}$. Finally, in $LX_FF$, $\hat{b}_{\scriptscriptstyle LX_FF}$ takes the best possible matrix from $\{X_F(\slex, \mstd), X_F(\ssyn, \mstd), \allowbreak X_F(\ssyn, \mlex) \}$. Results obtained with the structured perceptron algorithm.}
 \label{tab:ner_2d}
 \begin{tabular}{@{}llccc@{}}
 	\toprule
@@ -281,13 +281,13 @@ $\mstd$ &$\hat{b}_{\scriptscriptstyle LX_FF}$           &  54.82   & \textbf{75.
            
 
 \paragraph{Second Degree Fusion} 
-The second degree fusion techniques presented in Table \ref{tab:ner_2d} show that the recombination of cross fusion techniques gets us closer to the early fusion baseline. Except for cross late early fusion, the rest of the recombination schemes yield interesting results. First, in cross early fusion, the best results, for the most part, are obtained while using the $\slex$ matrix combined with the output of $E(\mlex, \mstd)$, which is still far from the baseline values. Concerning, EXEF, we get already close to surpass the baselines with the $\mstd$ matrix, with the exception of the CONLL dataset. In LXEF, even though the cross fusion $X(\ssyn, \mlex)$ is not the best performing, we found experimentally that by combining it with $\mlex$ through a late fusion, it gets  a strong complementary representation. Our intuition in this case was to complement $\mlex$ with itself but enriched with the $\ssyn$ information. In the following high degree fusion results we discover that indeed this propagation of information helps us beat the baselines we set before.
+The second degree fusion techniques presented in Table \ref{tab:ner_2d} show that the recombination of cross fusion techniques gets us closer to the early fusion baseline. Except for cross feature cross similarity fusion ($X_FX_SF$), the rest of the recombination schemes yield interesting results. First, in cross feature fusion, the best results, for the most part, are obtained while using the $\slex$ matrix combined with the output of $E(\mlex, \mstd)$, which is still far from the baseline values. Concerning, EXEF, we get already close to surpass the baselines with the $\mstd$ matrix, except for the CONLL dataset. In LXEF, even though the cross fusion $X(\ssyn, \mlex)$ is not the best performing, we found experimentally that by combining it with $\mlex$ through a late fusion, it gets  a strong complementary representation. Our intuition in this case was to complement $\mlex$ with itself but enriched with the $\ssyn$ information. In the following high degree fusion results we discover that indeed this propagation of information helps us beat the baselines we set before.
 
 
 \begin{table}[t]
 \centering
 
-\caption{F-measure results using high degree  (HF) fusion operators. In $EEELX_FLX_F$, $\hat{b}_{\scriptscriptstyle EEELX_FLX_F} =  E(E(\mstd, 	 L(\mlex, X_F(\ssyn, \mlex))), \allowbreak L(\mlex, X_F(\sstd, \mlex)))$ for CONLL and $\hat{b}_{\scriptscriptstyle EEELX_FLX_F} =  E(E(\mstd, 	 L(\mstd, X_F(\ssyn, \mstd))), L(\mlex, X_F(\ssyn, \mlex)))$ for WNER and WGLD. The best result is obtained in $EEELX_FLX_F$  when $\alpha=0.95$. If $\alpha$ is not indicated there is no weighting on EF.}
+\caption{F-measure results using high degree  (HF) fusion operators. In $EEELX_FLX_F$, $\hat{b}_{\scriptscriptstyle EEELX_FLX_F} =  E(E(\mstd, 	 L(\mlex, X_F(\ssyn, \mlex))), \allowbreak L(\mlex, X_F(\sstd, \mlex)))$ for CONLL and $\hat{b}_{\scriptscriptstyle EEELX_FLX_F} =  E(E(\mstd, 	 L(\mstd, X_F(\ssyn, \mstd))), L(\mlex, X_F(\ssyn, \mlex)))$ for WNER and WGLD. The best result is obtained in $EEELX_FLX_F$  when $\alpha=0.95$. If $\alpha$ is not indicated there is no weighting on EF. Results obtained with the structured perceptron algorithm.}
 
 \label{tab:ner-nf1}
 \begin{tabular}{@{}llccc@{}}
@@ -304,7 +304,7 @@ $\mstd$ & $L(\mlex, X_F(\ssyn, \mlex))$ & 67.16                      & 79.45    
 
   
 $\mlex$ & $ \hat{b}_{\scriptscriptstyle EEELX_FLX_F}$ & 65.01                      & 78.02                     & 62.34                    \\
-$\mlex_{\alpha=0.95}$ & $ \hat{b}_{\scriptscriptstyle EEELX_FLX_F}$  & \textbf{79.67}                      & \textbf{81.79}                     & \textbf{67.05	}                     \\ \midrule
+$\mlex_{\alpha=0.95}$ & $ \hat{b}_{\scriptscriptstyle EEELX_FLX_F}$  & \textbf{79.67}                      & \textbf{81.79}                     & \textbf{67.05	}                     \\ \midrule \midrule
 \multicolumn{2}{l}{EF Baseline} & 78.90                      & 80.04                     & 63.20                     \\ 
 \bottomrule
 \end{tabular}
@@ -321,12 +321,14 @@ Finally, the last set of experiments are shown in Table \ref{tab:ner-nf1}. Using
 \subsection{Fusion Analysis}
 In this subsection we present an analysis on the results obtained with the combination fusion operators shown  above. Namely, we want to understand how each addition of fusion operators helps to improve the result of the NER task. For simplicity,  we focus on the most successful fusion combination found for the three tested corpora. While the procedure to build the models analyzed herein is the same as before, we do have certain dissimilarities due to the need to explain said models in an effective way. Namely, there are two important changes in the methodology presented before: (1) we focus exclusively on the Wikigold corpus, and more importantly (2), we change the learning method from a structured perceptron to a multinomial logistic regression with L1 regularization. The main reason is that the regression is somewhat easier to interpret as it fits a sparse vector of weights for each feature and for each possible class. While the structured perceptron, also fits a matrix of feature weights, its interpretation is complex as these weights are then used to decode the best combination of tags given a complete phrase, considering the preceding and following words for each term in the corpus. In other words, in the logistic regression we can explain each word prediction independently based on a sparse vector of fitted weights for each feature and the vector that represent the word itself. On the other hand, while using the structured perceptron, we need to look at whole phrases  while considering precedent and subsequent words at each time, making the interpretation quite complex. We note that the performance is considerably lower using the logistic regression. Still, using the logistic regression also yields a sequential performance improvement  by using enriched feature spaces, similarly to those experiments shown in the previous results tables (results with the structured perceptron).
 
-The most performing fusion combination found during the previous experiments is reported in the second to last line in Table \ref{tab:ner-nf1}. We will use this fusion operator to investigate the characteristics of the feature space, which yields improved results. We note that, experimentally, this operator gave the best results for both the structured perceptron and the logistic regression learning methods (as can be seen in Table \ref{tab:4ops}. This operator is fully expressed as:    
+The most performing fusion combination found during the previous experiments is reported in the second to last line in Table \ref{tab:ner-nf1}. We will use this fusion operator to investigate the characteristics of the feature space, which yields improved results. We note that, experimentally, this operator gave the best results for both the structured perceptron and the logistic regression learning methods (as can be seen in Table \ref{tab:4ops}). This operator is fully expressed as:    
 \begin{equation}\label{eq:big_fusion}
-E_{\alpha=0.95}(\mlex,  E(E(\mstd, 	 L(\mstd, X(\ssyn, \mstd))), L(\mlex, X(\ssyn, \mlex))))
+E_{\alpha=0.95}(\mlex,  E(E(\mstd, 	 L(\mstd, X_F(\ssyn, \mstd))), L(\mlex, X_F(\ssyn, \mlex))))
 \end{equation}
 
-This fusion is principally based on early fusion operators. While we defined them in Chapter \ref{chap:ling_net} as  binary functions, we may also express it as a $n$-ary function which concatenates all the input values into a single representation\footnote{The parameter $\alpha$ still applies exclusively to the first input and the set of all the following.}. Thus, equation \ref{eq:big_fusion} can be written as:
+This fusion is principally based on the early fusion operator. It is important to notice that only the left most fusion operator is weighted, that is, its first input is the only one affected by the weight $\alpha=0.95$. The rest of the early fusions in the operator are non-weighted, i.e., no scaling is applied to their operands. Still, as they are second operator of the first weighted early fusion, they are implicitly affected by a weight of $(1-\alpha)=0.05$.
+
+For the sake of clarity in the presentation of the operator in Equation \ref{eq:big_fusion}, and while we defined early fusion as a binary function (in Chapter \ref{chap:ling_net}), we will express it below as a $n$-ary function which concatenates all the input values into a single representation. Again, we note that the parameter $\alpha$ applies exclusively too the first operand of the first and left most early fusion operation. Nevertheless, we include the implicit weights that affect each of the arguments of each function in the description below. Thus, we identify four main operations in equation \ref{eq:big_fusion}:
 \begin{equation}\label{eq:big_fusion2}
 \overbrace{\underbrace{\overbrace{E_{\alpha=0.95}(\underbrace{\mlex}_{\circled{1}},\mstd}^{\circled{2}},L(\mstd, X(\ssyn, \mstd))}_{\circled{3}}, L(\mlex, X(\ssyn, \mlex))}^{\circled{4}})
 \end{equation}
@@ -335,12 +337,12 @@ This fusion is principally based on early fusion operators. While we defined the
 Explicitly, these numbered operations are below. We associate to each operations a model, which is trained using the representation obtained with the corresponding fusion operation.
 \begin{enumerate}
 \item[\circled{1}] $\mlex$ \label{eq:f1} used to train model $M_1$.
-\item[\circled{2}] $E_{\alpha=0.95}(\mlex, \mstd)$ \label{eq:f2} used to train model $M_2$.
-\item[\circled{3}] $E_{\alpha=0.95}(\mlex, \mstd, L(\mstd, X(\ssyn, \mstd)))$ used to train model $M_3$. \label{eq:f3}
-\item[\circled{4}] $E_{\alpha=0.95}(\mlex, \mstd, L(\mstd, X(\ssyn, \mstd)), L(\mlex, X(\ssyn, \mlex)))$ used to train model $M_4$. \label{eq:f4}
+\item[\circled{2}] $E_{\alpha_1=0.95,\alpha_2=0.05}(\alpha_1\mlex, \alpha_2\mstd)$ \label{eq:f2} used to train model $M_2$.
+\item[\circled{3}] $E_{\alpha_1=0.95,\alpha_2=\alpha_3=0.05}(\alpha_1\mlex, \alpha_2\mstd, \alpha_3L(\mstd, X(\ssyn, \mstd)))$ used to train model $M_3$. \label{eq:f3}
+\item[\circled{4}] $E_{\alpha_1=0.95,\alpha_2=\alpha_3=\alpha_4=0.05}(\alpha_1\mlex, \alpha_2\mstd, \alpha_3L(\mstd, X(\ssyn, \mstd)), \alpha_4L(\mlex, X(\ssyn, \mlex)))$ used to train model $M_4$. \label{eq:f4}
 \end{enumerate}
 
-As can be seen, the operation in Equation \ref{eq:big_fusion2} is a concatenation of four elements, the feature matrices $\mlex$ and $\mstd$, and two late fusions, each one containing a cross early fusion. The analysis we make tries to elucidate the role of each numbered fusion combination. To this end, we analyze the models $M_1$ to $M_4$ and their corresponding predictions given to certain word instances. 
+As can be seen, the operation in Equation \ref{eq:big_fusion2} is a concatenation of four elements, the feature matrices $\mlex$ and $\mstd$, and two late fusions, each one containing a cross feature fusion ($X_FF$). The analysis we make tries to elucidate the role of each numbered fusion combination. To this end, we analyze the models $M_1$ to $M_4$ and their corresponding predictions given to certain word instances. 
 
 \paragraph{Per-Entity Performance Gain}
 First, we are interested into discovering what is the contribution of each model to  the F-measure metric overall and for each specific type of named entity. In that sense,  Table \ref{tab:4ops} identifies the gains in performance due to the incremental addition of  fusion operations. In the first line  we see the results using the $M_1$. As said before, the results are lower than those obtained with the structured perceptron. On the second line, it is shown that the increment in F-measure (shown in parentheses) for all classes obtained by using $M_2$ is considerable and in fact the largest (17.50) of them all. Also, while all the classes improve, the most important gain is obtained for the class PER (person), shown in bold letters. In the same sense, on the third line, for model $M_3$, the best improvement is found for the class ORG (organization). Finally, the last mode $M_4$, improves LOC (location) class among the rest of the classes.
@@ -350,9 +352,9 @@ First, we are interested into discovering what is the contribution of each model
 
 % Please add the following required packages to your document preamble:
 % \usepackage{booktabs}
-\begin{table}[]
+\begin{table}[!ht]
 \centering
-\caption{Results and improvements between four multinomial linear regression (L1 normalization) models. The performance (in F-measure) is lower than before but the improvement trend with more fusion enrichment is kept.   }
+\caption{Results and improvements between four multinomial linear regression (L1 normalization) models. The performance (in F-measure) is lower than before but the improvement trend with more fusion enrichment is kept. Results obtained with the logistic regression algorithm.  }
 \label{tab:4ops}
 \begin{tabular}{@{}llllll@{}}
 \toprule
@@ -376,10 +378,11 @@ To determine which features are the most relevant, we look into the words non-ze
 
 In what follows we are interested in determining which features help to determine the correct classification of the words discussed.
                                                                                                                          
-\paragraph{Per-Model Feature Importance}
+\paragraph{Per-model Feature Importance}
 In Figures \ref{fig:trans_M1_M2}, \ref{fig:trans_M2_M3}, and \ref{fig:trans_M3_M4} we present six heatmaps showing the features that contribute and prevent words from being classified as one of the five tags available according (broadly) to the weights fitted for each feature during training. Specifically, there is a line for each possible class and a column for each feature that has a non-zero fitted coefficient and a non-zero value on the representation space of its corresponding word. In parentheses, next to the classes, we see the product of  the feature vector of the studied word times the coefficients' matrix of the corresponding model. These values serve as an indicator\footnote{Indeed, these values are used to obtain the  probability of each class by applying to them a logistic function, namely a softmax function.} of the class predicted by the model. Color wise,  white indicates zero values, red indicates positive values and blue represent negative values. The color intensity is directly associated with the absolute value of the coefficient.
 
-\subparagraph{From $M_1$ to $M_2$} In the analysis from model $M_1$ to model $M_2$, we consider the word $Kory$, which changes from being ill classified in model $M1$ as O to being well classified in $M2$ as PER. We consider this last tag since its the class model $M2$ improves the most. 
+\subparagraph{From $\mathbf{M_1}$ to $\mathbf{M_2}$} In the analysis from model $M_1$ to model $M_2$, we consider the word $Kory$.
+%, which changes from being ill classified in model $M1$ as O to being well classified in $M2$ as PER. We consider this last tag since its the class model $M2$ improves the most. 
 
 In model $M_1$ (Figure \ref{fig:trans_M1}) we see it is wrongly classified as not a named entity, or tag O, as the feature \textit{word-1:senior}, i.e., the previous word was \textit{senior}, drives this decision. The tag PER is also supported by the features \textit{word+2:and} and \textit{word-2:,} but it is not enough to drive the decision towards it considering the features' coefficients  of the O class.
 
@@ -427,7 +430,7 @@ On the other hand, regarding the model $M_2$ (Figure \ref{fig:trans_M2}), \texti
 
 
 
-\subparagraph{From $M_3$ to $M_4$} Going from model $M_2$ to $M_3$, we focus on the word \textit{A-League}. In the first model, $M_3$ (Figure \ref{fig:trans_M22}), \textit{A-League} is classified as O, since it being a  noun\footnote{The PoS tagger identified it as a simple noun.} (and not a proper noun) seems to be a good indication of a noun not being part of named entity, among other features, such as \textit{suf+2:r}, i.e., the last letter of the second word to the right of \textit{A-League}, in this case \textit{r}. 
+\subparagraph{From $\mathbf{M_2}$ to $\mathbf{M_3}$} Going from model ${M_2}$ to ${M_3}$, we focus on the word \textit{A-League}. In the first model, $M_3$ (Figure \ref{fig:trans_M22}), \textit{A-League} is classified as O, since it being a  noun\footnote{The PoS tagger identified it as a simple noun.} (and not a proper noun) seems to be a good indication of a noun not being part of named entity, among other features, such as \textit{suf+2:r}, i.e., the last letter of the second word to the right of \textit{A-League}, in this case \textit{r}. 
 
 With respect to model $M_3$ (see Figure \ref{fig:trans_M3}), \textit{A-League} is correctly tagged as ORG. While the largest coefficients are assigned to the features of the model $M2$ (namely CAP and NN), we can see that the enriched features \textit{CAP\_M3}\footnote{Features added by the third fusion operation are labeled with a \textit{\_M3} suffix. The same is done for the fourth fusion with the suffix \textit{\_M4}} and \textit{suf-1:the\_M3} play a decisive role into the assignation of the class ORG, as most of the values corresponding to the newly added features are positive for this class.
 
@@ -453,7 +456,7 @@ With respect to model $M_3$ (see Figure \ref{fig:trans_M3}), \textit{A-League} i
 	\label{fig:trans_M3_M4}
 \end{figure}
 
-\subparagraph{From $M_2$ to $M_3$} Finally, going from model $M3 $ to model $M4$, in Figure \ref{fig:trans_M3_M4} we have an incorrect ORG classification to a correct LOC classification after the application of the last fusion operation. The chosen word is \textit{Green}. Both coefficients' values are quite similar  to each other (see Figures \ref{fig:trans_M33} and \ref{fig:trans_M4}). In fact, the score in parentheses for both LOC and ORG are quite close in both models. This is expected as their difference in performance is small (see Table \ref{tab:4ops}). Not surprisingly, there are only two features coming from the last fusion (the last two columns, indicated with a \textit{\_M4} suffix. Nonetheless, it seems that one of these enriched features, \textit{word-1:in\_M4} determines the model decision towards the LOC class, thus making the correct classification.
+\subparagraph{From $\mathbf{M_3}$ to $\mathbf{M_4}$} Finally, going from model $M_3 $ to model $M_4$, in Figure \ref{fig:trans_M3_M4} we have an incorrect ORG classification to a correct LOC classification after the application of the last fusion operation. The chosen word is \textit{Green}. Both coefficients' values are quite similar  to each other (see Figures \ref{fig:trans_M33} and \ref{fig:trans_M4}). In fact, the score in parentheses for both LOC and ORG are quite close in both models. This is expected as their difference in performance is small (see Table \ref{tab:4ops}). Not surprisingly, there are only two features coming from the last fusion (the last two columns, indicated with a \textit{\_M4} suffix. Nonetheless, it seems that one of these enriched features, \textit{word-1:in\_M4} determines the model decision towards the LOC class, thus making the correct classification.
 
 In general, in these experiments, we see that the added enriched features are not the highest valued in the fitted coefficients vectors, nonetheless, they  provide the extra information needed to push the model towards the correct prediction, by enriching the features through cross and late fusion and by providing more descriptors for each word and consequently reducing the sparsity of the representation matrices.
 
@@ -499,17 +502,19 @@ As shown in Figure \ref{fig:diagmetodoWSD}, the procedure we follow is very simi
 We discovered a set of successful fusion operations in the previous experiments. In these experiments we set to test if the improvements obtained before, using said fusion schemes, can be transfered into WSI/WSD and other corpora. 
 
 \paragraph{Representation Spaces}
-We use the same set of features from the previous subsection (see \ref{sec:rep_spaces}), except for the standard NER features, that is, those represented by $M^{STD}$, as they are specifically designed to tackle that task. Consequently, we will experiment with two representation matrices $\mlex$ and $\msyn$.
+We use the same set of features from the previous subsection (see \ref{sec:rep_spaces}), except for the standard NER features, that is, those represented by $\mstd$, as they are specifically designed to tackle that task. Consequently, we will experiment with two representation matrices $\mlex$ and $\msyn$.
 
 \paragraph{Learning Methods}
-Regarding the machine learning methods to induce senses, (the WSI part), we employ spectral clustering, as in  \cite{GoyalH14}, on the input matrices in order to automatically discover senses (a cluster is considered a sense). Regarding disambiguation, we trivially assign senses to the target word instances according to the number of common words in each cluster and the context words of the target word. In other words, for each test instance of a target word, we select the cluster (sense) with the maximum number of shared words with the current instance context.
+Regarding the machine learning methods to induce senses, (the WSI part), we employ spectral clustering (as is described previously in Chapter 3, paragraph \ref{par:partitioning_clustering}) on the input matrices in order to automatically discover senses (a cluster is considered a sense). As we noted before, this method require as input a symmetric positive similarity matrix. Given that our fusion operators already may yield similarity matrices (e.g., late fusion of similarity matrices). If that is the case, we use this type of matrix directly as input to the algorithm. Otherwise, we compute the cosine similarity to obtain the corresponding affinity matrix and then use it as input. Similarly, spectral clustering is said to be more efficient if the input matrix is sparse \cite{song2008parallel}. We do not sparsify the matrix, usually done by applying a top-$k$ nearest neighbors selection, as we already apply said selection in certain fusion operators and it then becomes even harder to track the modifications applied to the feature space.
+
+ Regarding disambiguation, we trivially assign senses to the target word instances according to the number of common words in each cluster and the context words of the target word. In other words, for each test instance of a target word, we select the cluster (sense) with the maximum number of shared words with the current instance context.
 
 \paragraph{Experiments and Evaluation}
 Having learned the best fusion configuration from the previous task, in these experiments we set to test if the improvements achieved can be transfered into another NLP task, namely Word Sensed Induction and Disambiguation (WSI/WSD). As preprocessing, we simply remove stopwords and tokens with less than three letters. The features we extracted from the tested corpora with the same tools as in the previous task.
 \subparagraph{Test Dataset}
 The WSI/WSD model is tested on the dataset of  the Semeval-2007 WSID task \cite{Agirre2007}. The task was based on a set of 100 target words (65 verbs and 35 nouns), each  word having a set of instances, which are specific contexts where the word appear. Senses are induced from these contexts and applied to each one of the instances.
 
-%In the case of Semeval-2007, the unsupervised evaluation assumed the induced senses as clusters of examples. These clusters are compared to the sets of examples tagged with the given gold standard word senses (classes), and evaluated using the \textit{F-Score} measure for clusters. 
+%In the case of Semeval-2007, the unsupervised evaluation assumed the induced senses as clusters of examples. These clusters are compared to the sets of examples tagged with the given gold standard word senses (classes), and evaluated using the \textit{F-measure} measure for clusters. 
 % 
 %The supervised setting maps the induced senses to manually-defined gold standard senses, and use a mapping produced by the organizers to tag the test corpus with gold standard tags. The mapping is
 %automatically produced by the organizers, and the resulting results evaluated according to the
@@ -518,75 +523,76 @@ The WSI/WSD model is tested on the dataset of  the Semeval-2007 WSID task \cite{
 
 \subparagraph{Evaluation Measures}
 Being an unsupervised task, the evaluation metrics of WSI/WSD are debated in terms of quality \cite{CruysA11}. We consider supervised recall and unsupervised F-measure, as in the competition original paper \cite{Agirre2007}. The first one maps the output of a system to the true senses of the target words' instances and the second one measures the quality of the correspondence between the automatically found clusters and the senses. 
-We consider that the number of senses found by the system is also a rather good indicator of performance: the best competition baseline assigns the most frequent sense to each target word (this baseline is called MFS), thus this baseline system would have an average of 1 sense (cluster) per word. A system that goes near this average may be indeed not resolving the task efficiently but finding the MFS trivial solution. Consequently, to show that we do not fall in the MFS solution, we display in our results the average number of clusters.
+We consider that the number of senses found by the system is also a rather good indicator of performance: the best competition baseline assigns the most frequent sense to each target word (this baseline is called the Most Frequent Sense or MFS), thus this baseline system would have an average of 1 sense (cluster) per word. A system that goes near this average may be indeed not resolving the task efficiently but finding the MFS trivial solution. Consequently, to show that we do not fall in the MFS solution, we display in our results the average number of clusters.
 
 
 \begin{table}[htp!]
 \centering
 \setlength\tabcolsep{3pt}
-\caption{Supervised Recall and Unsupervised F-measure for the Semeval-2007 corpus. We also display the average number of clusters found by each fusion configuration.}
+\caption{Supervised Recall and Unsupervised F-measure for the Semeval-2007 corpus. We also display the average number of clusters found by each fusion configuration. Results obtained with the spectral clustering algorithm.}
 \label{ref:wsd-semeval}
 \begin{tabular}{@{}lccc|cccc@{}}
 \toprule
-\textbf{Method} & \multicolumn{3}{c|}{\textbf{Recall (\%)}} & \multicolumn{3}{c}{\textbf{FM (\%)}} & \# \textbf{cl} \\ \midrule
+\textbf{Method} & \multicolumn{3}{c|}{\textbf{Recall (\%)}} & \multicolumn{3}{c}{\textbf{F-measure (\%)}} & \# \textbf{cl} \\ \midrule
        & all           & noun          & verb          & all          & noun         & verb         &\\ 
        \midrule
        & \multicolumn{7}{r}{\textbf{Single Features}} \\ \midrule
-       $M^{LEX}$                    & 79.20 & 82.10 & 75.80 &	72.70	 & 76.90 & 67.90 & 4.13\\
+       $\mlex$                    & 79.20 & 82.10 & 75.80 &	72.70	 & 76.90 & 67.90 & 4.13\\
  
 
-       $M^{SYN}$                    & 79.10 & 81.60 & 76.20 &	69.30	& 69.40 & 69.20 & 4.47\\
+       $\msyn$                    & 79.10 & 81.60 & 76.20 &	69.30	& 69.40 & 69.20 & 4.47\\
        \midrule
-       &            \multicolumn{7}{r}{\textbf{Early Fusion}}       \\ \midrule
-       $E(M^{LEX}, M^{SYN})$		& 78.70 & 81.11 & 76.10 &	74.00	& 76.66 & 71.11 & 4.46\\
+       &            \multicolumn{7}{r}{\textbf{Early Fusion (EF)}}       \\ \midrule
+       $E(\mlex, \msyn)$		& 78.70 & 81.11 & 76.10 &	74.00	& 76.66 & 71.11 & 4.46\\
 	  \midrule
-       &            \multicolumn{7}{r}{\textbf{Cross Early Fusion}}       \\ \midrule	         
+       &            \multicolumn{7}{r}{\textbf{Cross Feature Fusion ($\mathbf{X_FF}$)}}       \\ \midrule	         
 	   
-	   $X(S^{LEX}, M^{LEX})$		& 79.20 & 82.30 & 75.70 &	76.20	& 79.60 & 72.50 & 3.63 \\	   
-       $X(S^{LEX}, M^{SYN})$		& 78.30 & 80.90 & 75.30 &	74.60	& 75.10 & 73.90 & 3.08 \\
-	   $X(S^{SYN}, M^{LEX})$		& 78.60 & 80.90 & 76.10 &	78.90	& 80.70 & 76.90	 & 1.08 \\	   
-       $X(S^{SYN}, M^{SYN})$		& 78.90 & 81.40 & 76.10 &	73.70	& 77.70 & 70.00 & 2.72 \\       
+	   $X_F(\slex, \mlex)$		& 79.20 & 82.30 & 75.70 &	76.20	& 79.60 & 72.50 & 3.63 \\	   
+       $X_F(\slex, \msyn)$		& 78.30 & 80.90 & 75.30 &	74.60	& 75.10 & 73.90 & 3.08 \\
+	   $X_F(\ssyn, \mlex)$		& 78.60 & 80.90 & 76.10 &	78.90	& 80.70 & 76.90	 & 1.08 \\	   
+       $X_F(\ssyn, \msyn)$		& 78.90 & 81.40 & 76.10 &	73.70	& 77.70 & 70.00 & 2.72 \\       
  \midrule
-       &            \multicolumn{7}{r}{\textbf{Cross Late Fusion}}       \\ \midrule
+       &            \multicolumn{7}{r}{\textbf{Cross Similarity Fusion ($\mathbf{X_SF}$)}}       \\ \midrule
 	   
  
-	   $X(S^{SYN}, S^{LEX})$		& 78.70 & 80.90 & 76.20 &	78.90	& 80.80 & 76.80 & 1.01 \\
-	   $X(S^{LEX}, S^{SYN})$		& 78.80 & 80.90	& 76.06 &	78.70	& 80.50  & 76.80 & 1.33 \\
+	   $X_S(\ssyn, \slex)$		& 78.70 & 80.90 & 76.20 &	78.90	& 80.80 & 76.80 & 1.01 \\
+	   $X_S(\slex, \ssyn)$		& 78.80 & 80.90	& 76.06 &	78.70	& 80.50  & 76.80 & 1.33 \\
 	  
  \midrule
-       &            \multicolumn{7}{r}{\textbf{Cross Late Early Fusion}}       \\ \midrule
+       &            \multicolumn{7}{r}{\textbf{Cross Feature Cross Similarity Fusion ($\mathbf{X_FX_SF}$)}}       \\ \midrule
 	   
  
 
 
-       $X(X(S^{LEX}, S^{SYN}), M^{LEX})$		& 78.40 & 80.40 & 76.10 &	70.00	&68.70  & 71.40& 3.11 \\	   
-       $X(X(S^{LEX}, S^{SYN}), M^{SYN})$		& 78.90 & 81.80 & 75.60 &	75.20	& 77.40 & 72.80 & 3.16 \\	   
+       $X(X(\slex, \ssyn), \mlex)$		& 78.40 & 80.40 & 76.10 &	70.00	&68.70  & 71.40& 3.11 \\	   
+       $X(X(\slex, \ssyn), \msyn)$		& 78.90 & 81.80 & 75.60 &	75.20	& 77.40 & 72.80 & 3.16 \\	   
        	  \midrule
-       &            \multicolumn{7}{r}{\textbf{Early Cross Early Fusion}}       \\ \midrule	         
+       &            \multicolumn{7}{r}{\textbf{Early Cross Feature Fusion ($\mathbf{EX_FF}$)}}       \\ \midrule	         
        
-       $E(M^{LEX}, X(S^{LEX}, M^{LEX}))$		& 79.20 & 82.40 & 75.70 &	76.00	& 79.50  & 72.10 & 3.57 \\	   
-	   $E(M^{SYN}, X(S^{LEX}, M^{LEX}))$		& 78.30 & 80.50 & 75.80 &	75.20	&75.40  & 75.00 & 1.95 \\	   
+       $E(\mlex, X_F(\slex, \mlex))$		& 79.20 & 82.40 & 75.70 &	76.00	& 79.50  & 72.10 & 3.57 \\	   
+	   $E(\msyn, X_F(\slex, \mlex))$		& 78.30 & 80.50 & 75.80 &	75.20	&75.40  & 75.00 & 1.95 \\	   
        \midrule
-       &            \multicolumn{7}{r}{\textbf{Late Cross Early Fusion}}       \\ \midrule	  
-	   $L(M^{SYN}, X(S^{LEX}, M^{SYN}))$		& 78.60 & 81.10 & 75.80 &	67.80	& 71.40&63.80 & 4.22 \\	   
-	   $L(M^{LEX}, X(S^{LEX}, M^{LEX}))$		& 79.50 & 82.80 & 75.70 &	76.09	&79.10 &72.70 & 3.96 \\	   
+       &            \multicolumn{7}{r}{\textbf{Late Cross Feature Fusion ($\mathbf{LX_FF}$)}}       \\ \midrule	  
+	   $L(\msyn, X_F(\slex, \msyn))$		& 78.60 & 81.10 & 75.80 &	67.80	& 71.40&63.80 & 4.22 \\	   
+	   $L(\mlex, X_F(\slex, \mlex))$		& 79.50 & 82.80 & 75.70 &	76.09	&79.10 &72.70 & 3.96 \\	   
        \midrule
-       &            \multicolumn{7}{r}{\textbf{Early Late Cross Early Fusion}}       \\ \midrule	  
-	   $E(M^{LEX}, L(M^{SYN}, X(S^{LEX}, M^{SYN})))$		& 78.50 & 81.40 & 75.40 &	74.20	& 78.20 & 69.80& 4.26 \\	   
-	   $E(M^{LEX}, L(M^{LEX}, X(S^{LEX}, M^{LEX})))$		& 79.50 & 82.70 & 75.90 &	75.80	& 78.50&72.70 & 3.99 \\
+       &            \multicolumn{7}{r}{\textbf{Early Late Cross Feature Fusion ($\mathbf{ELX_FF	}$)}}       \\ \midrule	  
+	   $E(\mlex, L(\msyn, X_F(\slex, \msyn)))$		& 78.50 & 81.40 & 75.40 &	74.20	& 78.20 & 69.80& 4.26 \\	   
+	   $E(\mlex, L(\mlex, X_F(\slex, \mlex)))$		& 79.50 & 82.70 & 75.90 &	75.80	& 78.50&72.70 & 3.99 \\
 	   \midrule
-	   &            \multicolumn{7}{c}{Early Early Late Cross Early Fusion}       \\ 
-	   
+	   \midrule
 	   
 	   Semeval-2007 Best Systems& 81.60 & 86.80 & 75.70 &	78.70	& 80.80&76.30 & 3.06, 1.15 \\ 	 
-%	   Baseline 		& 78.70 & 80.90 & 76.20 &	78.90	& 80.70&76.80 & 1.00 \\ 	   	 	    
+	   Baseline 		& 78.70 & 80.90 & 76.20 &	78.90	& 80.70&76.80 & 1.00 \\ 	   	 	    
 		   
        \bottomrule
 \end{tabular}
 \end{table}
 
 \paragraph{Results and Discussion}
-Word sense induction and disambiguation results are found in Table \ref{ref:wsd-semeval}. Again, as with NER, we aim to surpass the baseline of the single features and early fusion.  We experimentally set $\beta=0.90$ and $\gamma=50$. In this task, in late fusion, when the first matrix  is deemed more relevant than the second one, the performance is higher. This may be due to the fact that, in this task, the feature matrices rows contain types (that is, each line represent an unique word), and thus they are more dense, which may entail more noisy data. By reducing the relevance of the second matrix in late fusion, we are effectively attenuating the less important information. Regarding $\gamma=50$, again due to the denser characteristic of the matrices, there is a larger quantity of true similar words that are useful to project information into another matrix, through cross fusion.  
+Word sense induction and disambiguation results are found in Table \ref{ref:wsd-semeval}. Again, as with NER, we aim to surpass the baseline of the single features and early fusion.  We experimentally set $\beta=0.90$ and $\gamma=50$. Remember that $\beta$ controls the relevance of each matrix in the late fusion binary operator $L(\alpha\cdot A, (1-\alpha)\cdot B)$. Specifically regarding this task, late fusion, when the first matrix  is deemed more relevant than the second one, the performance is higher. This may be due to the fact that, in this task, the feature matrices rows contain types (that is, each line represent an unique word), and thus they are more dense, which may entail more noisy data. By reducing the relevance of the second matrix in late fusion, we are effectively attenuating the less important information.
+
+Concerning the parameter $\gamma=50$ in cross fusion (remember that $\gamma$ controls the number of top nearest neighbors in the cross fusion operation: $X_{\gamma}(A,B) = \mathbf{K}(A,\gamma) \times B$), again due to the denser characteristic of the matrices, we believe there is a larger quantity of true similar words that are useful to project information into another matrix, through cross fusion.  
 
 In the following paragraphs, we will discuss these results all at once. We omit certain configurations that do not yield interesting results either by converging to the MFS solution (one sense found per target word) or because the performance shown by those  configurations is simply not interesting.
 
@@ -594,10 +600,10 @@ In the following paragraphs, we will discuss these results all at once. We omit 
 Regarding Single Features, $\mlex$ comes on top of $\msyn$ again. Nonetheless, $\msyn$ is much closer in terms of performance, and as expected, it is actually higher with regards to verbs. 
 
 \subparagraph{First Degree Fusion}
-On the 1F level, we see that the early fusion technique in this task does not surpass the independent features representation. Our intuition is that the similarities of both matrices seem to be correlated. In cross early fusion, the best result is obtained by $X(\slex, \mlex)$,  regarding the unsupervised F-measure. This configuration already beats our baselines, improving both noun and verb results on the unsupervised evaluation, improving the supervised recall of nouns, and staying on the same level considering all words. Also, it produces more senses than the MSF average number of senses (1 sense per target word), which is good but not indicative of results correctness. Regarding cross late fusion, given the average number of clusters produced, it seems that both results converge towards the MFS, therefore we do not consider these results.
+On the 1F level, we see that the early fusion technique in this task does not surpass the independent features representation. Our intuition is that the similarities of both matrices seem to be correlated. In cross feature fusion, the best result is obtained by $X(\slex, \mlex)$,  regarding the unsupervised F-measure. This configuration already beats our baselines, improving both noun and verb results on the unsupervised evaluation, improving the supervised recall of nouns, and staying on the same level considering all words. Also, it produces more senses than the MSF average number of senses (1 sense per target word), which is good but not indicative of results correctness. Regarding cross similarity fusion ($X_SF$), given the average number of clusters produced, it seems that both results converge towards the MFS, therefore we do not consider these results.
 
 \subparagraph{Second Degree Fusion}
-Beginning with the fusion recombinations, in level 2F, both cross late early fusions yield average results. In  early late cross early fusion, the early fusion of $\mlex$ with  $X(\slex, \mlex)$ yields very similar results than $X(\slex, \mlex)$. The next natural step is to test this fusion via a linear combination, with a late fusion. The result obtained confirmed the intuition of enriching a single feature matrix with another weighted-down matrix to improve the performance. Indeed, we consider that $L(M^{LEX}, X(S^{LEX}, M^{LEX}))$ gets the best results in terms of all-words supervised recall and the second best all-words unsupervised F-measure (we do not consider solutions that are too close to the MFS baseline). 
+Beginning with the fusion recombinations, in level 2F, both cross feature cross similarity fusions yield average results. In  early late cross feature fusion, the early fusion of $\mlex$ with  $X(\slex, \mlex)$ yields very similar results than $X(\slex, \mlex)$. The next natural step is to test this fusion via a linear combination, with a late fusion. The result obtained confirmed the intuition of enriching a single feature matrix with another weighted-down matrix to improve the performance. Indeed, we consider that $L(\mlex, X(\slex, \mlex))$ gets the best results in terms of all-words supervised recall and the second best all-words unsupervised F-measure (we do not consider solutions that are too close to the MFS baseline). 
 
 \subparagraph{High Degree Fusion}
 We test the same configurations as in NER, within the HF level, to try and improve our results. Nonetheless, in general, they do not overcome the best result found previously.
@@ -759,10 +765,10 @@ Each type of hyperedge has its own network characteristics as mentioned before. 
 
 \begin{table}[!htb]
 \centering
-
+\caption{Unsupervised F-measure (FM) for the Semeval-2007 test set. Results obtained with our proposed algorithm.}
 \begin{tabular}{@{}lrrrr@{}}
 \toprule
-\textbf{FS (\%)} & \textbf{all} & \textbf{nouns} & \textbf{verbs} & \textbf{\#cl} \\ \midrule
+\textbf{FM (\%)} & \textbf{all} & \textbf{nouns} & \textbf{verbs} & \textbf{\#cl} \\ \midrule
 1c1word          & 78.9         & 80.7           & 76.8           & 1.00             \\
 UBC-AS           & 78.7         & 80.8           & 76.3           & 1.32          \\
 DEP     & 74.9         & 80.2           & 69.0           & 3.27          \\
@@ -771,19 +777,19 @@ UoY(2007)        & 56.1         & 65.8           & 45.1           & 9.28        
 Random           & 37.9         & 38.1           & 37.7           & 19.7             \\
 1c1instance & 	9.5         & 6.6           & 12.7           & 48.51             \\ \bottomrule
 \end{tabular}
-\caption{Unsupervised F-Score (FS) for the Semeval-2007 test set}
+
 \label{tab:sem2007_unsup_FS}
 \end{table}
 
-In Table \ref{tab:sem2007_unsup_FS} we present the unsupervised evaluation results for our models as well as for some other systems. We include the F-Score measure as performance metric. Three baselines are included. The best one, one cluster per word, or \textit{1c1word} was not beaten during the competition. The second was a random assignation of senses to each instance. Finally, the third and easiest to beat baseline assigned one cluster per instance {1c1instance}. 
+In Table \ref{tab:sem2007_unsup_FS} we present the unsupervised evaluation results for our models as well as for some other systems. We include the F-measure measure as performance metric. Three baselines are included. The best one, one cluster per word, or \textit{1c1word} was not beaten during the competition. The second was a random assignation of senses to each instance. Finally, the third and easiest to beat baseline assigned one cluster per instance {1c1instance}. 
 
 In this table, as in the rest of the tables presented in this section, the columns show the results for all the words, for the nouns exclusively as well as for the verbs. The final column indicates the number of induced clusters per system. It is important to consider this value as the unsupervised metrics are biased towards systems with less number of induced clusters and thus to the 1c1word baseline.
 
-We can appreciate that both our methods surpass the baselines and the system described before \textit{UoY(2007)}. The best system of the competition, \textit{UBC-AS} used also co-occurrence graphs and applied a random-walk based clustering algorithm over the vertices' similarity matrix. Still, our system induced a larger amount of senses, while retaining a competitive F-Score value. We also note that in this evaluation DEP, the system using only co-occurrent dependency relations outperformed the lexical co-occurrence only system LEX.
+We can appreciate that both our methods surpass the baselines and the system described before \textit{UoY(2007)}. The best system of the competition, \textit{UBC-AS} used also co-occurrence graphs and applied a random-walk based clustering algorithm over the vertices' similarity matrix. Still, our system induced a larger amount of senses, while retaining a competitive F-measure value. We also note that in this evaluation DEP, the system using only co-occurrent dependency relations outperformed the lexical co-occurrence only system LEX.
 
 \begin{table}[!htb]
 \centering
-\caption{Supervised Recall (SR) on the Semeval-2007 test set}
+\caption{Supervised Recall (SR) on the Semeval-2007 test set. Results obtained with our proposed algorithm.}
 \begin{tabular}{@{}lrrrr@{}}
 \toprule
 \textbf{SR (\%)} & \textbf{all} & \textbf{nouns} & \textbf{verbs} & \textbf{\#cl} \\ \midrule
@@ -803,7 +809,7 @@ Moving onto the supervised results for Semeval-2007, in Table \ref{tab:sem2007_s
 
 
 
-As a way of determining where does both systems complement each other, in Figure \ref{fig:nouns_fs} and Figures  \ref{fig:verbs_fs2} and \ref{fig:verbs_fs3} we show the unsupervised F-Score value for nouns and verbs respectively (we split the verbs in two figures for visibility). We can see that, as the previous result tables indicated, DEP did better overall. Nonetheless, and what is most interesting in these figures, is that there are certain words (both nouns and verbs) that obtain better scores using LEX instead of DEP and vice versa. For example, the nouns \textit{area}, \textit{future}, and \textit{state} are better treated by LEX, according to this measure, even if by a small margin. On the other hand, with respect to the verbs, the differences between performance are more important. Again, the LEX system does better while finding senses and assigning them to the verbs \textit{avoid}, \textit{fix}, and \textit{work}. %This information will be useful during the design of hybridization techniques between feature of our hypergraph structure.
+As a way of determining where does both systems complement each other, in Figure \ref{fig:nouns_fs} and Figures  \ref{fig:verbs_fs2} and \ref{fig:verbs_fs3} we show the unsupervised F-measure value for nouns and verbs respectively (we split the verbs in two figures for visibility). We can see that, as the previous result tables indicated, DEP did better overall. Nonetheless, and what is most interesting in these figures, is that there are certain words (both nouns and verbs) that obtain better scores using LEX instead of DEP and vice versa. For example, the nouns \textit{area}, \textit{future}, and \textit{state} are better treated by LEX, according to this measure, even if by a small margin. On the other hand, with respect to the verbs, the differences between performance are more important. Again, the LEX system does better while finding senses and assigning them to the verbs \textit{avoid}, \textit{fix}, and \textit{work}. %This information will be useful during the design of hybridization techniques between feature of our hypergraph structure.
 
  
 
@@ -813,21 +819,21 @@ As a way of determining where does both systems complement each other, in Figure
  \begin{figure}[!htb]
 \centering
 \includegraphics[width=1\linewidth]{images/Chapitre5/tex_img_files/nouns_fs.pdf}
-\caption{Unsupervised F-Score results for the nouns of the Semeval-2007 test set.}
+\caption{Unsupervised F-measure results for the nouns of the Semeval-2007 test set.}
 \label{fig:nouns_fs}
 \end{figure}
 
  \begin{figure}[!htb]
 \centering
 \includegraphics[width=1\linewidth]{images/Chapitre5/tex_img_files/verbs_fs_2.pdf}
-\caption{Unsupervised F-Score results for the first half of verbs of the Semeval-2007 test set.}
+\caption{Unsupervised F-measure results for the first half of verbs of the Semeval-2007 test set.}
 \label{fig:verbs_fs2}
 \end{figure}
 
  \begin{figure}[!htb]
 \centering
 \includegraphics[width=1\linewidth]{images/Chapitre5/tex_img_files/verbs_fs_3.pdf}
-\caption{Unsupervised F-Score results for the second half of verbs of the Semeval-2007 test set.}
+\caption{Unsupervised F-measure results for the second half of verbs of the Semeval-2007 test set.}
 \label{fig:verbs_fs3}
 \end{figure}
 
@@ -836,15 +842,15 @@ As a way of determining where does both systems complement each other, in Figure
 
 %todo split verbs?
 \subparagraph{Semeval-2010}
-In Semeval-2010, two unsupervised evaluation metrics are introduced: \textit{V-Measure} and \textit{paired F-Score}. Briefly, the V-Measure assesses the quality of a clustering solution by measuring the degree to which each cluster consists of instances principally belonging to a single gold standard class, or homogeneity; and to completeness, the level with which each gold standard class consists of instances primarily assigned to a single cluster.
+In Semeval-2010, two unsupervised evaluation metrics are introduced: \textit{V-Measure} and \textit{paired F-measure}. Briefly, the V-Measure assesses the quality of a clustering solution by measuring the degree to which each cluster consists of instances principally belonging to a single gold standard class, or homogeneity; and to completeness, the level with which each gold standard class consists of instances primarily assigned to a single cluster.
 
-The paired F-Score evaluation transforms the clustering problem into a classification one. Two instance pairs sets are generated, the first one coming from the system induced clusters, by including pairs of the instances found in each cluster. The second set of instance pairs is built from the gold standard classes. It contains pairs of the instances found in each class. We can then define \textit{Precision} and \textit{Recall}. Precision is computed as the ratio of the number of common instance pairs between the two sets divided by the total number of pairs in the clustering solution. Recall is the count of common instance pairs between the two sets divided by the total number of pairs in the gold standard. The paired F-Score is the harmonic mean of both quantities.
+The paired F-measure evaluation transforms the clustering problem into a classification one. Two instance pairs sets are generated, the first one coming from the system induced clusters, by including pairs of the instances found in each cluster. The second set of instance pairs is built from the gold standard classes. It contains pairs of the instances found in each class. We can then define \textit{Precision} and \textit{Recall}. Precision is computed as the ratio of the number of common instance pairs between the two sets divided by the total number of pairs in the clustering solution. Recall is the count of common instance pairs between the two sets divided by the total number of pairs in the gold standard. The paired F-measure is the harmonic mean of both quantities.
 
 Concerning the supervised evaluation, it follows explicitly that of Semeval-2007, using recall as the main performance measure as in  \cite{Semeval2010,VandeCruys2011,pedersen2010duluth}.
 
 \begin{table}[]
 \centering
-\caption{Unsupervised V-Measure (VM) on the Semeval 2010 test set}
+\caption{Unsupervised V-Measure (VM) on the Semeval 2010 test set. Results obtained with our proposed algorithm.}
 \begin{tabular}{@{}lrrrr@{}}
 \toprule
 \textbf{VM (\%)} & \textbf{all} & \textbf{nouns} & \textbf{verbs} & \textbf{\#cl} \\ \midrule
@@ -863,10 +869,10 @@ In Table \ref{tab:sem2010_VM} we present our systems compared to the baseline an
 
 \begin{table}[]
 \centering
-\caption{Unsupervised Paired F-Score (FS) for the Semeval 2010 test set}
+\caption{Unsupervised Paired F-measure (FM) for the Semeval 2010 test set. Results obtained with our proposed algorithm.}
 \begin{tabular}{@{}lrrrr@{}}
 \toprule
-\textbf{FS (\%)} & \textbf{all} & \textbf{nouns} & \textbf{verbs} & \textbf{\#cl} \\ \midrule
+\textbf{FM (\%)} & \textbf{all} & \textbf{nouns} & \textbf{verbs} & \textbf{\#cl} \\ \midrule
 MFS & 63.5 & 57.0 & 72.4 & 1.00 \\
 Duluth-WSI-SVD-Gap & 63.3 & 57.0 & 72.4 & 1.02 \\
 DEP & 53.6 & 50.1 & 58.7 & 2.75 \\
@@ -878,13 +884,13 @@ Random & 31.9 & 30.4 & 34.1 & 4.00 \\ \bottomrule
 \label{tab:sem2010_FS}
 \end{table}
 
-The second unsupervised measure, Paired F-Score, can be seen in Table \ref{tab:sem2010_FS}. In this case both systems presented performed better than the random baseline. Any system presented was able to beat the MFS baseline. We note that DEP does much better compared to LEX concerning verbs, namely 58\% vs. 28\% F-Score. Still, the results are low considering the best results of the competition, 63\% from Duluth, although again, it generates a number of senses very similar to the MFS baseline. Both our systems induce a considerable amount of clusters while keeping a descent F-Score.
+The second unsupervised measure, Paired F-measure, can be seen in Table \ref{tab:sem2010_FS}. In this case both systems presented performed better than the random baseline. Any system presented was able to beat the MFS baseline. We note that DEP does much better compared to LEX concerning verbs, namely 58\% vs. 28\% F-measure. Still, the results are low considering the best results of the competition, 63\% from Duluth, although again, it generates a number of senses very similar to the MFS baseline. Both our systems induce a considerable amount of clusters while keeping a descent F-measure.
 
 
 
 \begin{table}[tb]
 \centering
-\caption{Supervised recall (SR) for Semeval 2010 test set (80\% mapping, 20\% evaluation)}
+\caption{Supervised recall (SR) for Semeval 2010 test set (80\% mapping, 20\% evaluation). Results obtained with our proposed algorithm.}
 \begin{tabular}{@{}lrrr@{}}
 \toprule
 \textbf{SR (\%)} & \textbf{all} & \textbf{nouns} & \textbf{verbs} \\ \midrule
