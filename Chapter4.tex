@@ -31,8 +31,8 @@ At the end of the chapter we conclude by discussing the experiments performed, t
 
 \begin{figure}
 \centering
-\includegraphics[width=.9\linewidth]{images/Chapitre4/main_diag2.pdf}
-\caption{Complete description of the three contributions of this work. In this chapter we focus on the third contribution, addressing WSD/WSI and NER with the model proposed in the previous chapter.}
+\includegraphics[width=.7\linewidth]{images/Chapitre4/main_diag2.pdf}
+\caption{Complete description of the three contributions of this work. In this chapter we focus on  WSD/WSI and NER as applications of the model proposed.}
 \label{fig:main_diag2}
 \end{figure}
 
@@ -700,13 +700,12 @@ Indeed, contrary to what we reported in the previous NER experiments, the best r
 
 Specifically, regarding supervised recall, the operations $L(\mlex, X_F(\slex,\mlex))$ and $E(\mlex,L(\mlex,X_F(\slex,\mlex)))$ (with a performance of 79.5\%) surpass the MFS baseline (78.7\%), both single feature matrices $\mlex$ and $\msyn$ (79.2\%), and the early fusion trivial operation $E(\mlex,\msyn)$ ( with 78.7\%). Concerning the unsupervised F-measure, we do surpass our two baselines but not the 1c1word competition baseline. While considering this performance metric is harder to determine the best performing model. There are several fusion operations that match the performance of the 1c1word baseline, although the number of clusters produced is very close to one. This is the case of the $X_F(\ssyn,\mlex)$ and $X_S(\ssyn,\slex)$ operators, with 78.9\% F-measure and generating 1.08 and 1.01 clusters respectively. 
 
-In order to determine the best performing operators, that stray away from the trivial baselines, in the following we consider the H-measure, introduced before, to help us identify those systems that perform the best. In Figure \ref{fig:h_measure_semeval2007}, we see the H-measure for each of the fusion operators reported, with $\delta=3.68$, as this is the number of true senses per target word in the Semeval 2007 corpus.  According to this metric, we find the 1F and 2F degree  levels the most interesting. Specifically, $X_F(\slex,\mlex)$, in 1F, is the most performing fusion operator. Indeed, by transferring quality lexical similarities into its same feature matrix, we obtain more useful relations than by using any syntactic data.
+In order to determine the best performing operators, that stray away from the trivial baselines, in the following we consider the H-measure, introduced before, to help us identify those systems that perform the best. In Figure \ref{fig:h_measure_semeval2007}, we see the H-measure for each of the fusion operators reported. We calculate the H-measure with $\delta=3.68$, as this is the number of true senses per target word in the Semeval 2007 corpus.  According to this metric, we find the 1F and 2F degree  levels the most interesting. Specifically, $X_F(\slex,\mlex)$, in 1F, is the most performing fusion operator. Indeed, by transferring quality lexical similarities into its same feature matrix, we obtain more useful relations than by using any syntactic data.
 On the other had, in second place, the operator $E(\mlex,X_F(\slex,\mlex))$ of the 2F level consists also exclusively on lexical information. While the same operators that outperformed the rest in NER (in the HF level) are not as adequate in this WSI/WSD experiment, we see that most of the feature combination techniques improve over the baselines of the single features and early fusion operations. 
 
 
 \begin{figure}
 \centering
-\label{fig:h_measure_semeval2007}
 \begin{tikzpicture}{width=15cm,height=5cm}
 \pgfplotsset{compat=1.8}
 \begin{axis}[
@@ -754,6 +753,7 @@ On the other had, in second place, the operator $E(\mlex,X_F(\slex,\mlex))$ of t
 \end{axis}
 \end{tikzpicture}
 \caption{H-measure for the WSI/WSD task on the Semeval 2007 corpus. Results obtained with the spectral clustering algorithm. The best performing operator is the $X_F(\slex,\mlex)$.}
+\label{fig:h_measure_semeval2007}
 \end{figure}
 
 
@@ -886,7 +886,7 @@ The assignation of a sense consists in looking at each $tw$ instance represented
 	
 \paragraph{Experiments and Evaluation}
 \subparagraph{Test Datasets}
-We trained and evaluated our system on two datasets: Semeval 2007 Task 2 (as in the previous experiments) and Semeval 2010 Task 14 \cite{Semeval2010}. We recall that the Semeval 2007 task consisted in the induction and disambiguation of a single set of 100 words, 65 verbs and 35 nouns, each target word having a set of contexts where the word appear. On the other hand, the Semeval 2010 task consisted also on 100 words, with 50 being verbs and 50 being nouns. This time, a training set from which the senses of a word have to be induced is provided. In our experiment, for the Semeval 2010 dataset, we induce the senses from the training set and disambiguate the target words present within the test set.
+We trained and evaluated our system on two datasets: Semeval 2007 Task 2 (as in the previous experiments) and Semeval 2010 Task 14 \cite{Semeval2010}. We recall that the Semeval 2007 task consisted in the induction and disambiguation of a single set of 100 words, 65 verbs and 35 nouns, each target word having a set of contexts where the word appear. On the other hand, the Semeval 2010 task consisted also on 100 words, with 50 being verbs and 50 being nouns. The average number of true senses in this dataset is 3.79. On this version of Semeval, a training set from which the senses of a word have to be induced is provided. In our experiment, for the Semeval 2010 dataset, we induce the senses from the training set and disambiguate the target words present within the test set.
 
 We apply a light pretreatment, consisting on token lemmatization and we remove all words that appear less than four times. Concerning the individual graphs of each target word, we work only with nouns and if the extracted graph has fewer than 100 nodes, we do not apply any filtering (we keep all the extracted words). We do this in order to avoid empty solutions.
 
@@ -940,7 +940,7 @@ Looking at the table, we can see that both our methods surpass the baselines and
 With respect to our fusion space methods, SC$_{\text{fusion}}$ and GB$_{\text{fusion}}$ we find that both are competitive but cannot achieve a better performance that those systems prepared for the competition. Both systems are better than using independent features, according to the unsupervised F-measure. GB$_{\text{fusion}}$  Nonetheless, for supervised recall, only GB$_{\text{fusion}}$ beats both of the single feature matrices.
 
 
-\begin{table}[!htb]
+\begin{table}[!tb]
 \centering
 \caption{Supervised Recall (SR) on the Semeval 2007 test set. The highest values for each column are in bold. Results are obtained with our proposed algorithm.}
 \begin{tabular}{@{}lrrrr@{}}
@@ -959,15 +959,11 @@ UoY(2007) & 77.7 & 81.6 & 73.3 & 9.3 \\ \bottomrule
 \label{tab:sem2007_sup_recall}
 \end{table}
 
-
-
-
 Moving onto the supervised results for Semeval 2007, in Table \ref{tab:sem2007_sup_recall} we show the results obtained concerning supervised recall.  In this table we include the competing system I2R \cite{Niu2007}, based on an Information Bottleneck based clustering algorithm, which obtains the best results according to all the words and nouns. Both our systems DEP and SEN beat the baseline of assigning the most frequent sense to an instance MFS). More interestingly, DEP was able to beat the MFS verb baseline, something that was not achieved during the competition. As was the case before, our systems beat UoY(2007).
 
 
 \begin{figure}
 \centering
-\label{fig:h_measure_semeval2007}
 \begin{tikzpicture}{width=5cm,height=5cm}
 \pgfplotsset{compat=1.8}
 \begin{axis}[
@@ -1002,9 +998,10 @@ Moving onto the supervised results for Semeval 2007, in Table \ref{tab:sem2007_s
 \end{axis}
 \end{tikzpicture}
 \caption{H-measure for the WSI/WSD task on the Semeval 2007 corpus using our network-based method as well as other systems, indicated on the x-axis. The best performing system was spectral clustering with a fusion representation space SC$_{\text{fusion}}$.}
+\label{fig:h_measure_semeval2007_nbased}
 \end{figure}
 
-We now look into the results from the H-measure perspective. Again, as in the experiments with fusion opeartions, the best system SC$_{\text{fusion}}$ uses spectral clustering with a single cross media fusion operator, i.e., $X_F(\slex,\mlex)$. Close, in second place, we find the other fusion based system, this time using the network-based method proposed previously. Finally, the system UBC-AS  is ranked third by the H-measure.
+We now look into the results from the H-measure perspective (see Figure \ref{fig:h_measure_semeval2007_nbased}). Again, as in the experiments with fusion opeartions, the best system SC$_{\text{fusion}}$ uses spectral clustering with a single cross media fusion operator, i.e., $X_F(\slex,\mlex)$. Close, in second place, we find the other fusion based system, this time using the network-based method proposed previously. Finally, the system UBC-AS  is ranked third by the H-measure.
 
 In general, it is interesting to notice that the fusion operators outperform again the single features and is on pair with other performing systems. What does seems unexpected is that the roles played by the DEP and SEN system is inverted regarding to the fusion experiments presented in the previous subsection. Indeed, using our network-based approach the performance of DEP is considerably larger than that of SEN, whereas using spectral clustering the lexical information outranked (by a small margin) the syntactic information (based on dependencies). Again, we attribute this lack of performance of SEN to the size of the window employed, which seems to general to detect appropriate senses.
 
@@ -1116,7 +1113,7 @@ Random & 57.3 & 51.5 & 65.7 & 4.0\\ \bottomrule
 
 Finally, we in Table \ref{tab:sem2010_SR} we show the supervised Recall results of Semeval 2010. The best performing algorithm shown is NMF$_{lib}$. During the competition, UoY(2010) was the best method. It is a graph-based algorithm which shares the name with the UoY(2007)  system presented in Semeval 2007, but it is a different  approach. Concerning our systems, in this evaluation they seem to perform the best, or in a comparable level, to the top methods.  We find that in general our systems seem to perform better on the Semeval 2007 dataset. Discovering the reason could shed light into improving the performance on the Semeval 2010 test set. Given the results, it seems like a combination of features (syntactic plus lexical) in  a single algorithm could yield better results. 
 
-Again, in order to find the overall best systems, we present the H-measure as before. This time the H-measure will be the harmonic mean of the newly introduced unsupervised paired F-measure instead of the plain F-measure used before. The supervised recall stays also as before. We do not employ the V-measure for the reasons exposed before, namely it is biased towards systems that generate many senses. Ideally, the paired F-measure was conceived to punish systems that produced less or more senses than the true number of senses for each target word. In reality, it does not seem to be the case. We present in Figure \ref{h_measure_semeval2010} the H-measure for the systems discussed before in the Semeval 2010 context. Duluth-WSI-SVD-Gap is the best system overall, followed by our approach using DEP as input matrix. 
+Again, in order to find the overall best systems, we present the H-measure as before. This time the H-measure will be the harmonic mean of the newly introduced unsupervised paired F-measure instead of the plain F-measure used before. The supervised recall stays also as before. We do not employ the V-measure for the reasons exposed before, namely it is biased towards systems that generate many senses. Ideally, the paired F-measure was conceived to punish systems that produced less or more senses than the true number of senses for each target word. In reality, it does not seem to be the case. We present in Figure \ref{fig:h_measure_semeval2010} the H-measure ($\delta=3.79$) results for the systems discussed previously in the Semeval 2010 context. Duluth-WSI-SVD-Gap is the best system overall, followed by our approach using DEP as input matrix. 
 
 Looking at the results, we argue that the Semeval 2010 task was more complex than Semeval 2007. We believe it is in part due to the fact that there are more verbs in the dataset, which are always harder to disambiguate than nouns. The dataset was also considerably larger, which may have introduced noise and required more sophisticated filtering techniques. We see that our system SEN performs poorly. Indeed, it generates too many senses, which is a symptom of poorly generated clusters, that is, the clusters found are not distinctive nor cohesive enough to enclose whole senses. On the other hand DEP does reasonably well, maybe in part due to the fact that again there are more verbs whose senses are better distinguished   using syntactic information.
 
@@ -1124,7 +1121,6 @@ Looking at the results, we argue that the Semeval 2010 task was more complex tha
 
 \begin{figure}
 \centering
-\label{fig:h_measure_semeval2010}
 \begin{tikzpicture}{width=5cm,height=5cm}
 \pgfplotsset{compat=1.8}
 \begin{axis}[
@@ -1157,6 +1153,7 @@ Looking at the results, we argue that the Semeval 2010 task was more complex tha
 \end{axis}
 \end{tikzpicture}
 \caption{H-measure for the WSI/WSD task on the Semeval 2010 corpus using our network-based method as well as other systems, indicated on the x-axis. The best performing system is Duluth-WSI-SVD-Gap, while our best method is that based on syntactic information DEP.}
+\label{fig:h_measure_semeval2010}
 \end{figure}
 
 
