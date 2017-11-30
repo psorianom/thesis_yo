@@ -512,20 +512,26 @@ Regarding the machine learning methods to induce senses, (the WSI part), we empl
 \paragraph{Experiments and Evaluation}
 Having learned the best fusion configuration from the previous task, in these experiments we set to test if the improvements achieved can be transfered into another NLP task, namely Word Sensed Induction and Disambiguation (WSI/WSD). As preprocessing, we simply remove stopwords and tokens with less than three letters. The features we extracted from the tested corpora with the same tools as in the previous task.
 \subparagraph{Test Dataset}
-The WSI/WSD model is tested on the dataset of  the Semeval 2007 WSID task \cite{Agirre2007}. The task was based on a set of 100 target words (65 verbs and 35 nouns), each  word having a set of instances, which are specific contexts where the word appear. Senses are induced from these contexts and applied to each one of the instances.
+The WSI/WSD model is tested on the dataset of  the Semeval 2007 WSID task \cite{Agirre2007}. The task was based on a set of 100 target words (65 verbs and 35 nouns), each  word having a set of instances, which are specific contexts where the word appear. Senses are induced from these contexts and applied to each one of the instances. The real number of average senses per word is 3.68. This number will be useful to determine the performance of the systems below.
 
-%In the case of Semeval 2007, the unsupervised evaluation assumed the induced senses as clusters of examples. These clusters are compared to the sets of examples tagged with the given gold standard word senses (classes), and evaluated using the \textit{F-measure} measure for clusters. 
-% 
-%The supervised setting maps the induced senses to manually-defined gold standard senses, and use a mapping produced by the organizers to tag the test corpus with gold standard tags. The mapping is
-%automatically produced by the organizers, and the resulting results evaluated according to the
-%usual precision and recall measures for supervised word sense disambiguation systems. 
 
 
 \subparagraph{Evaluation Measures}
-Being an unsupervised task, the evaluation metrics of WSI/WSD are debated in terms of quality \cite{CruysA11}. We consider supervised recall and unsupervised F-measure, as in the competition original paper \cite{Agirre2007}. The first one maps the output of a system to the true senses of the target words' instances and the second one measures the quality of the correspondence between the automatically found clusters and the senses. 
-We consider that the number of senses found by the system is also a rather good indicator of performance: the best competition baseline assigns the most frequent sense to each target word (this baseline is called the Most Frequent Sense or MFS), thus this baseline system would have an average of 1 sense (cluster) per word. A system that goes near this average may be indeed not resolving the task efficiently but finding the MFS trivial solution. Consequently, to show that we do not fall in the MFS solution, we display in our results the average number of clusters.
+Being an unsupervised task, the evaluation metrics of WSI/WSD are debated in terms of quality \cite{CruysA11}. We consider supervised recall and unsupervised F-measure, as in the competition original paper \cite{Agirre2007}. 
 
+Ihe unsupervised evaluation assumed the induced senses as clusters of examples. These clusters are compared to the sets of examples tagged with the given gold standard word senses (classes), and evaluated using the F-measure measure for clusters. The supervised setting maps the induced senses to manually-defined gold standard senses, and use a mapping produced by the organizers to tag the test corpus with gold standard tags. The mapping is automatically produced by the organizers, and the resulting results evaluated according to the usual precision and recall measures for supervised word sense disambiguation systems. 
 
+%The first one maps the output of a system to the true senses of the target words' instances and the second one measures the quality of the correspondence between the automatically found clusters and the senses. 
+
+We consider that the number of senses found by the system is also a rather good indicator of performance: the best competition baseline assigns the Most Frequent Sense baseline (or MFS) to each test instance of each target word. In other words, each test instance is assigned the sense that occurs the most in the training set. Consequently, this baseline produces an average of one sense (cluster) per word. A system that goes near this average may be indeed not be resolving the task efficiently but finding the one cluster per word trivial solution. Consequently, to show that we do not fall in the MFS solution, we display in our results the average number of clusters. Furthermore, given this problematic situation we introduce a simple measure, the H-measure, that takes into account three factors of the performance results of a system: the supervised recall of all-words ($SR$), the unsupervised F-measure of all-words ($UF$), and the number of true senses on the corpus. The H-measure is calculated as the harmonic mean of $SR$ and $UF$ plus a weight that grows if the number of induced clusters (\#cl) by the system is close to the true number of senses, which we call $\delta$. More formally:
+
+\begin{equation}
+\text{H-measure} = 2*\dfrac{SR*UF}{SR+UF}+\log{\dfrac{\delta}{|\#cl-\delta|}}
+\end{equation}
+
+This metric is not bounded between 0 and 1 as the F-measure and recall. The greater its value, the more confidently we  say that the system produces good results. The way it is formulated, having the F-measure and the recall within the formulation serves as an assurance against having systems that are bad but coincidentally produces a correct number of senses. Given that we are calculating the harmonic mean of another harmonic mean (within the F-measure) makes the H-measure severe regarding F-measure and recall. Improvements on both metrics must be had to show a growth in  the H-measure.
+
+We consider this measure as a simple method to rank the results that follow, as the metrics provided by the WSI/WSD competitions are not always ideal and have their own issues, and more importantly, because they may contradict each other. Still, the H-measure is not intended to replace the classic metrics. 
 
 
 \begin{table}[htp!]
@@ -653,7 +659,7 @@ We consider that the number of senses found by the system is also a rather good 
 
 
 \paragraph{Results and Discussion}
-Word sense induction and disambiguation results, using fusion enriched matrices with spectral clustering, are found in Tables \ref{tab:wsd-semeval_sup_Recall} and \ref{tab:wsd-semeval_unsup_fm} for the supervised recall and unsupervised F-measure respectively.
+Word sense induction and disambiguation results, using fusion enriched matrices with spectral clustering, are found in Tables \ref{tab:wsd-semeval_sup_Recall} and \ref{tab:wsd-semeval_unsup_fm} for the supervised recall and unsupervised F-measure respectively. We present the results for al words, nouns and verbs.
 
 In the unsupervised evaluation results, we include an interesting baseline which had also the best performing results. The baseline consists in assigning one cluster per word (or {1c1word}), i.e., it simply assigns a single sense to all the test instances of a word. This baseline was not beat during the competition. On the other had, for the supervised results, we include the Most Frequent Sense (or MFS) baseline which tags every test instance with the sense that occurred most often in the training corpus of the competition. Besides these baselines, we included also the best performing systems' results for both of the evaluations.
 
@@ -671,9 +677,9 @@ Regarding Single Features (SF), $\mlex$ comes on top of $\msyn$ again, looking a
 \subparagraph{First Degree Fusion}
 On the 1F level, we see that the early fusion techniques in this task does not surpass the independent features representation in none of the metrics. This is unexpected as in NER, the early fusion operator was actually the best baseline during the experiments. This may be due to the fact that the clustering algorithm is sensitive to the noise produced when adding both matrices together, thus reducing the quality of the clusters found. 
 
-In cross feature fusion, with respect to the supervised evaluation, there is the $X_F(\slex,\mlex)$ operator that performs as well as $\mlex$. Indeed, this operator does improves on nouns, although it has lower performance on verbs.
+In cross feature fusion, with respect to the supervised evaluation, the $X_F(\slex,\mlex)$ operator that performs as well as $\mlex$, while producing almost the same number of average senses as the true value (3.63 versus 3.68). Indeed, this operator does improves on nouns, although it has lower performance on verbs. We will see later that this is indeed the best performing fusion operator according to our H-measure.
 %
-Regarding the unsupervised F-measure, the best result is obtained by $X_F(\slex, \mlex)$. This configuration already beats the SF baselines by improving both noun and verb results on the unsupervised evaluation. Nonetheless,  while it produces a bit more senses than the MSF average number of senses (1 sense per target word versus 1.08 by this fusion operator), it may be simply approaching  the same MSF naive solution, that is, assigning one sense per word. 
+Regarding the unsupervised F-measure, the best result is again obtained by $X_F(\slex, \mlex)$. This configuration already beats the SF baselines by improving both noun and verb results on the unsupervised evaluation. Nonetheless,  while it produces a bit more senses than the MSF average number of senses (1 sense per target word versus 1.08 by this fusion operator), it may be simply approaching  the same MSF naive solution, that is, assigning one sense per word. 
 
 
 Looking at cross similarity fusion ($X_SF$), in both tables, we see that both  $X_S(\ssyn,\slex)$ and $X_S(\slex,\ssyn)$ produces results that are too close to the baseline MFS and 1c1word, implying that we are converging to a naive solution.
@@ -688,15 +694,67 @@ Concerning the all-words unsupervised F-measure, in this level, all the operatio
 
 
 \subparagraph{High Degree Fusion}
-As with the NER experiments on the HF level, the intuition in this stage is to recombine the best previous  operators in new fusion modalities. In this case, we present the best performing operations. We note that we tried other fusions but they were found to have low results. As an example of these failed configurations, we tried $E(\mlex,X_F(\slex,\mlex))$ both recombined through an early and a late fusion operations. Furthermore, in order to have coherence with the best result obtained in NER, we tried solving WSI/WSD using the Triple Early Double Late Cross Feature Fusion (or $EEELX_FLX_F$). Unfortunately, the results in this level were not as interesting as before. Thus, we present the two most successful high degree fusion operators found. The two operators we test in this level do improve on the early fusion baseline. However, they are not able to improve over the 1c1word baseline. 
+As with the NER experiments on the HF level, the intuition in this stage is to recombine the best previous  operators in new fusion modalities. In this case, we present the best performing operations. We note that we tried other fusions but they were found to have low results. As an example of these failed configurations, we tried $E(\mlex,X_F(\slex,\mlex))$ both recombined through an early and a late fusion operations. Furthermore, in order to have coherence with the best result obtained in NER, we tried solving WSI/WSD using the Triple Early Double Late Cross Feature Fusion (or $EEELX_FLX_F$). Unfortunately, the results in this level were not as interesting as before. Nevertheless, we present the two most successful high degree fusion operators found. The two operators we test in this level do improve on the early fusion baseline. However, they are not able to improve over the 1c1word baseline. 
 
 Indeed, contrary to what we reported in the previous NER experiments, the best results are generally obtained in the 2F level, and not in the HF level, according to the all-word supervised recall and unsupervised F-measure. Still, it is clear that the best recombination of fusion operations (yield better results than our established baselines (single features and early fusion) and the MFS baseline.
 
-Specifically, regarding supervised recall, the operations $L(\mlex, X_F(\slex,\mlex))$ and $E(\mlex,L(\mlex,X_F(\slex,\mlex)))$ (with a performance of 79.5\%) surpass the MFS baseline (78.7\%), both single feature matrices $\mlex$ and $\msyn$ (79.2\%), and the early fusion trivial operation $E(\mlex,\msyn)$ ( with 78.7\%).
-  
-Concerning the unsupervised F-measure, we do surpass our two baselines but not the 1c1word competition baseline. While considering this performance metric is harder to determine the best performing model. There are several fusion operations that match the performance of the 1c1word baseline, although the number of clusters produced is very close to one. This is the case of the $X_F(\ssyn,\mlex)$ and $X_S(\ssyn,\slex)$ operators, with 78.9\% F-measure and generating 1.08 and 1.01 clusters respectively. This fact leads us to consider another performance metric, introduced before in this Chapter, to try to identify the best systems.
+Specifically, regarding supervised recall, the operations $L(\mlex, X_F(\slex,\mlex))$ and $E(\mlex,L(\mlex,X_F(\slex,\mlex)))$ (with a performance of 79.5\%) surpass the MFS baseline (78.7\%), both single feature matrices $\mlex$ and $\msyn$ (79.2\%), and the early fusion trivial operation $E(\mlex,\msyn)$ ( with 78.7\%). Concerning the unsupervised F-measure, we do surpass our two baselines but not the 1c1word competition baseline. While considering this performance metric is harder to determine the best performing model. There are several fusion operations that match the performance of the 1c1word baseline, although the number of clusters produced is very close to one. This is the case of the $X_F(\ssyn,\mlex)$ and $X_S(\ssyn,\slex)$ operators, with 78.9\% F-measure and generating 1.08 and 1.01 clusters respectively. 
+
+In order to determine the best performing operators, that stray away from the trivial baselines, in the following we consider the H-measure, introduced before, to help us identify those systems that perform the best. In Figure \ref{fig:h_measure_semeval2007}, we see the H-measure for each of the fusion operators reported, with $\delta=3.68$, as this is the number of true senses per target word in the Semeval 2007 corpus.  According to this metric, we find the 1F and 2F degree  levels the most interesting. Specifically, $X_F(\slex,\mlex)$, in 1F, is the most performing fusion operator. Indeed, by transferring quality lexical similarities into its same feature matrix, we obtain more useful relations than by using any syntactic data.
+On the other had, in second place, the operator $E(\mlex,X_F(\slex,\mlex))$ of the 2F level consists also exclusively on lexical information. While the same operators that outperformed the rest in NER (in the HF level) are not as adequate in this WSI/WSD experiment, we see that most of the feature combination techniques improve over the baselines of the single features and early fusion operations. 
 
 
+\begin{figure}
+\centering
+\label{fig:h_measure_semeval2007}
+\begin{tikzpicture}{width=15cm,height=5cm}
+\pgfplotsset{compat=1.8}
+\begin{axis}[
+%	xtick distance={160},
+    ybar=-0.5cm,
+    width=.9\linewidth,
+    enlargelimits=0.15,
+    domain = 0:80,
+    xmin=0, xmax=80,
+%    x=1mm, % Distance between the centers of the bars
+%    enlarge x limits={abs=1cm}, % The distance between the center of the first bar and the left edge
+%    enlarge y limits=false,
+    legend style={at={(0.5,.97)},anchor=north,legend columns=-1},
+    ylabel={H-measure},
+%    xmin=0, xmax=85,
+    xticklabels={
+	    {$\mlex$},
+	    {$\msyn$},
+	    {$E(\mlex, \msyn)$},
+	    {$X_F(\slex, \mlex)$},
+	    {$X_F(\slex, \msyn)$},
+	    {$X_F(\ssyn, \mlex)$},
+	    {$X_F(\ssyn, \msyn)$},
+	    {$X_S(\ssyn, \slex)$},
+	    {$X_S(\slex, \ssyn)$},
+	    {$X_F(X_S(\slex, \ssyn), \mlex)$},
+	    {$X_F(X_S(\slex, \ssyn), \msyn)$},
+	    {$E(\mlex, X_F(\slex, \mlex))$},
+	    {$E(\msyn, X_F(\slex, \mlex))$},
+	    {$L(\msyn, X_F(\slex, \msyn))$},
+	    {$L(\mlex, X_F(\slex, \mlex))$},
+	    {$E(\mlex, L(\msyn, X_F(\slex, \msyn)))$},
+	    {$E(\mlex, L(\mlex, X_F(\slex, \mlex)))$}
+    },
+    xtick={0,5,...,80},
+    nodes near coords,
+    nodes near coords align={vertical},
+    x tick label style={rotate=90,anchor=east},
+    ]
+\addplot+[mark=none, bar width=.5cm]  coordinates {(0,76.72) (5,74.54)};
+\addplot+[mark=none, bar width=.5cm]  coordinates {(10,76.95) (15,79.54) (20,77.19) (25,78.90) (30,76.79) (35,78.94) (40,78.94)};
+\addplot+[mark=none, bar width=.5cm]  coordinates {(45,74.77) (50,77.86) (55,79.09) (60,77.05) (65,73.64) (70,78.88)};
+\addplot+[mark=none, bar width=.5cm]  coordinates {(75,77.09) (80,78.68)};
+\legend{SF,1F,2F,HF}
+\end{axis}
+\end{tikzpicture}
+\caption{H-measure for the WSI/WSD task on the Semeval 2007 corpus. Results obtained with the spectral clustering algorithm. The best performing operator is the $X_F(\slex,\mlex)$.}
+\end{figure}
 
 
 In the following subsection, we put aside the fusion enrichment and we focus into another characteristic of our proposed hypergraph structure. We leverage the links (features) among nodes (words) to induce senses. Specifically, we propose a method that clusters together words which represent induced senses for a set of target words.
@@ -737,11 +795,11 @@ The goal is first to solve the WSI task, that is, automatically determine a list
 %As described before, WSI  is usually solved following four steps: (1) creation of a linguistic network, (2) determine the level of similarity between nodes within the network, (3) cluster nodes together, thus creating individual senses, and (4)  assign a cluster (sense) to each instance of a target word in the input document (this step amounts to WSD).
 
 
-Our method  is inspired on previous approaches from both \cite{2004.Veronis} and \cite{2007.Klapaftis.UOY}. In Hyperlex,  the graph-based  method presented  in \cite{2004.Veronis}, the main intuition is that co-occurrence networks have small-world properties and thus it is possible to detect and isolate important heavily-connected nodes, call "hubs". These hubs, and their connected nodes represent a sense in itself. 
+Our method  is inspired on previous approaches from both \cite{2004.Veronis} and \cite{2007.Klapaftis.UoY}. In Hyperlex,  the graph-based  method presented  in \cite{2004.Veronis}, the main intuition is that co-occurrence networks have small-world properties and thus it is possible to detect and isolate important heavily-connected nodes, call "hubs". These hubs, and their connected nodes represent a sense in itself. 
 
 Hyperlex performs WSI and WSD using a weighted lexical co-occurrence network. The process is performed for each target word in the document. As a first step, they build a  graph by defining the vertices (the target word node is removed) as the tokens found in the  co-occurring  context of a target word. The edges link two words co-occurring together. Each edge is assigned a weight that decreases as the association frequency of the words increases. The second step consists on iteratively finding the hubs and removing them, along with their adjacent nodes, from the target word graph. Again, the intuition of the method is that these isolated hubs, and their adjacent words, represent a sense of the analyzed word. The third and final step carries out the disambiguation. A new graph is created by adding the target word to the co-occurrence graph. Zero-weighted edges are added between each hub and the target word. A minimum spanning tree is then calculated and the sense component found to have the closest set of nodes is chosen as the target word sense.
 
-The second approach, {UOY}, described in \cite{2007.Klapaftis.UOY},  relies itself on the small-world intuition presented  by Hyperlex to find hubs and its adjacent nodes to represent senses.   In short, these methods, as ours, exploit the real-world characteristics of linguistic networks by theorizing that there are certain few high-degree nodes (called hubs) that carry an important role in the network and therefore may represent, coupled with their neighbors, a sense for a given target word. Particularly, UOY considers bigrams and trigrams that co-occur in a paragraph as hyperedges. Under a frequent-itemset setting, they determine important hyperedges given their \textit{support} and their \textit{confidence}  values. Then, the clustering of words takes place by finding the hubs and considering them as sense carriers only if they satisfy a threshold mainly set upon their containing-hyperedge confidence value. Finally, once the senses are identified, each target word instance (represented by a context) is assigned to a sense according to the sum of confidences of the hyperedge appearing on said context. 
+The second approach, {UoY}, described in \cite{2007.Klapaftis.UoY},  relies itself on the small-world intuition presented  by Hyperlex to find hubs and its adjacent nodes to represent senses.   In short, these methods, as ours, exploit the real-world characteristics of linguistic networks by theorizing that there are certain few high-degree nodes (called hubs) that carry an important role in the network and therefore may represent, coupled with their neighbors, a sense for a given target word. Particularly, UoY considers bigrams and trigrams that co-occur in a paragraph as hyperedges. Under a frequent-itemset setting, they determine important hyperedges given their \textit{support} and their \textit{confidence}  values. Then, the clustering of words takes place by finding the hubs and considering them as sense carriers only if they satisfy a threshold mainly set upon their containing-hyperedge confidence value. Finally, once the senses are identified, each target word instance (represented by a context) is assigned to a sense according to the sum of confidences of the hyperedge appearing on said context. 
 
 In our method, we generate a network for each $tw$ and consider that the high-degree nodes inside this network may represent a $tw$ sense. Figure \ref{fig:wsd_wsi_process}  shows an overview of the process. Also, in Algorithm \ref{alg:wsd} we show the general flow of our approach.  We detail the steps taken alongside the corresponding line in the algorithm below. 
 
@@ -813,7 +871,7 @@ We compute the Jaccard index between each node $n_{i,j} \in U$ as $Jaccard(i,j)=
 Once the incidence matrix $F_{tw}$ is built we can proceed to induce senses for a target word by clustering words (vertices) together. First, we calculate the degree of each node $n_i \in F_{tw}$. The degree of a node is simply the number of hyperedges it is incident in. Nodes are sorted in descending order and evaluated one by one. We consider the top $c$-nodes as sense hub candidates (line 6). We accept or reject a node $n \in F_{tw}$ as a sense carrying word according to one condition. As shown from line 11 to 17 in the pseudo-code, we set a minimum limit to the average of the Jaccard similarities between each pair of neighbors of node $n \in F_{tw}$ within each hyperedge  $n$ belongs to. Formally, for a node $n$, we define the average Jaccard measure as: $$AvgJaccard(n)=\frac{1}{|hedges(n)|}\sum_{h\in hedges(n)}\frac{\sum_{\substack{i\in h\\j\in h;i\neq j}}Jaccard(i,j)}{|h|}$$ 
 where $hedeges(n)$ is the set of hyperedges $n$ is incident in and its cardinality is defined as $|hedges(n)|$, and $|h|$ is the number of nodes in the hyperedge $h$. 
 
-The Jaccard similarity measure allows us to easily determine the neighbors of each node in the current bipartite hypergraph representation. As each node is joined to a sentence or dependency node, calculating the Jaccard similarity amounts to determining the level of co-occurrence between each word according to a specific type of hyperedge (represented as a node from the other graph partition) while taking into account the total number of hyperedges the words participate in. We differentiate specifically from the previously described method, UOY, in that in the case of that system, the weighting of the hyperedges is done by computing the average confidence metric of each hyperedge. In this regard, the Jaccard similarity is more flexible with respect to the confidence metric, as the confidence requires in the numerator the number of contexts (paragraphs in UOY's case) shared by all the members of the hyperedge, whereas the Jaccard measure takes pairs of members individually and thus is less strict in the apparition of all the elements of the hyperedge in the contexts. Given the nature of the features used (lexical and syntactical dependencies), we fix our thresholds in a manual but simpler way by defining percentiles and taking the value of the threshold directly, without having to change it according to the characteristics of the data.
+The Jaccard similarity measure allows us to easily determine the neighbors of each node in the current bipartite hypergraph representation. As each node is joined to a sentence or dependency node, calculating the Jaccard similarity amounts to determining the level of co-occurrence between each word according to a specific type of hyperedge (represented as a node from the other graph partition) while taking into account the total number of hyperedges the words participate in. We differentiate specifically from the previously described method, UoY, in that in the case of that system, the weighting of the hyperedges is done by computing the average confidence metric of each hyperedge. In this regard, the Jaccard similarity is more flexible with respect to the confidence metric, as the confidence requires in the numerator the number of contexts (paragraphs in UoY's case) shared by all the members of the hyperedge, whereas the Jaccard measure takes pairs of members individually and thus is less strict in the apparition of all the elements of the hyperedge in the contexts. Given the nature of the features used (lexical and syntactical dependencies), we fix our thresholds in a manual but simpler way by defining percentiles and taking the value of the threshold directly, without having to change it according to the characteristics of the data.
 
 If node $n$ satisfies both thresholds $th_1$ and $th_2$, it is deemed as a sense purveyor and all its neighbors (words that appear in the same hyperedges as $n$) are conflated into a single set representing a $tw$ sense. This new sense is added to $SoS_{tw}$ (line 17). The sense set is then removed from $F_{tw}$.
 
@@ -835,9 +893,10 @@ We apply a light pretreatment, consisting on token lemmatization and we remove a
 
 
 \subparagraph{Implementation}
-The objective of this experiment is to understand the performance of both lexical and syntactic co-occurrence information, used independently, while solving WSI and WSD tasks while using the method described in the previous subsection. To that end we build two independent systems: LEX, which uses exclusively lexical co-occurrence hyperedges, and DEP, which employs only syntactic dependency hyperedges. 
+The objective of this experiment is to understand the performance of both lexical and syntactic co-occurrence information, used independently, while solving WSI and WSD tasks while using the method described in the previous subsection. To that end we build two independent systems, using : SEN, which uses exclusively lexical co-occurrence hyperedges, and DEP, which employs only syntactic dependency hyperedges. Both are obtained as described in Chapter \ref{chap:ling_net}, section \ref{sec:ling_model}.
  %
-Each type of hyperedge has its own network characteristics as mentioned before. Sentence hyperedges tend to have a much smaller number of words than those of the dependency category. This make sense as sentences usually contain less than 30 words, meanwhile a dependency hyperedge may contain up to hundreds of words (several words may share the same dependency relation). Taking this into consideration we set different threshold values for LEX and for DEP. First, we  consider only the top 100 nodes as candidate sense hubs. Secondly, we do not set the thresholds' values directly but instead we set up a percentile value for the Jaccard similarity ($th_1$) and for the average Jaccard similarity ($th_2$). This is a practical solution to the changing nature of the network model according to the features being employed. We experimentally found the best values for  each threshold used.
+ 
+Each type of hyperedge has its own network characteristics as mentioned before. Sentence hyperedges tend to have a much smaller number of words than those of the dependency category. This make sense as sentences usually contain less than 30 words, meanwhile a dependency hyperedge may contain up to hundreds of words (several words may share the same dependency relation). Taking this into consideration we set different threshold values for SEN and for DEP. First, we  consider only the top 100 nodes as candidate sense hubs. Secondly, we do not set the thresholds' values directly but instead we set up a percentile value for the Jaccard similarity ($th_1$) and for the average Jaccard similarity ($th_2$). This is a practical solution to the changing nature of the network model according to the features being employed. We experimentally found the best values for  each threshold used.
 
 
 
@@ -853,15 +912,18 @@ Each type of hyperedge has its own network characteristics as mentioned before. 
 
 \begin{table}[!htb]
 \centering
-\caption{Unsupervised F-measure (FM) for the Semeval 2007 test set. Results are obtained with our proposed algorithm.}
+\caption{Unsupervised F-measure for the Semeval 2007 test set. The highest values for each column are in bold. These results are obtained with our proposed algorithm.}
 \begin{tabular}{@{}lrrrr@{}}
 \toprule
-\textbf{F-measure (\%)} & \textbf{all} & \textbf{nouns} & \textbf{verbs} & \textbf{\#cl} \\ \midrule
-1c1word          & 78.9         & 80.7           & 76.8           & 1.00             \\
-UBC-AS           & 78.7         & 80.8           & 76.3           & 1.32          \\
+\textbf{System} & \multicolumn{3}{c}{\textbf{F-measure (\%)}} & \textbf{\#cl} \\
+ & \textbf{all} & \textbf{nouns} & \textbf{verbs} & \\ \midrule
+1c1word          & \textbf{78.9}         & 80.7           & \textbf{76.8}           & 1.0             \\
+UBC-AS           & 78.7         & \textbf{80.8}           & 76.3           & 1.3          \\
+SC$_{\text{fusion}}$     & 76.2         & 79.6           & 72.5           & 3.6          \\
+GB$_{\text{fusion}}$     & 75.9         & 78.7           & 71.8           & 3.4          \\
 DEP     & 74.9         & 80.2           & 69.0           & 3.27          \\
-LEX     & 61.4         & 62.6           & 60.1           & 4.26         \\
-UoY(2007)        & 56.1         & 65.8           & 45.1           & 9.28          \\
+SEN     & 61.4         & 62.6           & 60.1           & 4.26         \\
+UoY(2007)        & 56.1         & 65.8           & 45.1           & 9.3          \\
 Random           & 37.9         & 38.1           & 37.7           & 19.7             \\
 1c1instance & 	9.5         & 6.6           & 12.7           & 48.51             \\ \bottomrule
 \end{tabular}
@@ -869,35 +931,85 @@ Random           & 37.9         & 38.1           & 37.7           & 19.7        
 \label{tab:sem2007_unsup_FS}
 \end{table}
 
-In Table \ref{tab:sem2007_unsup_FS} we present the unsupervised evaluation results for our models as well as for some other systems. We include the F-measure as performance metric. 
+In Table \ref{tab:sem2007_unsup_FS} we present the unsupervised F-measure evaluation results for our models as well as for some other systems: the previously presented UoY (version 2007) and UBC-AS \cite{Agirre2007UBC}, the best performing system according to this measure. Additionally, three baselines are included, the already-known 1c1word plus two new ones, the Random  baseline which assigns a sense randomly to each test instance; and the 1c1instance baseline, which attributes a unique sense to each one of the test instances. Finally, we also include the fusion operator that obtained the highest performance (according to the H-measure) in the experiments of the previous subsection, that is, the results of the $X_F(\slex,\mlex)$ fusion. As the last experiments were performed with spectral clustering, we will call this system SC$_\text{fusion}$. Furthermore, given that we generate representation spaces, we can use the same fusion matrix but this time using the graph-based algorithm presented in this subsection, instead of the spectral clustering used before. We call this system GB$_{\text{fusion}}$
 
-In this table, as in the rest of the tables presented in this section, the columns show the results for all the words, for the nouns exclusively as well as for the verbs. The final column indicates the number of induced clusters per system. It is important to consider this value as the unsupervised metrics are biased towards systems with less number of induced clusters and thus to the 1c1word baseline.
+In this table, as in the rest of the tables presented in this section, as before, the columns show the results for all the words, for the nouns, and for the verbs. Again, the final column indicates the number of induced clusters per system. It is important to consider this value as the unsupervised metrics are biased towards systems with less number of induced clusters and thus to the 1c1word baseline. We aim to address this shortcoming with our H-measure.
 
-We can appreciate that both our methods surpass the baselines and the system described before \textit{UoY(2007)}. The best system of the competition, \textit{UBC-AS} used also co-occurrence graphs and applied a random-walk based clustering algorithm over the vertices' similarity matrix. Still, our system induced a larger amount of senses, while retaining a competitive F-measure value. We also note that in this evaluation DEP, the system using only co-occurrent dependency relations outperformed the lexical co-occurrence only system LEX.
+Looking at the table, we can see that both our methods surpass the baselines and the system described before {UoY(2007)}. The best system of the competition, {UBC-AS} used also co-occurrence graphs and applied a random-walk based clustering algorithm over the vertices' similarity matrix. Still, our system induced a larger amount of senses, while retaining a competitive F-measure value. We also note that in this evaluation DEP, the system using only co-occurrent dependency relations outperformed the lexical co-occurrence only system SEN. It is very possible that this lack of lexical performance is due to the size of the surrounding words window, which in this case is selected to be the entire phrase were the word occurs. 
+
+With respect to our fusion space methods, SC$_{\text{fusion}}$ and GB$_{\text{fusion}}$ we find that both are competitive but cannot achieve a better performance that those systems prepared for the competition. Both systems are better than using independent features, according to the unsupervised F-measure. GB$_{\text{fusion}}$  Nonetheless, for supervised recall, only GB$_{\text{fusion}}$ beats both of the single feature matrices.
+
 
 \begin{table}[!htb]
 \centering
-\caption{Supervised Recall (SR) on the Semeval 2007 test set. Results are obtained with our proposed algorithm.}
+\caption{Supervised Recall (SR) on the Semeval 2007 test set. The highest values for each column are in bold. Results are obtained with our proposed algorithm.}
 \begin{tabular}{@{}lrrrr@{}}
 \toprule
-\textbf{Recall (\%)} & \textbf{all} & \textbf{nouns} & \textbf{verbs} & \textbf{\#cl} \\ \midrule
-I2R & 81.6 & 86.8 & 75.7 & 3.08 \\
-LEX & 79.4 & 82.5 & 75.9 & 4.26 \\
-DEP & 79.1 & 81.5 & 76.4 & 3.27\\
-MFS & 78.7 & 80.9 & 76.2 & 1 \\
-UoY(2007) & 77.7 & 81.6 & 73.3 & 9.28 \\ \bottomrule
+\textbf{System} & \multicolumn{3}{c}{\textbf{Recall (\%)}} & \textbf{\#cl} \\
+ & \textbf{all} & \textbf{nouns} & \textbf{verbs} & \\ \midrule
+I2R & \textbf{81.6} & \textbf{86.8} & 75.7 & 3.1 \\
+GB$_{\text{fusion}}$ & 79.6 & 83.3 & {76.3} & 3.4 \\
+SEN & 79.4 & 82.5 & 75.9 & 4.3 \\
+SC$_{\text{fusion}}$ & 79.2 & 82.3 & 75.7 & 3.6\\
+DEP & 79.1 & 81.5 & \textbf{76.4} & 3.3\\
+MFS & 78.7 & 80.9 & 76.2 & 1.0 \\
+UoY(2007) & 77.7 & 81.6 & 73.3 & 9.3 \\ \bottomrule
 \end{tabular}
 
 \label{tab:sem2007_sup_recall}
 \end{table}
 
 
-Moving onto the supervised results for Semeval 2007, in Table \ref{tab:sem2007_sup_recall} we show the results obtained concerning the Recall performance metric.  In this table we include the competing system \textit{I2R} \cite{Niu2007}, based on an Information Bottleneck based clustering algorithm, which obtains the best results according to all the words and nouns. Both our systems DEP and LEX beat the baseline of assigning the most frequent sense to an instance MFS). More interestingly, DEP was able to beat the MFS verb baseline, something that was not achieved during the competition. As was the case before, our systems beat UoY(2007).
 
 
+Moving onto the supervised results for Semeval 2007, in Table \ref{tab:sem2007_sup_recall} we show the results obtained concerning supervised recall.  In this table we include the competing system I2R \cite{Niu2007}, based on an Information Bottleneck based clustering algorithm, which obtains the best results according to all the words and nouns. Both our systems DEP and SEN beat the baseline of assigning the most frequent sense to an instance MFS). More interestingly, DEP was able to beat the MFS verb baseline, something that was not achieved during the competition. As was the case before, our systems beat UoY(2007).
 
 
-As a way of determining where does both systems complement each other, in Figure \ref{fig:nouns_fs} and Figures  \ref{fig:verbs_fs2} and \ref{fig:verbs_fs3} we show the unsupervised F-measure value for nouns and verbs respectively (we split the verbs in two figures for visibility). We can see that, as the previous result tables indicated, DEP did better overall. Nonetheless, and what is most interesting in these figures, is that there are certain words (both nouns and verbs) that obtain better scores using LEX instead of DEP and vice versa. For example, the nouns \textit{area}, \textit{future}, and \textit{state} are better treated by LEX, according to this measure, even if by a small margin. On the other hand, with respect to the verbs, the differences between performance are more important. Again, the LEX system does better while finding senses and assigning them to the verbs \textit{avoid}, \textit{fix}, and \textit{work}. %This information will be useful during the design of hybridization techniques between feature of our hypergraph structure.
+\begin{figure}
+\centering
+\label{fig:h_measure_semeval2007}
+\begin{tikzpicture}{width=5cm,height=5cm}
+\pgfplotsset{compat=1.8}
+\begin{axis}[
+%	xtick distance={160},
+    ybar=-0.5cm,
+    width=.7\linewidth,
+    enlargelimits=0.15,
+    domain = 0:30,
+    xmin=0, xmax=30,
+%    x=1mm, % Distance between the centers of the bars
+%    enlarge x limits={abs=1cm}, % The distance between the center of the first bar and the left edge
+%    enlarge y limits=false,
+    legend style={at={(0.5,.97)},anchor=north,legend columns=-1},
+    ylabel={H-measure},
+%    xmin=0, xmax=85,
+    xticklabels={
+		UBC-AS,
+		I2R,
+		{GB$_{\text{fusion}}$},
+		SEN,
+		{SC$_{\text{fusion}}$},
+		DEP,
+		UoY(2007)
+    },
+    xtick={0,5,...,30},
+    nodes near coords,
+    nodes near coords align={vertical},
+    x tick label style={rotate=90,anchor=east},
+    ]
+\addplot+[mark=none, bar width=.5cm]  coordinates {(0,78.79) (5,72.48) (10,78.82) (15,70.02) (20,79.33) (25,77.93) (30,64.97)};
+%\legend{SF,1F,2F,HF}
+\end{axis}
+\end{tikzpicture}
+\caption{H-measure for the WSI/WSD task on the Semeval 2007 corpus using our network-based method as well as other systems, indicated on the x-axis. The best performing system was spectral clustering with a fusion representation space SC$_{\text{fusion}}$.}
+\end{figure}
+
+We now look into the results from the H-measure perspective. Again, as in the experiments with fusion opeartions, the best system SC$_{\text{fusion}}$ uses spectral clustering with a single cross media fusion operator, i.e., $X_F(\slex,\mlex)$. Close, in second place, we find the other fusion based system, this time using the network-based method proposed previously. Finally, the system UBC-AS  is ranked third by the H-measure.
+
+In general, it is interesting to notice that the fusion operators outperform again the single features and is on pair with other performing systems. What does seems unexpected is that the roles played by the DEP and SEN system is inverted regarding to the fusion experiments presented in the previous subsection. Indeed, using our network-based approach the performance of DEP is considerably larger than that of SEN, whereas using spectral clustering the lexical information outranked (by a small margin) the syntactic information (based on dependencies). Again, we attribute this lack of performance of SEN to the size of the window employed, which seems to general to detect appropriate senses.
+
+
+As a way of determining where does both systems complement each other, in Figure \ref{fig:nouns_fs} and Figures  \ref{fig:verbs_fs2} and \ref{fig:verbs_fs3} we show the unsupervised F-measure value for nouns and verbs respectively (we split the verbs in two figures for visibility). We can see that, as the previous result tables indicated, DEP did better overall. Nonetheless, and what is most interesting in these figures, is that there are certain words (both nouns and verbs) that obtain better scores using SEN instead of DEP and vice versa. For example, the nouns \textit{area}, \textit{future}, and \textit{state} are better treated by SEN, according to this measure, even if by a small margin. On the other hand, with respect to the verbs, the differences between performance are more important. Again, the SEN system does better while finding senses and assigning them to the verbs \textit{avoid}, \textit{fix}, and \textit{work}. %This information will be useful during the design of hybridization techniques between feature of our hypergraph structure.
 
  
 
@@ -930,65 +1042,70 @@ As a way of determining where does both systems complement each other, in Figure
 
 %todo split verbs?
 \subparagraph{Semeval 2010}
-In Semeval 2010, two unsupervised evaluation metrics are introduced: \textit{V-Measure} and \textit{paired F-measure}. Briefly, the V-Measure assesses the quality of a clustering solution by measuring the degree to which each cluster consists of instances principally belonging to a single gold standard class, or homogeneity; and to completeness, the level with which each gold standard class consists of instances primarily assigned to a single cluster.
+In the Semeval 2010 dataset \cite{Semeval2010}, two unsupervised evaluation metrics are introduced: {V-measure} and {paired F-measure}. Briefly, the V-measure assesses the homogeneity or the quality of a clustering solution by measuring the degree to which each cluster consists of instances principally belonging to a single gold standard class. or homogeneity. It also takes into account completeness, or the level each gold standard class consists of instances primarily assigned to a single cluster. The V-measure is always greater than zero but it is not bounded to one as maximum value. We consider that the larger the measure, better. A well-known drawback is that the V-measure  is biased towards systems that yield many senses \cite{Semeval2010,VandeCruys2011,pedersen2010duluth}. We present this metric for completeness but we do not heavily base our conclusions on it.
 
-The paired F-measure evaluation transforms the clustering problem into a classification one. Two instance pairs sets are generated, the first one coming from the system induced clusters, by including pairs of the instances found in each cluster. The second set of instance pairs is built from the gold standard classes. It contains pairs of the instances found in each class. We can then define \textit{Precision} and \textit{Recall}. Precision is computed as the ratio of the number of common instance pairs between the two sets divided by the total number of pairs in the clustering solution. Recall is the count of common instance pairs between the two sets divided by the total number of pairs in the gold standard. The paired F-measure is the harmonic mean of both quantities.
+On the other hand, the paired F-measure evaluation transforms the clustering problem into a classification. Two instance pairs sets are generated, the first one coming from the system induced clusters, by including pairs of the instances found in each cluster. The second set of instance pairs is built from the gold standard classes. It contains pairs of the instances found in each class. We can then define \textit{Precision} and \textit{Recall}. Precision is computed as the ratio of the number of common instance pairs between the two sets divided by the total number of pairs in the clustering solution. Recall is the count of common instance pairs between the two sets divided by the total number of pairs in the gold standard. The paired F-measure is the harmonic mean of both quantities.
 
-Concerning the supervised evaluation, it follows explicitly that of Semeval 2007, using recall as the main performance measure as in  \cite{Semeval2010,VandeCruys2011,pedersen2010duluth}.
+Concerning the supervised evaluation, it follows the same of Semeval 2007, using recall as the main performance measure. The key difference is that the final results of the competition were obtained by reshuffling the data several times to avoid the issue of obtaining considerably different results with different splits of the data.
 
 \begin{table}[]
 \centering
-\caption{Unsupervised V-Measure (VM) on the Semeval 2010 test set. Results are obtained with our proposed algorithm.}
+\caption{Unsupervised V-measure  on the Semeval 2010 test set. The highest values for each column are in bold. Our results are obtained with our proposed algorithm.}
 \begin{tabular}{@{}lrrrr@{}}
 \toprule
-\textbf{V-measure (\%)} & \textbf{all} & \textbf{nouns} & \textbf{verbs} & \textbf{\#cl} \\ \midrule
-{Hermit} & 16.2 & 16.7 & 15.6 & 10.78 \\
-NMF$_{lib}$&11.8&13.5&9.4&4.80\\
-LEX & 11.6 & 8.8 & 11.9 & 10.5 \\
-Random & 4.4 & 4.2 & 4.6 & 4.00 \\
-DEP & 3.5 & 3.9 & 2.8 & 2.75 \\
-MFS & 0.0 & 0.0 & 0.0 & 1.00 \\ \bottomrule
+\textbf{System} & \multicolumn{3}{c}{\textbf{V-measure (\%)}} & \textbf{\#cl} \\
+ & \textbf{all} & \textbf{nouns} & \textbf{verbs} & \\ \midrule
+{Hermit} & \textbf{16.2} & \textbf{16.7} & \textbf{15.6} & 10.8 \\
+NMF$_{lib}$&11.8&13.5&9.4&4.8\\
+SEN & 11.6 & 8.8 & 11.9 & 10.5 \\
+Random & 4.4 & 4.2 & 4.6 & 4.0 \\
+DEP & 3.5 & 3.9 & 2.8 & 2.8 \\
+MFS & 0.0 & 0.0 & 0.0 & 1.0 \\ \bottomrule
 \end{tabular}
 
 \label{tab:sem2010_VM}
 \end{table}
 
-In Table \ref{tab:sem2010_VM} we present our systems compared to the baseline and other methods using during Semeval 2010. V-Measure is a metric well-known for favoring systems producing a higher number of clusters \cite{VandeCruys2011,pedersen2010duluth}. Thus, it is considered not a very reliable metric. We have included it to have a global insight about the performance of our method. We remark that only LEX performed better than both baselines, random assignation of senses (Random) and using the most frequent sense (MFS). Also, we note that we included only the best performing systems, in this case \textit{NMF$_{lib}$} and  \textit{Hermit}. The former  did not participate on the competition but was developed later. We include it henceforth to illustrate how systems variate from one position to another depending the metric used to assess the performance. The latter was the best method on this metric from the task challenge. It is important to notice that other systems exist between Hermit and LEX. They were not included for the sake of clarity.
+In Table \ref{tab:sem2010_VM} we present our systems compared to the baseline and other methods using during Semeval 2010. V-measure is a metric well-known for favoring systems producing a higher number of clusters \cite{VandeCruys2011,pedersen2010duluth}. Thus, it is considered not a very reliable metric. We have included it to have a global insight about the performance of our method. We remark that only SEN performed better than both baselines, random assignation of senses (Random) and using the most frequent sense (MFS). Also, we note that we included only the best performing systems, in this case NMF$_{lib}$ \cite{VandeCruys2011} and   Hermit \cite{JurgensS10}. The former  did not participate on the competition but was developed later. We include it henceforth to illustrate how systems variate from one position to another depending the metric used to assess the performance. The latter was the best method on this metric from the task challenge. It is important to notice that other systems exist between Hermit and SEN. They were not included for the sake of clarity.
 
 \begin{table}[]
 \centering
-\caption{Unsupervised Paired F-measure (FM) for the Semeval 2010 test set. Results are obtained with our proposed algorithm.}
+\caption{Unsupervised Paired F-measure (FM) for the Semeval 2010 test set. The highest values for each column are in bold. Our results are obtained with our proposed algorithm.}
 \begin{tabular}{@{}lrrrr@{}}
 \toprule
-\textbf{F-measure (\%)} & \textbf{all} & \textbf{nouns} & \textbf{verbs} & \textbf{\#cl} \\ \midrule
-MFS & 63.5 & 57.0 & 72.4 & 1.00 \\
-Duluth-WSI-SVD-Gap & 63.3 & 57.0 & 72.4 & 1.02 \\
-DEP & 53.6 & 50.1 & 58.7 & 2.75 \\
-NMF$_{lib}$&45.3&42.2&49.8&5.42\\
-LEX & 38.4 & 46.7 & 28.5 & 10.5 \\
-Random & 31.9 & 30.4 & 34.1 & 4.00 \\ \bottomrule
+\textbf{System} & \multicolumn{3}{c}{\textbf{Paired F-measure (\%)}} & \textbf{\#cl} \\
+ & \textbf{all} & \textbf{nouns} & \textbf{verbs} & \\ \midrule
+
+MFS & \textbf{63.5} & \textbf{57.0} & \textbf{72.4} & 1.0 \\
+Duluth-WSI-SVD-Gap & 63.3 & \textbf{57.0} & \textbf{72.4} & 1.0 \\
+DEP & 53.6 & 50.1 & 58.7 & 2.8 \\
+NMF$_{lib}$&45.3&42.2&49.8&5.4\\
+SEN & 38.4 & 46.7 & 28.5 & 10.5 \\
+Random & 31.9 & 30.4 & 34.1 & 4.0 \\ \bottomrule
 \end{tabular}
 
 \label{tab:sem2010_FS}
 \end{table}
 
-The second unsupervised measure, Paired F-measure, can be seen in Table \ref{tab:sem2010_FS}. In this case both systems presented performed better than the random baseline. Any system presented was able to beat the MFS baseline. We note that DEP does much better compared to LEX concerning verbs, namely 58\% vs. 28\% F-measure. Still, the results are low considering the best results of the competition, 63\% from Duluth, although again, it generates a number of senses very similar to the MFS baseline. Both our systems induce a considerable amount of clusters while keeping a descent F-measure.
+The second unsupervised measure, Paired F-measure, can be seen in Table \ref{tab:sem2010_FS}. In this case both systems presented performed better than the random baseline. All the systems presented were able to beat the MFS baseline. We note that DEP does much better compared to SEN concerning verbs, namely 58\% vs. 28\% F-measure. Still, the results are low considering the best results of the competition, 63\% from the Duluth system \cite{Pedersen2010} , although again, it generates a number of senses very similar to the MFS baseline. Both our systems induce a considerable amount of clusters while keeping a descent F-measure. Our results are obtained with our proposed algorithm.
 
 
 
-\begin{table}[tb]
+\begin{table}[!tb]
 \centering
-\caption{Supervised recall (SR) for Semeval 2010 test set (80\% mapping, 20\% evaluation). Results are obtained with our proposed algorithm.}
-\begin{tabular}{@{}lrrr@{}}
+\caption{Supervised recall  for Semeval 2010 test set (80\% mapping, 20\% evaluation). The highest values for each column are in bold. Results are obtained with our proposed algorithm.}
+\begin{tabular}{@{}lrrrr@{}}
 \toprule
-\textbf{Recall (\%)} & \textbf{all} & \textbf{nouns} & \textbf{verbs} \\ \midrule
-NMF$_{lib}$&62.6&57.3&70.2\\
-UoY(2010) & 62.4 & 59.4 & 66.8 \\
+\textbf{System} & \multicolumn{3}{c}{\textbf{Recall (\%)}} & \textbf{\#cl}  \\
+ & \textbf{all} & \textbf{nouns} & \textbf{verbs} & \\ \midrule
+%\textbf{Recall (\%)} & \textbf{all} & \textbf{nouns} & \textbf{verbs} \\ \midrule
+NMF$_{lib}$&\textbf{62.6}&57.3&\textbf{70.2} & 5.4\\
+UoY(2010) & 62.4 & \textbf{59.4} & 66.8 & 11.5\\
 
-LEX & 59.8 & 55.8 & 67.4 \\
-DEP & 59.3 & 53.9 & 67.2 \\
-MFS & 58.7 & 53.2 & 66.6 \\
-Random & 57.3 & 51.5 & 65.7 \\ \bottomrule
+SEN & 59.8 & 55.8 & 67.4 & 10.5\\
+DEP & 59.3 & 53.9 & 67.2 & 2.8\\
+MFS & 58.7 & 53.2 & 66.6 & 1.0\\
+Random & 57.3 & 51.5 & 65.7 & 4.0\\ \bottomrule
 
 \end{tabular}
 
@@ -997,11 +1114,52 @@ Random & 57.3 & 51.5 & 65.7 \\ \bottomrule
 \end{table}
 
 
-Finally, we in Table \ref{tab:sem2010_SR} we show the supervised Recall results of Semeval 2010. The best performing algorithm shown is NMF$_{lib}$. During the competition, UoY(2010) was the best method. It is a graph-based algorithm which shares the name with the UoY  system presented in Semeval 2007, but it is a different  approach. 
+Finally, we in Table \ref{tab:sem2010_SR} we show the supervised Recall results of Semeval 2010. The best performing algorithm shown is NMF$_{lib}$. During the competition, UoY(2010) was the best method. It is a graph-based algorithm which shares the name with the UoY(2007)  system presented in Semeval 2007, but it is a different  approach. Concerning our systems, in this evaluation they seem to perform the best, or in a comparable level, to the top methods.  We find that in general our systems seem to perform better on the Semeval 2007 dataset. Discovering the reason could shed light into improving the performance on the Semeval 2010 test set. Given the results, it seems like a combination of features (syntactic plus lexical) in  a single algorithm could yield better results. 
 
-Concerning our systems, in this evaluation they seem to perform the best, or in a comparable level, to the top methods.  We find that in general our systems seem to perform better on the Semeval 2007 dataset. Discovering the reason could shed light into improving the performance on the Semeval 2010 test set. Given the results, it seems like a combination of features (syntactic plus lexical) in  a single algorithm could yield better results. 
+Again, in order to find the overall best systems, we present the H-measure as before. This time the H-measure will be the harmonic mean of the newly introduced unsupervised paired F-measure instead of the plain F-measure used before. The supervised recall stays also as before. We do not employ the V-measure for the reasons exposed before, namely it is biased towards systems that generate many senses. Ideally, the paired F-measure was conceived to punish systems that produced less or more senses than the true number of senses for each target word. In reality, it does not seem to be the case. We present in Figure \ref{h_measure_semeval2010} the H-measure for the systems discussed before in the Semeval 2010 context. Duluth-WSI-SVD-Gap is the best system overall, followed by our approach using DEP as input matrix. 
 
-As a side note, it is argued that supervised Recall is not a very robust metric as the supervised method within tends to converge towards the most frequent sense. In this regard, several researchers \cite{VandeCruys2011,pedersen2010duluth} have voiced their concerns about the quality of the current WSI/WSD evaluation metrics as well as the need of new, more robust techniques to properly evaluate these systems.
+Looking at the results, we argue that the Semeval 2010 task was more complex than Semeval 2007. We believe it is in part due to the fact that there are more verbs in the dataset, which are always harder to disambiguate than nouns. The dataset was also considerably larger, which may have introduced noise and required more sophisticated filtering techniques. We see that our system SEN performs poorly. Indeed, it generates too many senses, which is a symptom of poorly generated clusters, that is, the clusters found are not distinctive nor cohesive enough to enclose whole senses. On the other hand DEP does reasonably well, maybe in part due to the fact that again there are more verbs whose senses are better distinguished   using syntactic information.
+
+
+
+\begin{figure}
+\centering
+\label{fig:h_measure_semeval2010}
+\begin{tikzpicture}{width=5cm,height=5cm}
+\pgfplotsset{compat=1.8}
+\begin{axis}[
+%	xtick distance={160},
+    ybar=-0.5cm,
+    width=.7\linewidth,
+    enlargelimits=0.15,
+    domain = 0:20,
+    xmin=0, xmax=20,
+%    x=1mm, % Distance between the centers of the bars
+%    enlarge x limits={abs=1cm}, % The distance between the center of the first bar and the left edge
+%    enlarge y limits=false,
+    legend style={at={(0.5,.97)},anchor=north,legend columns=-1},
+    ylabel={H-measure},
+%    xmin=0, xmax=85,
+    xticklabels={
+		Duluth-WSI-SVD-Gap,
+		DEP,
+		{NMF$_{\text{lib}}$},
+		SEN,
+		UoY(2010)
+    },
+    xtick={0,5,...,20},
+    nodes near coords,
+    nodes near coords align={vertical},
+    x tick label style={rotate=90,anchor=east},
+    ]
+\addplot+[mark=none, bar width=.5cm]  coordinates {(0,61.05) (5,56.89) (10,52.93) (15,46.52) (20,55.08)};
+%\legend{SF,1F,2F,HF}
+\end{axis}
+\end{tikzpicture}
+\caption{H-measure for the WSI/WSD task on the Semeval 2010 corpus using our network-based method as well as other systems, indicated on the x-axis. The best performing system is Duluth-WSI-SVD-Gap, while our best method is that based on syntactic information DEP.}
+\end{figure}
+
+
 
 
 
@@ -1020,6 +1178,8 @@ More specifically, concerning the first part, we presented  a comparative study 
 We analyzed the results to understand how the enrichment of features improved the performance. We found that at each fusion step, a different type of NER tag is benefited. We studied what features where driving the decision towards the correct class and found that while the enriched features are not the most prominent  in the decision function, they play an important role by tipping said decision towards the correct label and away from the wrong one. 
 
 Concerning fusion enrichment and WSI/WSD, we found that the fusion operations also improve the results of the task, although not as clearly as in NER. The metrics used to measure the performance on this ask does not allow a clear understanding on the behavior of the model employed. While we want to avoid converging to the trivial one sense per word solution, we know that words do not have numerous senses. In that sense, the results obtained stay reasonably away from the trivial solution while not producing many senses as other approaches.
+
+We proposed a metric, the H-measure, to rank the systems by considering the classic performance metrics and the number of senses found relative to the true number of senses. This metric allowed us to identify with a single value the best system. We found that according to it, the fusion based systems, whether using well-known algorithms (spectral clustering) or using the method developed in this section, perform adequately and show general improvements over the single feature representations as well as other systems.
 
 While there is an improvement using fusion techniques, we do note that they  enlarge the feature space, especially early fusion, which is used frequently. This may imply the need of larger quantities of memory and longer execution time. In that sense, as future work, more intelligent ways of finding the most appropriate fusion must be researched. This is indeed one of our future work paths: determining an optimal fusion path from single features to a high degree fusion recombination. Coupled with this, the automatic determination of the parameters is still ongoing research in the multimedia fusion community. Consequently, we believe that efficiently determining both parameters and fusion combinations is the general domain of our future work. Another route we would like to explore is testing these techniques on other tasks and with datasets from different domains, in order to assert its effectiveness.
 
