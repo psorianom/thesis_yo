@@ -512,7 +512,7 @@ Regarding the machine learning methods to induce senses, (the WSI part), we empl
 \paragraph{Experiments and Evaluation}
 Having learned the best fusion configuration from the previous task, in these experiments we set to test if the improvements achieved can be transfered into another NLP task, namely Word Sensed Induction and Disambiguation (WSI/WSD). As preprocessing, we simply remove stopwords and tokens with less than three letters. The features we extracted from the tested corpora with the same tools as in the previous task.
 \subparagraph{Test Dataset}
-The WSI/WSD model is tested on the dataset of  the Semeval 2007 WSID task \cite{Agirre2007}. The task was based on a set of 100 target words (65 verbs and 35 nouns), each  word having a set of instances, which are specific contexts where the word appear. Senses are induced from these contexts and applied to each one of the instances. The real number of average senses per word is 3.68. This number will be useful to determine the performance of the systems below.
+The WSI/WSD model is tested on the dataset of  the Semeval 2007 WSID task \cite{Agirre2007}. The task was based on a set of 100 target words (65 verbs and 35 nouns), each  word having a set of instances, which are specific contexts where the word appear. Senses are induced from these contexts and applied to each one of the instances. The real number of average senses per word is 2.87 in the test set, which was the set used to evaluate the competing systems. This number will be useful to determine the performance of the systems below.
 
 
 
@@ -523,13 +523,13 @@ Ihe unsupervised evaluation assumed the induced senses as clusters of examples. 
 
 %The first one maps the output of a system to the true senses of the target words' instances and the second one measures the quality of the correspondence between the automatically found clusters and the senses. 
 
-We consider that the number of senses found by the system is also a rather good indicator of performance: the best competition baseline assigns the Most Frequent Sense baseline (or MFS) to each test instance of each target word. In other words, each test instance is assigned the sense that occurs the most in the training set. Consequently, this baseline produces an average of one sense (cluster) per word. A system that goes near this average may be indeed not be resolving the task efficiently but finding the one cluster per word trivial solution. Consequently, to show that we do not fall in the MFS solution, we display in our results the average number of clusters. Furthermore, given this problematic situation we introduce a simple measure, the H-measure, that takes into account three factors of the performance results of a system: the supervised recall of all-words ($SR$), the unsupervised F-measure of all-words ($UF$), and the number of true senses on the corpus. The H-measure is calculated as the harmonic mean of $SR$ and $UF$ plus a weight that grows if the number of induced clusters (\#cl) by the system is close to the true average number of senses, which we call $\delta$. More formally:
+We consider that the number of senses found by the system is also a rather good indicator of performance: the best competition baseline assigns the Most Frequent Sense baseline (or MFS) to each test instance of each target word. In other words, each test instance is assigned the sense that occurs the most in the training set. Consequently, this baseline produces an average of one sense (cluster) per word. A system that goes near this average may be indeed not be resolving the task efficiently but finding the one cluster per word trivial solution. Consequently, to show that we do not fall in the MFS solution, we display in our results the average number of clusters. Furthermore, given this problematic situation we introduce a simple measure, the H-measure, that takes into account three factors of the performance results of a system: the supervised recall of all-words ($SR$), the unsupervised F-measure of all-words ($UF$), and the number of true senses on the corpus. The H-measure is calculated as the mean of two components. First, the harmonic mean of the $SR$ and the $UF$. Secondly, a ratio we propose that is bounded between zero and one. Zero indicates that the system produces one cluster per word, that is, the baseline. If the ratio is one, the system produces a number of average cluster per word that is close to the true gold-standard average number of senses. We call this quantity $\delta$. More formally, the H-measure is defined as:
 
 \begin{equation}
-\text{H-measure} = 2*\dfrac{SR*UF}{SR+UF}+\log{\dfrac{\delta}{|\#cl-\delta|}}
+\text{H-measure} = \dfrac{1}{2}\left(2*\dfrac{SR*UF}{SR+UF}+\dfrac{\delta}{\delta+|\#cl-\delta|}\right)
 \end{equation}
 
-This metric is not bounded between 0 and 1 as the F-measure and recall. The greater its value, the more confidently we  say that the system produces good results. The way it is formulated, having the F-measure and the recall within the formulation serves as an assurance against having systems that are bad but coincidentally produces a correct number of senses. Given that we are calculating the harmonic mean of another harmonic mean (within the F-measure) makes the H-measure severe regarding F-measure and recall. Improvements on both metrics must be had to show a growth in  the H-measure.
+This metric is bounded between 0 and 1 as the F-measure and recall. The greater its value, the more confidently we  say that the system produces good results. The way it is formulated, having the F-measure and the recall within the formulation serves as an assurance against having systems that are bad but coincidentally produces a correct number of senses. Given that we are calculating the harmonic mean of another harmonic mean (within the F-measure) makes the H-measure severe regarding F-measure and recall. Improvements on both metrics must be had to show a growth in  the H-measure.
 
 We consider this measure as a simple method to rank the results that follow, as the metrics provided by the WSI/WSD competitions are not always ideal and have their own issues, and more importantly, because they may contradict each other. Still, the H-measure is not intended to replace the classic metrics. 
 
@@ -589,7 +589,7 @@ We consider this measure as a simple method to rank the results that follow, as 
 	   
 
 	   Baseline MFS		& 78.70 & 80.90 & 76.20 & 1.00\\ 	   	 	    
-	   Semeval 2007 Best System& 81.60 & 86.80 & 75.70 & 1.15\\ 	 		   
+%	   Semeval 2007 Best System& 81.60 & 86.80 & 75.70 & 1.15\\ 	 		   
        \bottomrule
 \end{tabular}
 \end{table}
@@ -648,7 +648,7 @@ We consider this measure as a simple method to rank the results that follow, as 
 	   \midrule
 	   \midrule
 	   Baseline 1c1word 		&	78.90	& 80.70&76.80 & 1.00 \\ 	   	 	    	   
-	   Semeval 2007 Best Systems	&	78.70	& 80.80&76.30 & 3.06 \\ 	 
+%	   Semeval 2007 Best Systems	&	78.70	& 80.80&76.30 & 3.06 \\ 	 
 
 		   
        \bottomrule
@@ -659,7 +659,7 @@ We consider this measure as a simple method to rank the results that follow, as 
 
 
 \paragraph{Results and Discussion}
-Word sense induction and disambiguation results, using fusion enriched matrices with spectral clustering, are found in Tables \ref{tab:wsd-semeval_sup_Recall} and \ref{tab:wsd-semeval_unsup_fm} for the supervised recall and unsupervised F-measure respectively. We present the results for al words, nouns and verbs.
+Word sense induction and disambiguation results, using fusion enriched matrices with spectral clustering, are found in Tables \ref{tab:wsd-semeval_sup_Recall} and \ref{tab:wsd-semeval_unsup_fm} for the supervised recall and unsupervised F-measure respectively. We present the results for al words, nouns and verbs. The values corresponding the H-measure are discussed immediately following the analysis of the recall and F-measure.
 
 In the unsupervised evaluation results, we include an interesting baseline which had also the best performing results. The baseline consists in assigning one cluster per word (or {1c1word}), i.e., it simply assigns a single sense to all the test instances of a word. This baseline was not beat during the competition. On the other had, for the supervised results, we include the Most Frequent Sense (or MFS) baseline which tags every test instance with the sense that occurred most often in the training corpus of the competition. Besides these baselines, we included also the best performing systems' results for both of the evaluations.
 
@@ -677,7 +677,7 @@ Regarding Single Features (SF), $\mlex$ comes on top of $\msyn$ again, looking a
 \subparagraph{First Degree Fusion}
 On the 1F level, we see that the early fusion techniques in this task does not surpass the independent features representation in none of the metrics. This is unexpected as in NER, the early fusion operator was actually the best baseline during the experiments. This may be due to the fact that the clustering algorithm is sensitive to the noise produced when adding both matrices together, thus reducing the quality of the clusters found. 
 
-In cross feature fusion, with respect to the supervised evaluation, the $X_F(\slex,\mlex)$ operator that performs as well as $\mlex$, while producing almost the same number of average senses as the true value (3.63 versus 3.68). Indeed, this operator does improves on nouns, although it has lower performance on verbs. We will see later that this is indeed the best performing fusion operator according to our H-measure.
+In cross feature fusion, with respect to the supervised evaluation, the $X_F(\slex,\mlex)$ operator that performs as well as $\mlex$, while producing almost the same number of average senses as the true value (3.63 versus 2.87). Indeed, this operator does improves on nouns, although it has lower performance on verbs. We will see later that this is indeed the best performing fusion operator according to our H-measure.
 %
 Regarding the unsupervised F-measure, the best result is again obtained by $X_F(\slex, \mlex)$. This configuration already beats the SF baselines by improving both noun and verb results on the unsupervised evaluation. Nonetheless,  while it produces a bit more senses than the MSF average number of senses (1 sense per target word versus 1.08 by this fusion operator), it may be simply approaching  the same MSF naive solution, that is, assigning one sense per word. 
 
@@ -700,7 +700,7 @@ Indeed, contrary to what we reported in the previous NER experiments, the best r
 
 Specifically, regarding supervised recall, the operations $L(\mlex, X_F(\slex,\mlex))$ and $E(\mlex,L(\mlex,X_F(\slex,\mlex)))$ (with a performance of 79.5\%) surpass the MFS baseline (78.7\%), both single feature matrices $\mlex$ and $\msyn$ (79.2\%), and the early fusion trivial operation $E(\mlex,\msyn)$ ( with 78.7\%). Concerning the unsupervised F-measure, we do surpass our two baselines but not the 1c1word competition baseline. While considering this performance metric is harder to determine the best performing model. There are several fusion operations that match the performance of the 1c1word baseline, although the number of clusters produced is very close to one. This is the case of the $X_F(\ssyn,\mlex)$ and $X_S(\ssyn,\slex)$ operators, with 78.9\% F-measure and generating 1.08 and 1.01 clusters respectively. 
 
-In order to determine the best performing operators, that stray away from the trivial baselines, in the following we consider the H-measure, introduced before, to help us identify those systems that perform the best. In Figure \ref{fig:h_measure_semeval2007}, we see the H-measure for each of the fusion operators reported. We calculate the H-measure with $\delta=3.68$, as this is the number of true senses per target word in the Semeval 2007 corpus.  According to this metric, we find the 1F and 2F degree  levels the most interesting. Specifically, $X_F(\slex,\mlex)$, in 1F, is the most performing fusion operator. Indeed, by transferring quality lexical similarities into its same feature matrix, we obtain more useful relations than by using any syntactic data.
+In order to determine the best performing operators, that stray away from the trivial baselines, in the following we consider the H-measure, introduced before, to help us identify those systems that perform the best. In Figure \ref{fig:h_measure_semeval2007}, we see the H-measure for each of the fusion operators reported. We calculate the H-measure with $\delta=2.87$, as this is the number of true senses per target word in the Semeval 2007 corpus.  According to this metric, we find the 1F and 2F degree  levels the most interesting. Specifically, $X_F(\slex,\mlex)$, in 1F, is the most performing fusion operator. Indeed, by transferring quality lexical similarities into its same feature matrix, we obtain more useful relations than by using any syntactic data.
 On the other had, in second place, the operator $E(\mlex,X_F(\slex,\mlex))$ of the 2F level consists also exclusively on lexical information. While the same operators that outperformed the rest in NER (in the HF level) are not as adequate in this WSI/WSD experiment, we see that most of the feature combination techniques improve over the baselines of the single features and early fusion operations. 
 
 
@@ -713,12 +713,12 @@ On the other had, in second place, the operator $E(\mlex,X_F(\slex,\mlex))$ of t
     ybar=-0.5cm,
     width=.9\linewidth,
     enlargelimits=0.15,
-    domain = 0:80,
-    xmin=0, xmax=80,
+    domain = 0:85,
+    xmin=0, xmax=85,
 %    x=1mm, % Distance between the centers of the bars
 %    enlarge x limits={abs=1cm}, % The distance between the center of the first bar and the left edge
 %    enlarge y limits=false,
-    legend style={at={(0.5,.97)},anchor=north,legend columns=-1},
+    legend style={at={(0.7,.97)},anchor=north,legend columns=-1},
     ylabel={H-measure},
 %    xmin=0, xmax=85,
     xticklabels={
@@ -745,11 +745,13 @@ On the other had, in second place, the operator $E(\mlex,X_F(\slex,\mlex))$ of t
     nodes near coords align={vertical},
     x tick label style={rotate=90,anchor=east},
     ]
-\addplot+[mark=none, bar width=.5cm]  coordinates {(0,76.72) (5,74.54)};
-\addplot+[mark=none, bar width=.5cm]  coordinates {(10,76.95) (15,79.54) (20,77.19) (25,78.90) (30,76.79) (35,78.94) (40,78.94)};
-\addplot+[mark=none, bar width=.5cm]  coordinates {(45,74.77) (50,77.86) (55,79.09) (60,77.05) (65,73.64) (70,78.88)};
-\addplot+[mark=none, bar width=.5cm]  coordinates {(75,77.09) (80,78.68)};
-\legend{SF,1F,2F,HF}
+\addplot+[mark=none, bar width=.5cm]  coordinates {(0,72.8) (5,69.2)};
+\addplot+[mark=none, bar width=.5cm]  coordinates {(10,70.4) (15,78.7) (20,85.4) (25,70.2) (30,86.3) (35,69.8) (40,72.0)};
+\addplot+[mark=none, bar width=.5cm]  coordinates {(45,83.7) (50,84.4) (55,79.3) (60,76.5) (65,70.6) (70,75.3)};
+\addplot+[mark=none, bar width=.5cm]  coordinates {(75,71.2) (80,74.9)};
+\addplot+[mark=none, bar width=.5cm]  coordinates {(85,69.76)};
+
+\legend{SF,1F,2F,HF, MFS}
 \end{axis}
 \end{tikzpicture}
 \caption{H-measure for the WSI/WSD task on the Semeval 2007 corpus. Results obtained with the spectral clustering algorithm. The best performing operator is the $X_F(\slex,\mlex)$.}
@@ -909,6 +911,70 @@ Each type of hyperedge has its own network characteristics as mentioned before. 
 \paragraph{Results and Discussion}
 %Both Semeval 2007 and Semeval 2010 tasks are evaluated by an unsupervised and supervised set of measures. 
 \subparagraph{Semeval 2007}
+
+
+
+\begin{table}[htp!]
+\centering
+%\setlength\tabcolsep{3pt}
+\caption{All-words, nouns, and verbs supervised recall for the Semeval 2007 corpus using fusion operations (SF, 1F, 2F, HF) and our proposed method. We also display the average number of clusters found by each fusion configuration, the best performing system as well as the MFS baseline. In bold the best results per-column among our experiments.}
+\label{tab:wsd-semeval_sup_Recall}
+\begin{tabular}{@{}lrrrrc@{}}
+\toprule
+\textbf{Fusion Operation / System} & \multicolumn{3}{c}{\textbf{Recall (\%)}} & \#\textbf{cl} & \textbf{Fusion Level}\\ 
+        & \textbf{all}          & \textbf{nouns}          & \textbf{verbs} &          \\ 
+       \midrule
+        \multicolumn{5}{r}{\textbf{Single Features}} & \multirow{3}{*}{\textbf{SF}} \\ %\midrule
+       $\mlex$                    & 78.7 & 82.10 & 75.80 & 4.13\\
+ 
+
+       $\msyn$                    & 78.4 & 81.60 & \textbf{76.20} & 4.47\\
+       \midrule
+                   \multicolumn{5}{r}{\textbf{Early Fusion (EF)}}  & \multirow{10}{*}{\textbf{1F}}     \\ %\midrule
+       $E(\mlex, \msyn)$		& 78.80 & 81.11 & 76.10 & 4.46\\
+	  %\midrule
+                   \multicolumn{5}{r}{\textbf{Cross Feature Fusion ($\mathbf{X_FF}$)}}       \\ %\midrule	         
+	   
+	   $X_F(\slex, \mlex)$		& 78.70 & 82.30 & 75.70  & 3.63\\	   
+       $X_F(\slex, \msyn)$		& 78.50 & 80.90 & 75.30  & 3.08\\
+	   $X_F(\ssyn, \mlex)$		& \textbf{79.10} & 80.90 & 76.10  & 1.08\\	   
+       $X_F(\ssyn, \msyn)$		& 78.60 & 81.40 & 76.10 & 2.72\\       
+ %\midrule
+                   \multicolumn{5}{r}{\textbf{Cross Similarity Fusion ($\mathbf{X_SF}$)}}       \\ %\midrule
+	   
+ 
+	   $X_S(\ssyn, \slex)$		& 78.60 & 80.90 & \textbf{76.20}  & 1.01\\
+	   $X_S(\slex, \ssyn)$		& 78.70 & 80.90	& 76.06 & 1.33\\
+	  
+ \midrule
+                   \multicolumn{5}{r}{\textbf{Cross Feature Cross Similarity Fusion ($\mathbf{X_FX_SF}$)}}  & \multirow{9}{*}{\textbf{2F}}     \\ %\midrule
+	   
+       $X_F(X_S(\slex, \ssyn), \mlex)$		& 78.70 & 80.40 & 76.10 & 3.11 \\	   
+       $X_F(X_S(\slex, \ssyn), \msyn)$		& 78.70 & 81.80 & 75.60 & 3.16\\	   
+       	  %\midrule
+                   \multicolumn{5}{r}{\textbf{Early Cross Feature Fusion ($\mathbf{EX_FF}$)}}       \\ %\midrule	         
+       
+       $E(\mlex, X_F(\slex, \mlex))$		&78.70 & 82.40 & 75.70 & 3.57\\	   
+	   $E(\msyn, X_F(\slex, \mlex))$		& 78.90 & 80.50 & 75.80 & 1.95\\	   
+       %\midrule
+                   \multicolumn{5}{r}{\textbf{Late Cross Feature Fusion ($\mathbf{LX_FF}$)}}       \\ %\midrule	  
+	   $L(\msyn, X_F(\slex, \msyn))$		& 78.50 & 81.10 & 75.80 & 4.22\\	   
+	   $L(\mlex, X_F(\slex, \mlex))$		& 78.70 & \textbf{82.80} & 75.70 & 3.96\\	   
+       \midrule
+                   \multicolumn{5}{r}{\textbf{Early Late Cross Feature Fusion ($\mathbf{ELX_FF}$)}}     & \multirow{3}{*}{\textbf{HF}}  \\ %\midrule	  
+	   $E(\mlex, L(\msyn, X_F(\slex, \msyn)))$		& 78.60 & 81.40 & 75.40 & 4.26\\	   
+	   $E(\mlex, L(\mlex, X_F(\slex, \mlex)))$		& 78.60 & 82.70 & 75.90 & 3.99\\
+	   \midrule
+	   \midrule
+	   
+
+	   Baseline MFS		& 78.70 & 80.90 & 76.20 & 1.00\\ 	   	 	    
+%	   Semeval 2007 Best System& 81.60 & 86.80 & 75.70 & 1.15\\ 	 		   
+       \bottomrule
+\end{tabular}
+\end{table}
+
+
 
 \begin{table}[!htb]
 \centering
