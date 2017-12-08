@@ -913,7 +913,7 @@ Each type of hyperedge has its own network characteristics as mentioned before. 
 \paragraph{Results and Discussion}
 Both Semeval 2007 and Semeval 2010 tasks are first evaluated by an unsupervised and supervised set of measures, as before. Later on, we present the results according to our H-measure. The objective of these results comparison is to determine the level of performance of our proposed method and to verify that the fusion-produced representation spaces do improve over the use of independent features and the trivial feature concatenation (with early fusion).
 
-\subparagraph{Semeval 2007}
+%\subparagraph{Semeval 2007}
 
 
 
@@ -1040,7 +1040,7 @@ Both Semeval 2007 and Semeval 2010 tasks are first evaluated by an unsupervised 
 
 We analyze these results in terms of two main axes. First, as we want to know the pertinence of the proposed algorithm,  our algorithm is compared to the competition baseline and to the previous similar method from \cite{2007.Klapaftis.UOY}. Secondly, as before, we compare the use of single independent features ($\mlex$ and $\msyn$) and the trivial early fusion ($E(\mlex, \msyn)$) with the other more elaborated fusion operators. The goal is to show the interest of combining different types of information.
 
-In Table \ref{tab:sem2007_PM_Recall}  we show the supervised recall results obtained for the Semeval 2007 corpus, using our proposed method, with fusion operators. In this table, as in the rest of the tables presented in this section, as before, the columns show the results for all the words, for the nouns, and for the verbs. Again, the final column indicates the number of induced clusters per system. 
+In Table \ref{tab:sem2007_PM_Recall}  we show the supervised recall results obtained for the Semeval 2007 corpus, using our proposed method, coupled with fusion operators. In the table, as in the rest of the tables presented in this section, as before, the columns show the results for all the words, for the nouns, and for the verbs. Again, the final column indicates the number of induced clusters per system. 
 
 Our system, with a  $\mlex$ matrix is on par with the baseline MFS (assigning the most frequent sense to an instance) while producing more clusters and closer to the true number of average clusters. On the other hand, using the $\msyn$ is on the same level of performance while not beating the MFS baseline, but lightly performing better than using $\mlex$ in terms of verbs. Both systems improve on the inspiration method for our algorithm,  UoY (version 2007) \cite{2007.Klapaftis.UOY}, while not having to select thresholds specifically for each type of features used.
 
@@ -1048,11 +1048,14 @@ Our system, with a  $\mlex$ matrix is on par with the baseline MFS (assigning th
 Concerning the unsupervised F-measure evaluation, in Table \ref{tab:sem2007_PM_unsup_FS} we present the results for our models as well as for UoY. Additionally, one baseline is included, the 1c1word baseline. As described before, this baseline  groups all instances of a word into a single cluster. This baseline was not surpassed during the competition. Looking at the table, we can see that both our methods overcome the system described before {UoY(2007)}. Our systems induced a realtively close number of senses to the true number while retaining a competitive F-measure value. We also note that in this evaluation $\msyn$, the system using only co-occurrent dependency relations outperformed the lexical co-occurrence only system $\mlex$. It is very possible that this lack of lexical performance is due to the size of the surrounding words window, which in this case is selected to be the entire phrase were the word occurs. In this evaluation, using our method,  it is clearer that  verbs are  better addressed, and their senses better induced, using syntactic information compared to lexical information. It is indeed the same behavior shown while using the spectral clustering technique before.  We do note that our systems do not perform better than the 1c1word baseline. 
 
 
-In order to have a syntethic perspective of the results of our systems, we show in Figure \ref{fig:h_measure_semeval2007_nbased} the H-measure of our proposed model (using different fusion input matrices) as well as the baseline and UoY system. Again, as in the experiments with fusion operations, the best system SC$_{\text{fusion}}$ uses spectral clustering with a single cross media fusion operator, i.e., $X_F(\slex,\mlex)$. Close, in second place, we find the other fusion based system, this time using the network-based method proposed previously. Finally, the system UBC-AS  is ranked third by the H-measure.
+In order to have a syntethic perspective of the results of our systems, we show in Figure \ref{fig:h_measure_proposed_semeval2007} the H-measure of our proposed model (using different fusion input matrices) as well as the baseline (1c1word, which is analog to the MFS baseline in terms of supervised recall) and UoY system. According to our mesure, the fusion operators outperform again the single features and the early fusion. Namely, $X_F(\slex, \mlex)$ outperforms both independent features $\mlex$, $\msyn$, and $E(\mlex,\msyn)$. It is followed closely by the late cross feature fusion ($L(\mlex, X_F(\slex, \mlex))$) in the 2F level. 
 
-In general, it is interesting to notice that the fusion operators outperform again the single features and is on pair with other performing systems. What does seems unexpected is that the roles played by the $\msyn$ and $\mlex$ system is inverted regarding to the fusion experiments presented in the previous subsection. Indeed, using our network-based approach the performance of $\msyn$ is considerably larger than that of $\mlex$, whereas using spectral clustering the lexical information outranked (by a small margin) the syntactic information (based on dependencies). Again, we attribute this lack of performance of $\mlex$ to the size of the window employed, which seems to general to detect appropriate senses.
+What does seems unexpected is that the roles played by the $\msyn$ and $\mlex$ system is inverted regarding to the fusion experiments presented in the previous subsection. Indeed, using our network-based approach the performance of $\msyn$ is considerably larger than that of $\mlex$, whereas using spectral clustering the lexical information outranked (by a small margin) the syntactic information (based on dependencies). Again, we attribute this lack of performance of $\mlex$ to the size of the window employed, which seems to general to detect appropriate senses. 
 
-\begin{figure}
+Finally, while our fusion systems beat the early fusion and independent features baselines, the systems that perform the best do not employ heterogeneous data to do so. Indeed, the best systems that combine the two possible types of features lag behind the best fusion spaces. In most of the cases, as can be seen in the figure towards the center, this is due to the relatively lower number of clusters produced, which tends to reduce the H-measure performance.
+
+
+\begin{figure}[!t]
 \centering
 \begin{tikzpicture}{width=15cm,height=5cm}
 \pgfplotsset{compat=1.8}
@@ -1105,7 +1108,7 @@ In general, it is interesting to notice that the fusion operators outperform aga
 \end{axis}
 \end{tikzpicture}
 \caption{H-measure for the WSI/WSD task on the Semeval 2007 corpus. Results are obtained with our proposed  algorithm.}
-\label{fig:h_measure_PM_semeval2007}
+\label{fig:h_measure_proposed_semeval2007}
 \end{figure}
 
 
