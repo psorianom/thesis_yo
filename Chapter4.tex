@@ -711,7 +711,7 @@ On the other had, in second place, the operator $E(\mlex,X_F(\slex,\mlex))$ of t
 \begin{axis}[
 %	xtick distance={160},
     ybar=-0.5cm,
-    width=.9\linewidth,
+    width=.8\linewidth,
     enlargelimits=0.15,
     domain = 0:85,
     xmin=0, xmax=85,
@@ -749,12 +749,13 @@ On the other had, in second place, the operator $E(\mlex,X_F(\slex,\mlex))$ of t
 \addplot+[mark=none, bar width=.5cm]  coordinates {(10,70.4) (15,78.7) (20,85.4) (25,70.2) (30,86.3) (35,69.8) (40,72.0)};
 \addplot+[mark=none, bar width=.5cm]  coordinates {(45,83.7) (50,84.4) (55,79.3) (60,76.5) (65,70.6) (70,75.3)};
 \addplot+[mark=none, bar width=.5cm]  coordinates {(75,71.2) (80,74.9)};
-\addplot+[mark=none, bar width=.5cm]  coordinates {(85,69.76)};
+\addplot+[mark=none, bar width=.5cm]  coordinates {(85,69.8)};
 
 \legend{SF,1F,2F,HF, MFS}
 \end{axis}
 \end{tikzpicture}
-\caption{H-measure for the WSI/WSD task on the Semeval 2007 corpus. Results obtained with the spectral clustering algorithm. The best performing operator is the $X_F(\slex,\mlex)$.}
+\caption{H-measure for the WSI/WSD task on the Semeval 2007 corpus. Results are obtained with the spectral clustering algorithm.}
+% The best performing operator is the $X_F(\slex,\mlex)$.}
 \label{fig:h_measure_semeval2007}
 \end{figure}
 
@@ -886,19 +887,19 @@ The assignation of a sense consists in looking at each $tw$ instance represented
 
 
 	
-\paragraph{Experiments and Evaluation}
-\subparagraph{Test Datasets}
-We trained and evaluated our system on two datasets: Semeval 2007 Task 2 (as in the previous experiments) and Semeval 2010 Task 14 \cite{Semeval2010}. We recall that the Semeval 2007 task consisted in the induction and disambiguation of a single set of 100 words, 65 verbs and 35 nouns, each target word having a set of contexts where the word appear. On the other hand, the Semeval 2010 task consisted also on 100 words, with 50 being verbs and 50 being nouns. The average number of true senses in this dataset is 3.79. On this version of Semeval, a training set from which the senses of a word have to be induced is provided. In our experiment, for the Semeval 2010 dataset, we induce the senses from the training set and disambiguate the target words present within the test set.
+\subsection{Experiments and Evaluation}
+\paragraph{Test Datasets}
+We trained and evaluated our system on two datasets: Semeval 2007 Task 2 (as in the previous experiments) and Semeval 2010 Task 14 \cite{Semeval2010}. We recall that the Semeval 2007 task consisted in the induction and disambiguation of a single set of 100 words, 65 verbs and 35 nouns, each target word having a set of contexts where the word appear. The average number of senses in the testing set is 2.87. On the other hand, the Semeval 2010 task consisted also on 100 words, with 50 being verbs and 50 being nouns. The average number of true senses in this dataset is 3.79. On this version of Semeval, a training set from which the senses of a word have to be induced is provided. In our experiment, for the Semeval 2010 dataset, we induce the senses from the training set and disambiguate the target words present within the test set.
 
 We apply a light pretreatment, consisting on token lemmatization and we remove all words that appear less than four times. Concerning the individual graphs of each target word, we work only with nouns and if the extracted graph has fewer than 100 nodes, we do not apply any filtering (we keep all the extracted words). We do this in order to avoid empty solutions.
 
 
 
-\subparagraph{Implementation}
-The objective of this experiment is to understand the performance of both lexical and syntactic co-occurrence information, used independently, while solving WSI and WSD tasks while using the method described in the previous subsection. To that end we build two independent systems, using : SEN, which uses exclusively lexical co-occurrence hyperedges, and DEP, which employs only syntactic dependency hyperedges. Both are obtained as described in Chapter \ref{chap:ling_net}, section \ref{sec:ling_model}.
+\paragraph{Implementation}
+The objective of this experiment is to understand the performance of both lexical and syntactic co-occurrence information, used independently, while solving WSI and WSD tasks while using the method described in the previous subsection. To that end we build two independent systems, using : $\mlex$, which uses exclusively lexical co-occurrence hyperedges, and $\msyn$, which employs only syntactic dependency hyperedges. Both are obtained as described in Chapter \ref{chap:ling_net}, section \ref{sec:ling_model}.
  %
  
-Each type of hyperedge has its own network characteristics as mentioned before. Sentence hyperedges tend to have a much smaller number of words than those of the dependency category. This make sense as sentences usually contain less than 30 words, meanwhile a dependency hyperedge may contain up to hundreds of words (several words may share the same dependency relation). Taking this into consideration we set different threshold values for SEN and for DEP. First, we  consider only the top 100 nodes as candidate sense hubs. Secondly, we do not set the thresholds' values directly but instead we set up a percentile value for the Jaccard similarity ($th_1$) and for the average Jaccard similarity ($th_2$). This is a practical solution to the changing nature of the network model according to the features being employed. We experimentally found the best values for  each threshold used.
+Each type of hyperedge has its own network characteristics as mentioned before. Sentence hyperedges tend to have a much smaller number of words than those of the dependency category. This make sense as sentences usually contain less than 30 words, meanwhile a dependency hyperedge may contain up to hundreds of words (several words may share the same dependency relation). Taking this into consideration we set different threshold values for $\mlex$ and for $\msyn$. First, we  consider only the top 100 nodes as candidate sense hubs. Secondly, we do not set the thresholds' values directly but instead we experimentally set up a percentile value for the Jaccard similarity ($th_1=30$) and for the average Jaccard similarity ($th_2=30$). This is a practical solution to the changing nature of the network model according to the features being employed. We experimentally found the best values for  each threshold used.
 
 
 
@@ -909,7 +910,8 @@ Each type of hyperedge has its own network characteristics as mentioned before. 
 
 
 \paragraph{Results and Discussion}
-%Both Semeval 2007 and Semeval 2010 tasks are evaluated by an unsupervised and supervised set of measures. 
+Both Semeval 2007 and Semeval 2010 tasks are first evaluated by an unsupervised and supervised set of measures, as before. Later on, we present the results according to our H-measure. The objective of these results comparison is to determine the level of performance of our proposed method and to verify that the fusion-produced representation spaces do improve over the use of independent features and the trivial feature concatenation (with early fusion).
+
 \subparagraph{Semeval 2007}
 
 
@@ -918,52 +920,52 @@ Each type of hyperedge has its own network characteristics as mentioned before. 
 \centering
 %\setlength\tabcolsep{3pt}
 \caption{All-words, nouns, and verbs supervised recall for the Semeval 2007 corpus using fusion operations (SF, 1F, 2F, HF) and our proposed method. We also display the average number of clusters found by each fusion configuration, the best performing system as well as the MFS baseline. In bold the best results per-column among our experiments.}
-\label{tab:wsd-semeval_sup_Recall}
+\label{tab:sem2007_PM_Recall}
 \begin{tabular}{@{}lrrrrc@{}}
 \toprule
 \textbf{Fusion Operation / System} & \multicolumn{3}{c}{\textbf{Recall (\%)}} & \#\textbf{cl} & \textbf{Fusion Level}\\ 
         & \textbf{all}          & \textbf{nouns}          & \textbf{verbs} &          \\ 
        \midrule
         \multicolumn{5}{r}{\textbf{Single Features}} & \multirow{3}{*}{\textbf{SF}} \\ %\midrule
-       $\mlex$                    & 78.7 & 82.10 & 75.80 & 4.13\\
+       $\mlex$                    & 78.70 & 81.00 & 76.00 & 4.21\\
  
 
-       $\msyn$                    & 78.4 & 81.60 & \textbf{76.20} & 4.47\\
+       $\msyn$                    & 78.41 & 80.30 & 76.10 & 2.26\\
        \midrule
                    \multicolumn{5}{r}{\textbf{Early Fusion (EF)}}  & \multirow{10}{*}{\textbf{1F}}     \\ %\midrule
-       $E(\mlex, \msyn)$		& 78.80 & 81.11 & 76.10 & 4.46\\
+       $E(\mlex, \msyn)$		& 78.80 & 81.00 & \textbf{76.40} & 2.43\\
 	  %\midrule
                    \multicolumn{5}{r}{\textbf{Cross Feature Fusion ($\mathbf{X_FF}$)}}       \\ %\midrule	         
 	   
-	   $X_F(\slex, \mlex)$		& 78.70 & 82.30 & 75.70  & 3.63\\	   
-       $X_F(\slex, \msyn)$		& 78.50 & 80.90 & 75.30  & 3.08\\
-	   $X_F(\ssyn, \mlex)$		& \textbf{79.10} & 80.90 & 76.10  & 1.08\\	   
-       $X_F(\ssyn, \msyn)$		& 78.60 & 81.40 & 76.10 & 2.72\\       
+	   $X_F(\slex, \mlex)$		& 78.70 & 80.90 & 76.20  & 3.11\\	   
+       $X_F(\slex, \msyn)$		& 78.50 & 81.10 & 75.60  & 1.92\\
+	   $X_F(\ssyn, \mlex)$		& \textbf{79.10} & \textbf{81.60} & \textbf{76.40}  & 1.73\\	   
+       $X_F(\ssyn, \msyn)$		& 78.60 		 & 80.90  & 76.00 & 1.81\\       
  %\midrule
                    \multicolumn{5}{r}{\textbf{Cross Similarity Fusion ($\mathbf{X_SF}$)}}       \\ %\midrule
 	   
  
-	   $X_S(\ssyn, \slex)$		& 78.60 & 80.90 & \textbf{76.20}  & 1.01\\
-	   $X_S(\slex, \ssyn)$		& 78.70 & 80.90	& 76.06 & 1.33\\
+	   $X_S(\ssyn, \slex)$		& 78.60 & 80.80 & 76.20  & 1.44\\
+	   $X_S(\slex, \ssyn)$		& 78.70 & 80.90	& 76.20 & 1.10\\
 	  
  \midrule
                    \multicolumn{5}{r}{\textbf{Cross Feature Cross Similarity Fusion ($\mathbf{X_FX_SF}$)}}  & \multirow{9}{*}{\textbf{2F}}     \\ %\midrule
 	   
-       $X_F(X_S(\slex, \ssyn), \mlex)$		& 78.70 & 80.40 & 76.10 & 3.11 \\	   
-       $X_F(X_S(\slex, \ssyn), \msyn)$		& 78.70 & 81.80 & 75.60 & 3.16\\	   
+       $X_F(X_S(\slex, \ssyn), \mlex)$		& 78.70 & 81.00 & 75.80 & 1.59 \\	   
+       $X_F(X_S(\slex, \ssyn), \msyn)$		& 78.70 & 81.00 & 76.10 & 1.38\\	   
        	  %\midrule
                    \multicolumn{5}{r}{\textbf{Early Cross Feature Fusion ($\mathbf{EX_FF}$)}}       \\ %\midrule	         
        
-       $E(\mlex, X_F(\slex, \mlex))$		&78.70 & 82.40 & 75.70 & 3.57\\	   
-	   $E(\msyn, X_F(\slex, \mlex))$		& 78.90 & 80.50 & 75.80 & 1.95\\	   
+       $E(\mlex, X_F(\slex, \mlex))$		&78.70 & 81.20 & 75.80 & 2.41\\	   
+	   $E(\msyn, X_F(\slex, \mlex))$		& 78.90 & 81.40 & 76.10 & 2.35\\	   
        %\midrule
                    \multicolumn{5}{r}{\textbf{Late Cross Feature Fusion ($\mathbf{LX_FF}$)}}       \\ %\midrule	  
-	   $L(\msyn, X_F(\slex, \msyn))$		& 78.50 & 81.10 & 75.80 & 4.22\\	   
-	   $L(\mlex, X_F(\slex, \mlex))$		& 78.70 & \textbf{82.80} & 75.70 & 3.96\\	   
+	   $L(\msyn, X_F(\slex, \msyn))$		& 78.50 & 81.10 & 75.60 & 1.91\\	   
+	   $L(\mlex, X_F(\slex, \mlex))$		& 78.70 & 80.80 & \textbf{76.40} & 3.12\\	   
        \midrule
                    \multicolumn{5}{r}{\textbf{Early Late Cross Feature Fusion ($\mathbf{ELX_FF}$)}}     & \multirow{3}{*}{\textbf{HF}}  \\ %\midrule	  
-	   $E(\mlex, L(\msyn, X_F(\slex, \msyn)))$		& 78.60 & 81.40 & 75.40 & 4.26\\	   
-	   $E(\mlex, L(\mlex, X_F(\slex, \mlex)))$		& 78.60 & 82.70 & 75.90 & 3.99\\
+	   $E(\mlex, L(\msyn, X_F(\slex, \msyn)))$		& 78.60 & 80.70 & 76.20 & 1.99\\	   
+	   $E(\mlex, L(\mlex, X_F(\slex, \mlex)))$		& 78.60 & 81.10 & 75.70 & 2.39\\
 	   \midrule
 	   \midrule
 	   
@@ -975,36 +977,128 @@ Each type of hyperedge has its own network characteristics as mentioned before. 
 \end{table}
 
 
-
-\begin{table}[!htb]
+\begin{table}[htp!]
 \centering
-\caption{Unsupervised F-measure for the Semeval 2007 test set. The highest values for each column are in bold. These results are obtained with our proposed algorithm.}
-\begin{tabular}{@{}lrrrr@{}}
+\setlength\tabcolsep{3pt}
+\caption{All-words, nouns, and verbs unsupervised F-measure for the Semeval 2007 corpus using fusion operations (SF, 1F, 2F, HF) and our proposed method. We also display the average number of clusters found by each fusion configuration, the best performing system as well as the MFS baseline. In bold the best results per-column among our experiments.}
+\label{tab:sem2007_PM_unsup_FS}
+\begin{tabular}{@{}lrrrrc@{}}
 \toprule
-\textbf{System} & \multicolumn{3}{c}{\textbf{F-measure (\%)}} & \textbf{\#cl} \\
- & \textbf{all} & \textbf{nouns} & \textbf{verbs} & \\ \midrule
-1c1word          & \textbf{78.9}         & 80.7           & \textbf{76.8}           & 1.0             \\
-UBC-AS           & 78.7         & \textbf{80.8}           & 76.3           & 1.3          \\
-SC$_{\text{fusion}}$     & 76.2         & 79.6           & 72.5           & 3.6          \\
-GB$_{\text{fusion}}$     & 75.9         & 78.7           & 71.8           & 3.4          \\
-DEP     & 74.9         & 80.2           & 69.0           & 3.27          \\
-SEN     & 61.4         & 62.6           & 60.1           & 4.26         \\
-UoY(2007)        & 56.1         & 65.8           & 45.1           & 9.3          \\
-Random           & 37.9         & 38.1           & 37.7           & 19.7             \\
-1c1instance & 	9.5         & 6.6           & 12.7           & 48.51             \\ \bottomrule
-\end{tabular}
+\textbf{Fusion Operation / System} & \multicolumn{3}{c}{\textbf{F-measure (\%)}} & \#\textbf{cl} & \textbf{Fusion Level}\\ \midrule
+      	& \textbf{all}          & \textbf{nouns}          & \textbf{verbs}           \\ 
+       \midrule
+       \multicolumn{5}{r}{\textbf{Single Features}} & \multirow{3}{*}{\textbf{SF}}\\ %\midrule
+       $\mlex$                    &	63.80	 & 61.30 & 66.50 & 4.21\\
+ 
 
-\label{tab:sem2007_unsup_FS}
+       $\msyn$                    &	75.90	& 78.80 & 72.60 & 2.26\\
+       \midrule
+       \multicolumn{5}{r}{\textbf{Early Fusion (EF)}}  & \multirow{10}{*}{\textbf{1F}}     \\ %\midrule
+       $E(\mlex, \msyn)$		&	76.90	& \textbf{80.20} & 73.10 & 2.43\\
+	  %\midrule
+       \multicolumn{5}{r}{\textbf{Cross Feature Fusion ($\mathbf{X_FF}$)}}       \\ %\midrule	         
+	   
+	   $X_F(\slex, \mlex)$		&	71.00	& 68.10 & 74.20 & 3.11 \\	   
+       $X_F(\slex, \msyn)$		&	77.70	& 79.60 & 75.50 & 1.92 \\
+	   $X_F(\ssyn, \mlex)$		&	75.20	& 75.50 & 74.90	 & 1.73 \\	   
+       $X_F(\ssyn, \msyn)$		&	77.60	& 80.50 & 74.30 & 1.81 \\       
+% \midrule
+       \multicolumn{5}{r}{\textbf{Cross Similarity Fusion ($\mathbf{X_SF}$)}}       \\ %\midrule
+	   
+ 
+	   $X_S(\ssyn, \slex)$		&	74.10	& 72.10 & 76.50 & 1.44 \\
+	   $X_S(\slex, \ssyn)$		&	\textbf{78.30}	& 79.70  & \textbf{76.80} & 1.10 \\
+	  
+ \midrule
+       \multicolumn{5}{r}{\textbf{Cross Feature Cross Similarity Fusion ($\mathbf{X_FX_SF}$)}}   & \multirow{9}{*}{\textbf{2F}}    \\ %\midrule
+
+       $X_F(X_S(\slex, \ssyn), \mlex)$		&	77.80	&79.10  & 76.40& 1.59 \\	   
+       $X_F(X_S(\slex, \ssyn), \msyn)$		&	75.90	& 75.60 & 76.30 & 1.38 \\	   
+       	  %\midrule
+       \multicolumn{5}{r}{\textbf{Early Cross Feature Fusion ($\mathbf{EX_FF}$)}}       \\ %\midrule	         
+       
+       $E(\mlex, X_F(\slex, \mlex))$		&	75.40	& 76.30  & 74.40 & 2.41 \\	   
+	   $E(\msyn, X_F(\slex, \mlex))$		&	73.80	& 72.80  & 74.80 & 2.35 \\	   
+       %\midrule
+       \multicolumn{5}{r}{\textbf{Late Cross Feature Fusion ($\mathbf{LX_FF}$)}}       \\ %\midrule	  
+	   $L(\msyn, X_F(\slex, \msyn))$		&	77.60	& 79.50	 & 75.50 & 1.91 \\	   
+	   $L(\mlex, X_F(\slex, \mlex))$		&	70.10	& 67.70 & 74.20 & 3.12 \\	   
+       \midrule
+       \multicolumn{5}{r}{\textbf{Early Late Cross Feature Fusion ($\mathbf{ELX_FF	}$)}}    & \multirow{3}{*}{\textbf{HF}}   \\ %\midrule	  
+	   $E(\mlex, L(\msyn, X_F(\slex, \msyn)))$		&	77.90	& 79.50 & 75.80& 1.99 \\	   
+	   $E(\mlex, L(\mlex, X_F(\slex, \mlex)))$		&	75.40	& 76.30&74.40 & 2.39 \\
+	   \midrule
+	   \midrule
+	   Baseline 1c1word 		&	78.90	& 80.70&76.80 & 1.00 \\ 	   	 	    	   
+%	   Semeval 2007 Best Systems	&	78.70	& 80.80&76.30 & 3.06 \\ 	 
+
+		   
+       \bottomrule
+\end{tabular}
 \end{table}
+
 
 In Table \ref{tab:sem2007_unsup_FS} we present the unsupervised F-measure evaluation results for our models as well as for some other systems: the previously presented UoY (version 2007) and UBC-AS \cite{Agirre2007UBC}, the best performing system according to this measure. Additionally, three baselines are included, the already-known 1c1word plus two new ones, the Random  baseline which assigns a sense randomly to each test instance; and the 1c1instance baseline, which attributes a unique sense to each one of the test instances. Finally, we also include the fusion operator that obtained the highest performance (according to the H-measure) in the experiments of the previous subsection, that is, the results of the $X_F(\slex,\mlex)$ fusion. As the last experiments were performed with spectral clustering, we will call this system SC$_\text{fusion}$. Furthermore, given that we generate representation spaces, we can use the same fusion matrix but this time using the graph-based algorithm presented in this subsection, instead of the spectral clustering used before. We call this system GB$_{\text{fusion}}$
 
 In this table, as in the rest of the tables presented in this section, as before, the columns show the results for all the words, for the nouns, and for the verbs. Again, the final column indicates the number of induced clusters per system. It is important to consider this value as the unsupervised metrics are biased towards systems with less number of induced clusters and thus to the 1c1word baseline. We aim to address this shortcoming with our H-measure.
 
-Looking at the table, we can see that both our methods surpass the baselines and the system described before {UoY(2007)}. The best system of the competition, {UBC-AS} used also co-occurrence graphs and applied a random-walk based clustering algorithm over the vertices' similarity matrix. Still, our system induced a larger amount of senses, while retaining a competitive F-measure value. We also note that in this evaluation DEP, the system using only co-occurrent dependency relations outperformed the lexical co-occurrence only system SEN. It is very possible that this lack of lexical performance is due to the size of the surrounding words window, which in this case is selected to be the entire phrase were the word occurs. 
+Looking at the table, we can see that both our methods surpass the baselines and the system described before {UoY(2007)}. The best system of the competition, {UBC-AS} used also co-occurrence graphs and applied a random-walk based clustering algorithm over the vertices' similarity matrix. Still, our system induced a larger amount of senses, while retaining a competitive F-measure value. We also note that in this evaluation $\msyn$, the system using only co-occurrent dependency relations outperformed the lexical co-occurrence only system $\mlex$. It is very possible that this lack of lexical performance is due to the size of the surrounding words window, which in this case is selected to be the entire phrase were the word occurs. 
 
 With respect to our fusion space methods, SC$_{\text{fusion}}$ and GB$_{\text{fusion}}$ we find that both are competitive but cannot achieve a better performance that those systems prepared for the competition. Both systems are better than using independent features, according to the unsupervised F-measure. GB$_{\text{fusion}}$  Nonetheless, for supervised recall, only GB$_{\text{fusion}}$ beats both of the single feature matrices.
 
+\begin{figure}
+\centering
+\begin{tikzpicture}{width=15cm,height=5cm}
+\pgfplotsset{compat=1.8}
+\begin{axis}[
+%	xtick distance={160},
+    ybar=-0.5cm,
+    width=.8\linewidth,
+    enlargelimits=0.15,
+    domain = 0:80,
+    xmin=0, xmax=80,
+%    x=1mm, % Distance between the centers of the bars
+%    enlarge x limits={abs=1cm}, % The distance between the center of the first bar and the left edge
+%    enlarge y limits=false,
+    legend style={at={(0.7,1)},anchor=north,legend columns=-1},
+    ylabel={H-measure},
+%    xmin=0, xmax=85,
+    xticklabels={
+	    {$\mlex$},
+	    {$\msyn$},
+	    {$E(\mlex, \msyn)$},
+	    {$X_F(\slex, \mlex)$},
+	    {$X_F(\slex, \msyn)$},
+	    {$X_F(\ssyn, \mlex)$},
+	    {$X_F(\ssyn, \msyn)$},
+	    {$X_S(\ssyn, \slex)$},
+	    {$X_S(\slex, \ssyn)$},
+	    {$X_F(X_S(\slex, \ssyn), \mlex)$},
+	    {$X_F(X_S(\slex, \ssyn), \msyn)$},
+	    {$E(\mlex, X_F(\slex, \mlex))$},
+	    {$E(\msyn, X_F(\slex, \mlex))$},
+	    {$L(\msyn, X_F(\slex, \msyn))$},
+	    {$L(\mlex, X_F(\slex, \mlex))$},
+	    {$E(\mlex, L(\msyn, X_F(\slex, \msyn)))$},
+	    {$E(\mlex, L(\mlex, X_F(\slex, \mlex)))$}
+    },
+    xtick={0,5,...,80},
+    nodes near coords,
+    nodes near coords align={vertical},
+    x tick label style={rotate=90,anchor=east},
+    ]
+\addplot+[mark=none, bar width=.5cm]  coordinates {(0,69.3) (5,79.8)};
+\addplot+[mark=none, bar width=.5cm]  coordinates {(10,82.3) (15,83.5) (20,76.6) (25,74.3) (30,75.6) (35,71.5) (40,70.2)};
+\addplot+[mark=none, bar width=.5cm]  coordinates {(45,73.7) (50,71.6) (55,81.6) (60,80.5) (65,76.5) (70,83.1)};
+\addplot+[mark=none, bar width=.5cm]  coordinates {(75,77.4) (80,81.3)};
+%\addplot+[mark=none, bar width=.5cm]  coordinates {(85,69.8)};
+
+\legend{SF,1F,2F,HF, MFS}
+\end{axis}
+\end{tikzpicture}
+\caption{H-measure for the WSI/WSD task on the Semeval 2007 corpus. Results are obtained with our proposed  algorithm.}
+\label{fig:h_measure_PM_semeval2007}
+\end{figure}
 
 \begin{table}[!tb]
 \centering
@@ -1015,9 +1109,9 @@ With respect to our fusion space methods, SC$_{\text{fusion}}$ and GB$_{\text{fu
  & \textbf{all} & \textbf{nouns} & \textbf{verbs} & \\ \midrule
 I2R & \textbf{81.6} & \textbf{86.8} & 75.7 & 3.1 \\
 GB$_{\text{fusion}}$ & 79.6 & 83.3 & {76.3} & 3.4 \\
-SEN & 79.4 & 82.5 & 75.9 & 4.3 \\
+$\mlex$ & 79.4 & 82.5 & 75.9 & 4.3 \\
 SC$_{\text{fusion}}$ & 79.2 & 82.3 & 75.7 & 3.6\\
-DEP & 79.1 & 81.5 & \textbf{76.4} & 3.3\\
+$\msyn$ & 79.1 & 81.5 & \textbf{76.4} & 3.3\\
 MFS & 78.7 & 80.9 & 76.2 & 1.0 \\
 UoY(2007) & 77.7 & 81.6 & 73.3 & 9.3 \\ \bottomrule
 \end{tabular}
@@ -1025,7 +1119,7 @@ UoY(2007) & 77.7 & 81.6 & 73.3 & 9.3 \\ \bottomrule
 \label{tab:sem2007_sup_recall}
 \end{table}
 
-Moving onto the supervised results for Semeval 2007, in Table \ref{tab:sem2007_sup_recall} we show the results obtained concerning supervised recall.  In this table we include the competing system I2R \cite{Niu2007}, based on an Information Bottleneck based clustering algorithm, which obtains the best results according to all the words and nouns. Both our systems DEP and SEN beat the baseline of assigning the most frequent sense to an instance MFS). More interestingly, DEP was able to beat the MFS verb baseline, something that was not achieved during the competition. As was the case before, our systems beat UoY(2007).
+Moving onto the supervised results for Semeval 2007, in Table \ref{tab:sem2007_sup_recall} we show the results obtained concerning supervised recall.  In this table we include the competing system I2R \cite{Niu2007}, based on an Information Bottleneck based clustering algorithm, which obtains the best results according to all the words and nouns. Both our systems $\msyn$ and $\mlex$ beat the baseline of assigning the most frequent sense to an instance MFS). More interestingly, $\msyn$ was able to beat the MFS verb baseline, something that was not achieved during the competition. As was the case before, our systems beat UoY(2007).
 
 
 \begin{figure}
@@ -1049,9 +1143,9 @@ Moving onto the supervised results for Semeval 2007, in Table \ref{tab:sem2007_s
 		UBC-AS,
 		I2R,
 		{GB$_{\text{fusion}}$},
-		SEN,
+		$\mlex$,
 		{SC$_{\text{fusion}}$},
-		DEP,
+		$\msyn$,
 		UoY(2007)
     },
     xtick={0,5,...,30},
@@ -1069,10 +1163,10 @@ Moving onto the supervised results for Semeval 2007, in Table \ref{tab:sem2007_s
 
 We now look into the results from the H-measure perspective (see Figure \ref{fig:h_measure_semeval2007_nbased}). Again, as in the experiments with fusion opeartions, the best system SC$_{\text{fusion}}$ uses spectral clustering with a single cross media fusion operator, i.e., $X_F(\slex,\mlex)$. Close, in second place, we find the other fusion based system, this time using the network-based method proposed previously. Finally, the system UBC-AS  is ranked third by the H-measure.
 
-In general, it is interesting to notice that the fusion operators outperform again the single features and is on pair with other performing systems. What does seems unexpected is that the roles played by the DEP and SEN system is inverted regarding to the fusion experiments presented in the previous subsection. Indeed, using our network-based approach the performance of DEP is considerably larger than that of SEN, whereas using spectral clustering the lexical information outranked (by a small margin) the syntactic information (based on dependencies). Again, we attribute this lack of performance of SEN to the size of the window employed, which seems to general to detect appropriate senses.
+In general, it is interesting to notice that the fusion operators outperform again the single features and is on pair with other performing systems. What does seems unexpected is that the roles played by the $\msyn$ and $\mlex$ system is inverted regarding to the fusion experiments presented in the previous subsection. Indeed, using our network-based approach the performance of $\msyn$ is considerably larger than that of $\mlex$, whereas using spectral clustering the lexical information outranked (by a small margin) the syntactic information (based on dependencies). Again, we attribute this lack of performance of $\mlex$ to the size of the window employed, which seems to general to detect appropriate senses.
 
 
-As a way of determining where does both systems complement each other, in Figure \ref{fig:nouns_fs} and Figures  \ref{fig:verbs_fs2} and \ref{fig:verbs_fs3} we show the unsupervised F-measure value for nouns and verbs respectively (we split the verbs in two figures for visibility). We can see that, as the previous result tables indicated, DEP did better overall. Nonetheless, and what is most interesting in these figures, is that there are certain words (both nouns and verbs) that obtain better scores using SEN instead of DEP and vice versa. For example, the nouns \textit{area}, \textit{future}, and \textit{state} are better treated by SEN, according to this measure, even if by a small margin. On the other hand, with respect to the verbs, the differences between performance are more important. Again, the SEN system does better while finding senses and assigning them to the verbs \textit{avoid}, \textit{fix}, and \textit{work}. %This information will be useful during the design of hybridization techniques between feature of our hypergraph structure.
+As a way of determining where does both systems complement each other, in Figure \ref{fig:nouns_fs} and Figures  \ref{fig:verbs_fs2} and \ref{fig:verbs_fs3} we show the unsupervised F-measure value for nouns and verbs respectively (we split the verbs in two figures for visibility). We can see that, as the previous result tables indicated, $\msyn$ did better overall. Nonetheless, and what is most interesting in these figures, is that there are certain words (both nouns and verbs) that obtain better scores using $\mlex$ instead of $\msyn$ and vice versa. For example, the nouns \textit{area}, \textit{future}, and \textit{state} are better treated by $\mlex$, according to this measure, even if by a small margin. On the other hand, with respect to the verbs, the differences between performance are more important. Again, the $\mlex$ system does better while finding senses and assigning them to the verbs \textit{avoid}, \textit{fix}, and \textit{work}. %This information will be useful during the design of hybridization techniques between feature of our hypergraph structure.
 
  
 
@@ -1120,16 +1214,16 @@ Concerning the supervised evaluation, it follows the same of Semeval 2007, using
  & \textbf{all} & \textbf{nouns} & \textbf{verbs} & \\ \midrule
 {Hermit} & \textbf{16.2} & \textbf{16.7} & \textbf{15.6} & 10.8 \\
 NMF$_{lib}$&11.8&13.5&9.4&4.8\\
-SEN & 11.6 & 8.8 & 11.9 & 10.5 \\
+$\mlex$ & 11.6 & 8.8 & 11.9 & 10.5 \\
 Random & 4.4 & 4.2 & 4.6 & 4.0 \\
-DEP & 3.5 & 3.9 & 2.8 & 2.8 \\
+$\msyn$ & 3.5 & 3.9 & 2.8 & 2.8 \\
 MFS & 0.0 & 0.0 & 0.0 & 1.0 \\ \bottomrule
 \end{tabular}
 
 \label{tab:sem2010_VM}
 \end{table}
 
-In Table \ref{tab:sem2010_VM} we present our systems compared to the baseline and other methods using during Semeval 2010. V-measure is a metric well-known for favoring systems producing a higher number of clusters \cite{VandeCruys2011,pedersen2010duluth}. Thus, it is considered not a very reliable metric. We have included it to have a global insight about the performance of our method. We remark that only SEN performed better than both baselines, random assignation of senses (Random) and using the most frequent sense (MFS). Also, we note that we included only the best performing systems, in this case NMF$_{lib}$ \cite{VandeCruys2011} and   Hermit \cite{JurgensS10}. The former  did not participate on the competition but was developed later. We include it henceforth to illustrate how systems variate from one position to another depending the metric used to assess the performance. The latter was the best method on this metric from the task challenge. It is important to notice that other systems exist between Hermit and SEN. They were not included for the sake of clarity.
+In Table \ref{tab:sem2010_VM} we present our systems compared to the baseline and other methods using during Semeval 2010. V-measure is a metric well-known for favoring systems producing a higher number of clusters \cite{VandeCruys2011,pedersen2010duluth}. Thus, it is considered not a very reliable metric. We have included it to have a global insight about the performance of our method. We remark that only $\mlex$ performed better than both baselines, random assignation of senses (Random) and using the most frequent sense (MFS). Also, we note that we included only the best performing systems, in this case NMF$_{lib}$ \cite{VandeCruys2011} and   Hermit \cite{JurgensS10}. The former  did not participate on the competition but was developed later. We include it henceforth to illustrate how systems variate from one position to another depending the metric used to assess the performance. The latter was the best method on this metric from the task challenge. It is important to notice that other systems exist between Hermit and $\mlex$. They were not included for the sake of clarity.
 
 \begin{table}[]
 \centering
@@ -1141,16 +1235,16 @@ In Table \ref{tab:sem2010_VM} we present our systems compared to the baseline an
 
 MFS & \textbf{63.5} & \textbf{57.0} & \textbf{72.4} & 1.0 \\
 Duluth-WSI-SVD-Gap & 63.3 & \textbf{57.0} & \textbf{72.4} & 1.0 \\
-DEP & 53.6 & 50.1 & 58.7 & 2.8 \\
+$\msyn$ & 53.6 & 50.1 & 58.7 & 2.8 \\
 NMF$_{lib}$&45.3&42.2&49.8&5.4\\
-SEN & 38.4 & 46.7 & 28.5 & 10.5 \\
+$\mlex$ & 38.4 & 46.7 & 28.5 & 10.5 \\
 Random & 31.9 & 30.4 & 34.1 & 4.0 \\ \bottomrule
 \end{tabular}
 
 \label{tab:sem2010_FS}
 \end{table}
 
-The second unsupervised measure, Paired F-measure, can be seen in Table \ref{tab:sem2010_FS}. In this case both systems presented performed better than the random baseline. All the systems presented were able to beat the MFS baseline. We note that DEP does much better compared to SEN concerning verbs, namely 58\% vs. 28\% F-measure. Still, the results are low considering the best results of the competition, 63\% from the Duluth system \cite{Pedersen2010} , although again, it generates a number of senses very similar to the MFS baseline. Both our systems induce a considerable amount of clusters while keeping a descent F-measure. Our results are obtained with our proposed algorithm.
+The second unsupervised measure, Paired F-measure, can be seen in Table \ref{tab:sem2010_FS}. In this case both systems presented performed better than the random baseline. All the systems presented were able to beat the MFS baseline. We note that $\msyn$ does much better compared to $\mlex$ concerning verbs, namely 58\% vs. 28\% F-measure. Still, the results are low considering the best results of the competition, 63\% from the Duluth system \cite{Pedersen2010} , although again, it generates a number of senses very similar to the MFS baseline. Both our systems induce a considerable amount of clusters while keeping a descent F-measure. Our results are obtained with our proposed algorithm.
 
 
 
@@ -1165,8 +1259,8 @@ The second unsupervised measure, Paired F-measure, can be seen in Table \ref{tab
 NMF$_{lib}$&\textbf{62.6}&57.3&\textbf{70.2} & 5.4\\
 UoY(2010) & 62.4 & \textbf{59.4} & 66.8 & 11.5\\
 
-SEN & 59.8 & 55.8 & 67.4 & 10.5\\
-DEP & 59.3 & 53.9 & 67.2 & 2.8\\
+$\mlex$ & 59.8 & 55.8 & 67.4 & 10.5\\
+$\msyn$ & 59.3 & 53.9 & 67.2 & 2.8\\
 MFS & 58.7 & 53.2 & 66.6 & 1.0\\
 Random & 57.3 & 51.5 & 65.7 & 4.0\\ \bottomrule
 
@@ -1179,9 +1273,9 @@ Random & 57.3 & 51.5 & 65.7 & 4.0\\ \bottomrule
 
 Finally, we in Table \ref{tab:sem2010_SR} we show the supervised Recall results of Semeval 2010. The best performing algorithm shown is NMF$_{lib}$. During the competition, UoY(2010) was the best method. It is a graph-based algorithm which shares the name with the UoY(2007)  system presented in Semeval 2007, but it is a different  approach. Concerning our systems, in this evaluation they seem to perform the best, or in a comparable level, to the top methods.  We find that in general our systems seem to perform better on the Semeval 2007 dataset. Discovering the reason could shed light into improving the performance on the Semeval 2010 test set. Given the results, it seems like a combination of features (syntactic plus lexical) in  a single algorithm could yield better results. 
 
-Again, in order to find the overall best systems, we present the H-measure as before. This time the H-measure will be the harmonic mean of the newly introduced unsupervised paired F-measure instead of the plain F-measure used before. The supervised recall stays also as before. We do not employ the V-measure for the reasons exposed before, namely it is biased towards systems that generate many senses. Ideally, the paired F-measure was conceived to punish systems that produced less or more senses than the true average number of senses for each target word. In reality, it does not seem to be the case. We present in Figure \ref{fig:h_measure_semeval2010} the H-measure ($\delta=3.79$) results for the systems discussed previously in the Semeval 2010 context. Duluth-WSI-SVD-Gap is the best system overall, followed by our approach using DEP as input matrix. 
+Again, in order to find the overall best systems, we present the H-measure as before. This time the H-measure will be the harmonic mean of the newly introduced unsupervised paired F-measure instead of the plain F-measure used before. The supervised recall stays also as before. We do not employ the V-measure for the reasons exposed before, namely it is biased towards systems that generate many senses. Ideally, the paired F-measure was conceived to punish systems that produced less or more senses than the true average number of senses for each target word. In reality, it does not seem to be the case. We present in Figure \ref{fig:h_measure_semeval2010} the H-measure ($\delta=3.79$) results for the systems discussed previously in the Semeval 2010 context. Duluth-WSI-SVD-Gap is the best system overall, followed by our approach using $\msyn$ as input matrix. 
 
-Looking at the results, we argue that the Semeval 2010 task was more complex than Semeval 2007. We believe it is in part due to the fact that there are more verbs in the dataset, which are always harder to disambiguate than nouns. The dataset was also considerably larger, which may have introduced noise and required more sophisticated filtering techniques. We see that our system SEN performs poorly. Indeed, it generates too many senses, which is a symptom of poorly generated clusters, that is, the clusters found are not distinctive nor cohesive enough to enclose whole senses. On the other hand DEP does reasonably well, maybe in part due to the fact that again there are more verbs whose senses are better distinguished   using syntactic information.
+Looking at the results, we argue that the Semeval 2010 task was more complex than Semeval 2007. We believe it is in part due to the fact that there are more verbs in the dataset, which are always harder to disambiguate than nouns. The dataset was also considerably larger, which may have introduced noise and required more sophisticated filtering techniques. We see that our system $\mlex$ performs poorly. Indeed, it generates too many senses, which is a symptom of poorly generated clusters, that is, the clusters found are not distinctive nor cohesive enough to enclose whole senses. On the other hand $\msyn$ does reasonably well, maybe in part due to the fact that again there are more verbs whose senses are better distinguished   using syntactic information.
 
 
 
@@ -1204,9 +1298,9 @@ Looking at the results, we argue that the Semeval 2010 task was more complex tha
 %    xmin=0, xmax=85,
     xticklabels={
 		Duluth-WSI-SVD-Gap,
-		DEP,
+		$\msyn$,
 		{NMF$_{\text{lib}}$},
-		SEN,
+		$\mlex$,
 		UoY(2010)
     },
     xtick={0,5,...,20},
@@ -1218,7 +1312,7 @@ Looking at the results, we argue that the Semeval 2010 task was more complex tha
 %\legend{SF,1F,2F,HF}
 \end{axis}
 \end{tikzpicture}
-\caption{H-measure for the WSI/WSD task on the Semeval 2010 corpus using our network-based method as well as other systems, indicated on the x-axis. The best performing system is Duluth-WSI-SVD-Gap, while our best method is that based on syntactic information DEP.}
+\caption{H-measure for the WSI/WSD task on the Semeval 2010 corpus using our network-based method as well as other systems, indicated on the x-axis. The best performing system is Duluth-WSI-SVD-Gap, while our best method is that based on syntactic information $\msyn$.}
 \label{fig:h_measure_semeval2010}
 \end{figure}
 
