@@ -9,7 +9,7 @@ We organize this  chapter  in four parts: we present a brief state of the art on
 
 \section{Introduction}
 
-In the previous chapter we covered the details concerning the parameters regarding the construction of a distributional representation model, as well as its challenges.
+We have covered the details concerning the parameters regarding the construction of a distributional representation model, as well as its challenges.
 The challenges that we will address in this chapter are two: (1) how to organize heterogeneous textual information within a single linguistic resource, and (2), how to leverage said information to obtain complementary representation spaces, while taking into account the feature sparsity issue that is characteristic of textual data.
 
 
@@ -221,14 +221,14 @@ Given a  symmetric and positive similarity matrix $W \in \mathbb{R}^{n \times n}
 
 Special attention must be given to the input matrix $W$ as it must be indeed a symmetric affinity matrix in order to ensure the proper behavior of this method \cite{Luxburg2007,GoyalH14}.
 
-\input{network_soa_table.tex}
+
 
 \paragraph{Supervised Sequential Classification}\label{sec:perceptron}
 
 In order to determine the correct set of tags that identify the words within a phrase, sequential NLP tasks such as NER, are usually solved by using supervised structured algorithms. In particular, we focus on the  structured perceptron by \cite{Collins2002} sequence labeling algorithm. The general intuition of this method is introduced below. We chose this method as it is relatively simple and performs as well as more complex probabilistic approaches (e.g., conditional random fields, hidden Markov models)  \cite{Daume2006,daume2012course}. 
 
 
-Like  the well-known perceptron algorithm, the structured perceptron is an online method that learns to classify one example at a time. The goal of this algorithm is to determine a label for each structured input. Formally, for an input $x \in \mathcal{X}$, we want to predict a class $\hat{y} \in \mathcal{Y}$ that maximizes the following product: 
+Like  the well-known perceptron algorithm, the structured perceptron is an online method that learns to classify one example at a time. The goal of this algorithm is to determine a label for each structured input. Formally, for an input $x \in \mathcal{X}$, we want to predict a class $\hat{y} \in \mathcal{Y}$ that maximizes the following matrix product: 
 
 \begin{equation}
 \hat{y}= \argmax_{\hat{y}\in \mathcal{Y}}w\cdot \Phi(x,\hat{y})
@@ -281,9 +281,9 @@ In order to address this problem, another familiar  algorithm is employed: the V
 \subsection{Discussion}\label{sec:disc_chap3}
 We have covered the network attributes of several approaches on semantic related NLP tasks. A summary of these strategies is shown in Table \ref{tab:survey_sum}.
 In this section we shortly discuss the reviewed articles from a  modelization perspective as well as looking at the evolution of the approaches used to solve the word sense disambiguation and induction tasks.
+\input{network_soa_table.tex}
 
-
-Regarding WSD approaches, we see that the use of a lexical knowledge base, such as Wordnet, is pervasive in this task. Indeed, new resources, such as BabelNet, solves to some extent the fixed (no new senses are included automatically) nature of this type of resources by leveraging the always evolving knowledge of Wikipedia. Indeed, in the recent years, entity linking has emerged as a related task to WSD. It takes even more advantage from bases that combine both Wordnet and Wikipedia, such as BabelNet. On the other hand, WSI, while being a more flexible approach (language and word-usage independent, does not require human-made bases)  for solving WSD, its results are tightly linked to the quality of the clustering algorithm used. 
+Regarding WSD approaches, we see that the use of a lexical knowledge base, such as Wordnet\footnote{\url{https://wordnet.princeton.edu}}, is pervasive in this task. Indeed, new resources, such as BabelNet\footnote{\url{http://babelnet.org}}, solves to some extent the fixed (no new senses are included automatically) nature of this type of resources by leveraging the always evolving knowledge of Wikipedia. Indeed, in the recent years, entity linking has emerged as a related task to WSD. It takes even more advantage from bases that combine both Wordnet and Wikipedia, the case of BabelNet. On the other hand, WSI, while being a more flexible approach (language and word-usage independent, does not require human-made bases)  for solving WSD, its results are tightly linked to the quality of the clustering algorithm used. 
 % 
 %We refer to  linguistic-network modelization as the type of linguistic information and the means in which it is stored within a language network.
  With respect to the networks' modelization, we find that few approaches deal with syntactic attributes. We believe that finding semantic similarities can be improved by adding syntactic information not only  while using dependency relations but also by leveraging the constituency tree of each word. Moreover, using syntactic data along with semantic and/or lexical co-occurrences takes us into the heterogeneous network domain which has not been addressed in most of the approaches covered. Being able to design new similarity metrics that deal with different types of information opens new avenues of research in the semantic similarity domain. Finally, concerning the algorithms employed, few approaches make direct use of the graph Laplacian representation. New similarities could be defined using the Laplacian as a starting point. 
