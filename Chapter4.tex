@@ -1,10 +1,9 @@
 \chapter{Applications to named entity recognition and word sense disambiguation} 
 \label{chap:wsd}
 \begin{abstractchap}
-This chapter presents the experiments we performed as applications of the proposed model. On the first subsection, we use well-known methods to solve named entity recognition while using fusion enriched representation spaces. We show that these kinds of representations, leveraging heterogeneous information and alleviating its data sparsity, are useful to improve the performance of the task. Indeed, our results on three different datasets using enriched representations are better than those of the baselines we propose, and more importantly, our results show that the combination of textual features indeed improves the performance compared to single feature and the trivial feature concatenation. We also give a detailed analysis into how the fusion operations get to improve the performance of the task at hand.
+This chapter presents the experiments we performed as applications of our proposed model. On the first subsection, we use well-known methods to solve named entity recognition while using fusion enriched representation spaces. We show that these kinds of representations, leveraging heterogeneous information and alleviating its data sparsity, are useful to improve the performance of the task. Indeed, our results on three different datasets using enriched representations are better than those of the baselines we propose, and more importantly, our results show that the combination of textual features indeed improves the performance compared to single feature and the trivial feature concatenation. We also give a detailed analysis into how the fusion operations get to improve the performance of the task at hand.
 
-In the second subsection, we change the NLP task to word sense induction and disambiguation. First, we apply the same fusion operations as before to solve the task using an existing literature approach. Our experiments on two different corpora show that the improvements shown in named entity recognition are consistent in word sense induction and disambiguation. Secondly, we propose a method to exploit the structure of the network within our linguistic model. 
-Although this approach has been studied before, we improve over the previous  literature results while having a reduced number of parameters and employing heterogeneous features to solve the task. We also analyze the results obtained according to the  type of word studied, whether nouns or verbs, and according to the effect of the use of either lexical or syntactical information.
+In the second subsection, we change the NLP task to word sense induction and disambiguation. First, we apply the same fusion operations as before to solve the task using an existing literature approach. Our experiments on two different corpora show that the improvements shown in named entity recognition are consistent in word sense induction and disambiguation. Secondly, we propose a method to exploit the structure of the network within our linguistic model. Although the base intuition has been studied before, we improve over the previous  literature results while having a reduced number of parameters and employing heterogeneous features to solve the task. We also analyze the results obtained according to the  type of word studied, whether nouns or verbs, and according to the effect of the use of either lexical or syntactical information.
 
 
 %Secondly, in the second section of the chapter, we explore the use of well-known multi-modal fusion techniques to solve two prominent Natural Language Processing tasks. Specifically, we focus on solving Named Entity Recognition and Word  Induction and Disambiguation by applying feature-combination methods that have already shown their efficiency in the multi-media analysis domain. We present a series of experiments employing fusion techniques in order to combine textual linguistic features. 
@@ -18,7 +17,7 @@ In this applications chapter we set to solve two natural language processing tas
 
 These experiments represent the third and final contribution of this thesis, after introducing the theoretical fusion enriched model in the previous chapter. Indeed, this contribution is the continuation of our set of propositions, as shown in Figure \ref{fig:main_diag2}. We employ both a fusion enriched and a raw hypergraph network based on benchmark corpora to validate the utility of our proposals.
 
-The general objectives of the experiments described below are two: (1) to test the effectiveness of using fusion enriched representations to solve NLP tasks, while combining heterogeneous information and densifying the feature space;  and (2), to leverage the structure of a network built using the hypergraph structure described before.
+The general objectives of the experiments described below are: (1) to test the effectiveness of using fusion enriched representations to solve NLP tasks, while combining heterogeneous information and densifying the feature space;  and (2), to leverage the structure of a network built using the hypergraph structure described before.
 
  %By making use of the network we want to test the effectiveness of using different types of linguistic features. 
 There are two main parts  in this chapter. First we address NER, we study how the different types of fusion operations affect the performance of the task. We train well-known classification algorithms with representations obtained from fusion operations.  According to our results, we find that it is indeed interesting to combine different types of features into a single representation space. We also delve into a result's analysis to try to understand the reason behind the improvement using fusion techniques.
@@ -82,7 +81,7 @@ The experiments we carry on consist in generating fusion matrices that will serv
 In  Chapter \ref{chap:ling_net} we presented the fusion operators to be used in our experiments. Below we detail the three types of features matrices used to generate the fusion-enriched combinations that describe the words of the corpus tested.
 \subparagraph{Lexical Matrix (L)}
 For each token in the corpus, we use a lexical window of two words to the left and two words to the right, plus the token itself. Specifically, for a target word $w$, its lexical context is $(w_{-2}, w_{-1}, w, w_{+1}, w_{+2})$. This type of context features is typical for general systems studying the surroundings of a word and in particular for the named entity recognition task \cite{Daume2006,Nothman2009,RatinovR09}. 
- We retake the example phrase from \cite{LevyG14}, the lexical-based features of the phrase \textit{Australian scientist discovers start with telescope}, are shown in Table \ref{tab:lex-contextos}.
+ We retake the example phrase from \cite{LevyG14}, the lexical-based features of the phrase \textit{Australian scientist discovers star with telescope}, are shown in Table \ref{tab:lex-contextos}.
  
 \begin{table}[ht]
 \centering
@@ -99,7 +98,7 @@ telescope  &  word-2:star, word-1:with, word:telescope \\
 \hline \
 \end{tabular} 
 
-\caption{Lexical features corresponding to the phrase \textit{Australian scientist discovers start with telescope}.}
+\caption{Lexical features corresponding to the phrase \textit{Australian scientist discovers star with telescope}.}
 \label{tab:lex-contextos}
 \end{table} 
 
@@ -519,7 +518,7 @@ The WSI/WSD model is tested on the dataset of  the Semeval 2007 WSID task \cite{
 \subparagraph{Evaluation Measures}
 Being an unsupervised task, the evaluation metrics of WSI/WSD are debated in terms of quality \cite{CruysA11}. We consider supervised recall and unsupervised F-measure, as in the competition original paper \cite{Agirre2007}. 
 
-Ihe unsupervised evaluation assumed the induced senses as clusters of examples. These clusters are compared to the sets of examples tagged with the given gold standard word senses (classes), and evaluated using the F-measure measure for clusters. The supervised setting maps the induced senses to manually-defined gold standard senses, and use a mapping produced by the organizers to tag the test corpus with gold standard tags. The mapping is automatically produced by the organizers, and the resulting results evaluated according to the usual precision and recall measures for supervised word sense disambiguation systems. 
+The unsupervised evaluation assumed the induced senses as clusters of examples. These clusters are compared to the sets of examples tagged with the given gold standard word senses (classes), and evaluated using the F-measure measure for clusters. The supervised setting maps the induced senses to manually-defined gold standard senses, and use a mapping produced by the organizers to tag the test corpus with gold standard tags. The mapping is automatically produced by the organizers, and the resulting results evaluated according to the usual precision and recall measures for supervised word sense disambiguation systems. 
 
 %The first one maps the output of a system to the true senses of the target words' instances and the second one measures the quality of the correspondence between the automatically found clusters and the senses. 
 
@@ -888,15 +887,18 @@ The assignation of a sense consists in looking at each $tw$ instance represented
 
 
 	
-\subsection{Experiments and Evaluation}
-\paragraph{Test Datasets}
-We trained and evaluated our system on two datasets: Semeval 2007 Task 2 (as in the previous experiments) and Semeval 2010 Task 14 \cite{Semeval2010}. We recall that the Semeval 2007 task consisted in the induction and disambiguation of a single set of 100 words, 65 verbs and 35 nouns, each target word having a set of contexts where the word appear. The average number of senses in the testing set is 2.87. On the other hand, the Semeval 2010 task consisted also on 100 words, with 50 being verbs and 50 being nouns. The average number of true senses in this dataset is 3.79. On this version of Semeval, a training set from which the senses of a word have to be induced is provided. In our experiment, for the Semeval 2010 dataset, we induce the senses from the training set and disambiguate the target words present within the test set.
+\paragraph{Experiments and Evaluation}
+In the following paragraphs we describe the details and results of the experiments performed using our proposed method while using fusion enriched representations.
+\subparagraph{Test Datasets}
+We trained and evaluated our system on the Semeval 2007 Task 2 (as in the previous experiments) dataset, as on the previous experiments. We recall that the Semeval 2007 task consisted in the induction and disambiguation of a single set of 100 words, 65 verbs and 35 nouns, each target word having a set of contexts where the word appear. The average number of senses in the testing set is 2.87. 
+
+%On the other hand, the Semeval 2010 task consisted also on 100 words, with 50 being verbs and 50 being nouns. The average number of true senses in this dataset is 3.79. On this version of Semeval, a training set from which the senses of a word have to be induced is provided. In our experiment, for the Semeval 2010 dataset, we induce the senses from the training set and disambiguate the target words present within the test set.
 
 We apply a light pretreatment, consisting on token lemmatization and we remove all words that appear less than four times. Concerning the individual graphs of each target word, we work only with nouns and if the extracted graph has fewer than 100 nodes, we do not apply any filtering (we keep all the extracted words). We do this in order to avoid empty solutions.
 
 
 
-\paragraph{Implementation}
+\subparagraph{Implementation}
 The objective of this experiment is to understand the performance of both lexical and syntactic co-occurrence information, used independently, while solving WSI and WSD tasks while using the method described in the previous subsection. To that end we build two independent systems, using : $\mlex$, which uses exclusively lexical co-occurrence hyperedges, and $\msyn$, which employs only syntactic dependency hyperedges. Both are obtained as described in Chapter \ref{chap:ling_net}, section \ref{sec:ling_model}.
  %
  
@@ -910,8 +912,8 @@ Each type of hyperedge has its own network characteristics as mentioned before. 
 
 
 
-\paragraph{Results and Discussion}
-Both Semeval 2007 and Semeval 2010 tasks are first evaluated by an unsupervised and supervised set of measures, as before. Later on, we present the results according to our H-measure. The objective of these results comparison is to determine the level of performance of our proposed method and to verify that the fusion-produced representation spaces do improve over the use of independent features and the trivial feature concatenation (with early fusion).
+\subparagraph{Results and Discussion}
+Our experiments are first evaluated by an unsupervised and supervised set of measures, as before. Later on, we present the results according to our H-measure. The objective of these results comparison is to determine the level of performance of our proposed method and to verify that the fusion-produced representation spaces do improve over the use of independent features and the trivial feature concatenation (with early fusion).
 
 %\subparagraph{Semeval 2007}
 
@@ -1038,24 +1040,18 @@ Both Semeval 2007 and Semeval 2010 tasks are first evaluated by an unsupervised 
 \end{tabular}
 \end{table}
 
-We analyze these results in terms of two main axes. First, as we want to know the pertinence of the proposed algorithm,  our algorithm is compared to the competition baseline and to the previous similar method from \cite{2007.Klapaftis.UOY}. Secondly, as before, we compare the use of single independent features ($\mlex$ and $\msyn$) and the trivial early fusion ($E(\mlex, \msyn)$) with the other more elaborated fusion operators. The goal is to show the interest of combining different types of information.
+We analyze these results in terms of two  axes. First, as we want to discover the pertinence of the proposed algorithm,  our technique is compared to the competition baseline and to the previous similar method from \cite{2007.Klapaftis.UOY}. Secondly, as before, we compare the use of single independent features ($\mlex$ and $\msyn$) and the trivial early fusion ($E(\mlex, \msyn)$) with the other more elaborated fusion operators. The goal is to show the interest of combining different types of information.
 
 In Table \ref{tab:sem2007_PM_Recall}  we show the supervised recall results obtained for the Semeval 2007 corpus, using our proposed method, coupled with fusion operators. In the table, as in the rest of the tables presented in this section, as before, the columns show the results for all the words, for the nouns, and for the verbs. Again, the final column indicates the number of induced clusters per system. 
 
 Our system, with a  $\mlex$ matrix is on par with the baseline MFS (assigning the most frequent sense to an instance) while producing more clusters and closer to the true number of average clusters. On the other hand, using the $\msyn$ is on the same level of performance while not beating the MFS baseline, but lightly performing better than using $\mlex$ in terms of verbs. Both systems improve on the inspiration method for our algorithm,  UoY (version 2007) \cite{2007.Klapaftis.UOY}, while not having to select thresholds specifically for each type of features used.
 
 
-Concerning the unsupervised F-measure evaluation, in Table \ref{tab:sem2007_PM_unsup_FS} we present the results for our models as well as for UoY. Additionally, one baseline is included, the 1c1word baseline. As described before, this baseline  groups all instances of a word into a single cluster. This baseline was not surpassed during the competition. Looking at the table, we can see that both our methods overcome the system described before {UoY(2007)}. Our systems induced a realtively close number of senses to the true number while retaining a competitive F-measure value. We also note that in this evaluation $\msyn$, the system using only co-occurrent dependency relations outperformed the lexical co-occurrence only system $\mlex$. It is very possible that this lack of lexical performance is due to the size of the surrounding words window, which in this case is selected to be the entire phrase were the word occurs. In this evaluation, using our method,  it is clearer that  verbs are  better addressed, and their senses better induced, using syntactic information compared to lexical information. It is indeed the same behavior shown while using the spectral clustering technique before.  We do note that our systems do not perform better than the 1c1word baseline. 
+Concerning the unsupervised F-measure evaluation, in Table \ref{tab:sem2007_PM_unsup_FS} we present the results for our models as well as for UoY. Additionally, one baseline is included, the 1c1word baseline. As described before, this baseline  groups all instances of a word into a single cluster. This baseline was not surpassed during the competition. Looking at the table, we can see that both our methods overcome the system described before {UoY(2007)}. Our systems induced a relatively close number of senses to the true number while retaining a competitive F-measure value. We also note that in this evaluation $\msyn$, the system using only co-occurrent dependency relations outperformed the lexical co-occurrence only system $\mlex$. It is very possible that this lack of lexical performance is due to the size of the surrounding words window, which in this case is selected to be the entire phrase were the word occurs. In this evaluation, using our method,  it is clearer that  verbs are  better addressed, and their senses better induced, using syntactic information compared to lexical information. It is indeed the same behavior shown while using the spectral clustering technique before.  We do note that our systems do not perform better than the 1c1word baseline. 
 
 
-In order to have a syntethic perspective of the results of our systems, we show in Figure \ref{fig:h_measure_proposed_semeval2007} the H-measure of our proposed model (using different fusion input matrices) as well as the baseline (1c1word, which is analog to the MFS baseline in terms of supervised recall) and UoY system. According to our mesure, the fusion operators outperform again the single features and the early fusion. Namely, $X_F(\slex, \mlex)$ outperforms both independent features $\mlex$, $\msyn$, and $E(\mlex,\msyn)$. It is followed closely by the late cross feature fusion ($L(\mlex, X_F(\slex, \mlex))$) in the 2F level. 
 
-What does seems unexpected is that the roles played by the $\msyn$ and $\mlex$ system is inverted regarding to the fusion experiments presented in the previous subsection. Indeed, using our network-based approach the performance of $\msyn$ is considerably larger than that of $\mlex$, whereas using spectral clustering the lexical information outranked (by a small margin) the syntactic information (based on dependencies). Again, we attribute this lack of performance of $\mlex$ to the size of the window employed, which seems to general to detect appropriate senses. 
-
-Finally, while our fusion systems beat the early fusion and independent features baselines, the systems that perform the best do not employ heterogeneous data to do so. Indeed, the best systems that combine the two possible types of features lag behind the best fusion spaces. In most of the cases, as can be seen in the figure towards the center, this is due to the relatively lower number of clusters produced, which tends to reduce the H-measure performance.
-
-
-\begin{figure}[!t]
+\begin{figure}[!ht]
 \centering
 \begin{tikzpicture}{width=15cm,height=5cm}
 \pgfplotsset{compat=1.8}
@@ -1104,13 +1100,47 @@ Finally, while our fusion systems beat the early fusion and independent features
 \addplot+[mark=none, bar width=.5cm]  coordinates {(75,77.4) (80,81.3)};
 \addplot+[mark=none, bar width=.5cm]  coordinates {(85,69.7) (90,48.0)};
 
-\legend{SF,1F,2F,HF, MFS}
+\legend{SF,1F,2F,HF, MFS and UoY}
 \end{axis}
 \end{tikzpicture}
 \caption{H-measure for the WSI/WSD task on the Semeval 2007 corpus. Results are obtained with our proposed  algorithm.}
 \label{fig:h_measure_proposed_semeval2007}
 \end{figure}
 
+
+In order to have a syntethic perspective of the results of our systems, we show in Figure \ref{fig:h_measure_proposed_semeval2007} the H-measure of our proposed model (using different fusion input matrices) as well as the baseline (1c1word, which is analog to the MFS baseline in terms of supervised recall) and UoY system. According to our measure, the fusion operators outperform again the single features and the early fusion. Namely, $X_F(\slex, \mlex)$ outperforms both independent features $\mlex$, $\msyn$, and $E(\mlex,\msyn)$. It is followed closely by the late cross feature fusion ($L(\mlex, X_F(\slex, \mlex))$) in the 2F level. 
+
+What does seems unexpected is that the roles played by the $\msyn$ and $\mlex$ system is inverted regarding to the fusion experiments presented in the previous subsection. Indeed, using our network-based approach the performance of $\msyn$ is considerably larger than that of $\mlex$, whereas using spectral clustering the lexical information outranked (by a small margin) the syntactic information (based on dependencies). Again, we attribute this lack of performance of $\mlex$ to the size of the window employed, which seems to general to detect appropriate senses. While our fusion systems beat the early fusion and independent features baselines, the systems that perform the best do not employ heterogeneous data to do so. Indeed, the best systems that combine the two possible types of features lag behind the best fusion spaces. In most of the cases, as can be seen in the figure towards the center, this is due to the relatively lower number of clusters produced, which tends to reduce the H-measure performance.
+
+
+ 
+Finally, as a way of determining how both individual representation spaces $\mlex$ and $\msyn$ systems perform in comparison to each other, in Figure \ref{fig:nouns_fs} and Figures  \ref{fig:verbs_fs2} and \ref{fig:verbs_fs3} we show the unsupervised F-measure value for nouns and verbs respectively (we split the verbs in two figures for visibility). We can see that, as the previous result tables indicated, $\msyn$ did better overall. Nonetheless, and what is most interesting in these figures, is that there are certain words (both nouns and verbs) that obtain better scores using $\mlex$ instead of $\msyn$ and vice versa. For example, the nouns \textit{area}, \textit{future}, and \textit{state} are better treated by $\mlex$, according to this measure, even if by a small margin. On the other hand, with respect to the verbs, the differences between performance are more important. Again, the $\mlex$ system does better while finding senses and assigning them to the verbs \textit{avoid}, \textit{fix}, and \textit{work}. %This information will be useful during the design of hybridization techniques between feature of our hypergraph structure.
+
+ 
+
+
+
+
+ \begin{figure}[!htb]
+\centering
+\includegraphics[width=1\linewidth]{images/Chapitre5/tex_img_files/nouns_fs.pdf}
+\caption{Unsupervised F-measure results for the nouns of the Semeval 2007 test set.}
+\label{fig:nouns_fs}
+\end{figure}
+
+ \begin{figure}[!htb]
+\centering
+\includegraphics[width=1\linewidth]{images/Chapitre5/tex_img_files/verbs_fs_2.pdf}
+\caption{Unsupervised F-measure results for the first half of verbs of the Semeval 2007 test set.}
+\label{fig:verbs_fs2}
+\end{figure}
+
+ \begin{figure}[!htb]
+\centering
+\includegraphics[width=1\linewidth]{images/Chapitre5/tex_img_files/verbs_fs_3.pdf}
+\caption{Unsupervised F-measure results for the second half of verbs of the Semeval 2007 test set.}
+\label{fig:verbs_fs3}
+\end{figure}
 
 
  
@@ -1227,11 +1257,9 @@ Finally, while our fusion systems beat the early fusion and independent features
 
 \section{Conclusion}
 \label{chap6:conclusion}
-In this chapter we addressed two NLP tasks from two different points of view: on the one hand, we computed several representation spaces using fusion operations in order to enrich and densify otherwise sparse and independent features. The matrices generated were used to train both supervised and unsupervised models to solve named entity recognition and word sense induction and disambiguation.
+In this chapter we addressed two NLP tasks from two different points of view: on the one hand, we computed several representation spaces using fusion operations in order to enrich and densify otherwise sparse and independent features. The matrices generated were used to train both supervised and unsupervised models to solve named entity recognition and word sense induction and disambiguation tasks. On the other hand, we proposed a model that leverages the inner structure of the hypergraph network to group words that belong to a shared sense. This approach was used to solve word sense induction and disambiguation.
 
-On the other hand, we proposed a model that leverages the inner structure of the hypergraph network to group words that belong to a shared sense. This approach was used to solve word sense induction.
-
-More specifically, concerning the first part, we presented  a comparative study of multimedia fusion techniques applied to named entity recognition.  We also tested hybrid fusion recombinations in order to complement the information contained in the single representation matrices. In order to accomplish this goal, we built upon basic fusion techniques such as early and late fusion, as well as cross media fusion to transfer quality information from one set of features to another. 
+More specifically, concerning the first part, we presented  a comparative study of multimedia fusion techniques applied to named entity recognition.  We also tested hybrid fusion recombinations in order to complement the information contained in the single representation matrices. In order to accomplish this goal, we built upon basic fusion techniques such as early and late fusion, as well as cross media fusion to transfer quality information from one set of features to another. Our experiments show that it is in fact the combination and recombination of fusion operations that yields enriched feature spaces useful for NLP tasks. This is in unison to the results presented in \cite{Ah-PineCC15}, where the combination of fusion operators improve on multimedia information retrieval tasks.
 
 %We found that by taking a strong feature, in our case lexical context, $\mlex$, and enriching it with the output of rather complex fusion combinations, we can improve the performance of the tasks addressed. The enrichment has to give more relevance to the strong feature matrix, by selecting the right parameters. 
 
@@ -1245,7 +1273,7 @@ While there is an improvement using fusion techniques, we do note that they  enl
 
 
 % WSD network
-Concerning our proposed network-based method, we show how using the inner links within the hypergraph structure we can group words that represent senses and then assign them to target words. Our method distinguishes from similar works in two main aspects: the definition of similarity used, the reduced number of parameters that are needed, the use of diverse types of contexts to solve the task. 	We show that our method beats said similar approaches. Also, we discovered the behavior of syntactic contexts in comparison to lexical contexts at word-level. Indeed, lexical contexts seem to perform better. This is in line with other works on distributional representations \cite{kiela2014systematic}.
+Concerning our proposed network-based method, we show how using the inner links within the hypergraph structure we can group words that represent senses and then assign them to target words. Our method distinguishes from similar works in two main aspects: the definition of similarity used, the reduced number of parameters that are needed, the use of diverse types of contexts to solve the task. 	We show that our method beats said similar approaches. Also, we discovered the behavior of syntactic contexts in comparison to lexical contexts at word-level: nouns are better represented by lexical features as opposed to verbs which are best addressed by syntactic features. In general, lexical contexts seem to perform better. This is in line with other works on distributional representations \cite{kiela2014systematic}.
 
 
 
