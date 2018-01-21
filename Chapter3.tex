@@ -300,13 +300,13 @@ As stated before, our model consists on two parts (and two contributions). The f
 
 In this section we focus on the first part, the hypergraph model. We note that for the sake of simplicity we limit ourselves to lexical and syntactic information. The model in essence holds two different networks, one for each type of relations. They are both unified by means of a hypergraph structure. 
 
-\subsection{Hypergraph Linguistic Model}\label{sec:ling_model}
+\subsection{Hypergraph Linguistic Model}\label{sec:ling_model} \index{Hypergraph Linguistic Model}
 
- Formally, a hypergraph \cite{Berge1985} is a graph generalization  that allows more than two vertices to be linked by a single edge.  We call $\mathcal{H}=(V,E)$ a {hypergraph}
+ Formally, a hypergraph \cite{Berge1985} \index{hypergraph} is a graph generalization  that allows more than two vertices to be linked by a single edge.  We call $\mathcal{H}=(V,E)$ a {hypergraph}
  with the {vertex} set $V$ and the hyperedge set $E$. Let $V$ denote a finite set of objects, and let $E$  (the hyperarcs or hyperedges) be a
 group of subsets  of $V$ such that $V = \cup_{e_j \in E}e_j$.
 %todo add biblio how hypergraphs are used in NLP??
-A \emph{weighted hypergraph} is a hypergraph that has a positive number $w(e)$ associated with each hyperedge, called the \emph{weight} of the hyperedge $e$. A \emph{weighted hypergraph} is then denoted by $\mathcal{H}=(V,E,w)$.
+A \emph{weighted hypergraph} is a hypergraph that has a positive number $w(e)$ associated with each hyperedge, called the \emph{weight} of the hyperedge $e$ \index{hyperedge}. A \emph{weighted hypergraph} is then denoted by $\mathcal{H}=(V,E,w)$.
 %
 A hyperedge $e$ is said to be \emph{incident} with a vertex $v$ when
 $v \in e$.
@@ -420,7 +420,7 @@ From both syntactic parses and the phrase itself we build a hypergraph represent
 
 \end{itemize}
 
-\subparagraph{Incidence Matrix}We can represent these hyperedges as an incidence matrix, illustrated in Figure \ref{fig:incidence_report}.  
+\subparagraph{Incidence Matrix}\index{Incidence Matrix}We can represent these hyperedges as an incidence matrix, illustrated in Figure \ref{fig:incidence_report}.  
 Looking at the table, we can   infer that the word \textit{copies} appears  in two hyperedges of type NP: first in \textit{NP$_2$}, which is built from a noun phrase  and two prepositional phrases (\textit{PP}). Secondly, we see that it is part of \textit{NP$_3$}, which  indicates a plural noun (\textit{NNS}).
 Regarding the syntactic dependency hyperedges, the word \textit{copies} appear in the \textit{dobj} \textit{contains} column which indicates that \textit{copies} was the direct object of the verb \textit{contains}. Concerning the sentence hyperedges, we see that the token \textit{copies} appeared in the same sentence S$_1$ as the other four noun words.
 
@@ -451,7 +451,7 @@ Just as the literature approaches covered before, we aim to solve semantic tasks
 %Then, we focus exclusively on fusion techniques applied to NLP tasks, which is the general domain of the two tasks (NER and WSI/WSD) we focus on.                   
 The second part of our proposed method deals with the fusion of textual features. Namely, we combine the features that describe terms into a single representation space. This new space aims to address two issues that arise while working with textual data: effectively using information coming from different linguistic levels (e.g., lexical, syntactic, semantic) while alleviating the sparsity typical of textual representations.
 
-Multimodal fusion is a set of popular techniques used in multimedia analysis tasks. These methods integrate multiple media features, the affinities among these attributes or the decisions obtained from systems trained with said features, to obtain rich insights about the data being used and thus to solve a given analysis  task \cite{AtreyHEK10}. We note that these techniques come at the price of augmenting the complexity of a given system by increasing or reducing the sparsity of a given feature matrix.
+Multimodal fusion \index{Multimodal fusion} entails set of popular techniques used in multimedia analysis tasks. These methods integrate multiple media features, the affinities among these attributes or the decisions obtained from systems trained with said features, to obtain rich insights about the data being used and thus to solve a given analysis  task \cite{AtreyHEK10}. We note that these techniques come at the price of augmenting the complexity of a given system by increasing or reducing the sparsity of a given feature matrix.
 
 
 In the multimodal fusion literature we can discern two main common types of techniques: early fusion and late fusion. A third and fourth type of fusion methods, cross-media fusion and hybrid fusion are also employed in multimedia analysis tasks. 
@@ -463,7 +463,7 @@ We describe the four of them in the following paragraphs. The notation used is f
 
 
 
-\paragraph{Early Fusion}
+\paragraph{Early Fusion} \index{Early Fusion}
 This technique is the most widely used fusion method. The principle is simple: we take both modal features and concatenate them into a single representation matrix. More formally, we consider two matrices  that represent different modality features each  over the same set of individuals. To perform early fusion we concatenate them column-wise, such that we form a new matrix having the same number of lines but increasing the number of columns to the sum of the number of columns of both matrices. The matrices may also be weighted as to control the influence of each modality.
 
 Such trivial fusion  is shown in Figure \ref{fig:ef_diag}. In this example, two  matrices are used, $\mlex$ and $\msyn$. Each one represents a different feature space. They both have the same number of rows $n$, they have $m$ and $p$ columns, respectively. After an early fusion operation, the final matrix  has $m+p$ features. Formally, the early fusion function is defined as:
@@ -498,7 +498,7 @@ The main advantage of early fusion is that a single unique model is fitted while
 %where $||$ represents the column-wise concatenation operation and ? is the parameter that determines the contribution of each modality. 
 %
 %Early fusion has been employed in several multimodal tasks. For example, [?]. 
-\paragraph{Late Fusion}
+\paragraph{Late Fusion}\index{Late Fusion}
 In contrast to early fusion, in late fusion the combination of multimodal features are generally performed at the decision level, i.e., using the output of independent knowledge discovery models trained  each with a unique set of features \cite{ClinchantAC11}. In this setting,  decisions produced by each model are combined into a single final result set. The diagram in Figure \ref{fig:lf1} shows this combination of matrices $A$ and $B$.
 %
 The methods used to combine preliminary decisions usually involve one of two types: rule-based (where modalities are combined according to domain-specific knowledge) or linear fusion (e.g., weighting and then adding or multiplying both matrices together). This particular type of fusion is very close to machine learning  ensemble methods.
@@ -541,7 +541,7 @@ The advantages of late fusion include the combination of features at the same le
 
 
 %For example, in information retrieval (Ah-Pine et al., 2015), lexicon learning (Vulic et al., 2016), coreference resolution (Eisenstein and Davis, 2007); different types of representations (different modalities) can be combined in order to take advantage of the complementarity existing among them
-\paragraph{Cross-media  Fusion}
+\paragraph{Cross-media  Fusion}{Cross Fusion}
 %
 A third type of fusion technique, cross-media  fusion (or simply cross fusion),   introduced in \cite{ClinchantAC11,Ah-PineCC15}, is defined and employed to propagate a single similarity matrix into a second similarity matrix. In their paper, the authors propagated information from textual media towards visual media. In our case, we transfer information among textual features. For example, to perform a cross fusion between lexical and syntactical features, we perform the following steps: 
 \begin{enumerate}
@@ -569,42 +569,43 @@ The sole requirement is that the  number of columns of the result of the operati
 
 Cross fusion aims to bridge the semantic gap between two modalities by using the most similar neighbors as proxies to transfer valuable information  from one modality onto another one. Usually, the result of a cross fusion is combined with the previous techniques, early and late fusion. In this work we perform  experiment in that sense.
 
-\paragraph{Hybrid Fusion}
+\paragraph{Hybrid Fusion}\index{Hybrid Fusion}
 We may leverage the advantages of the previous three types of fusion techniques by combining them once more in a hybrid setting. As described in \cite{AtreyHEK10,yu2014informedia}, the main idea is to simultaneously combine features at the feature level, i.e., early fusion, and at the same semantic space or decision level. Nonetheless, they define a specific type of hybrid fusion. In this chapter, we adopt a looser definition of hybrid fusion. That is, we perform a hybrid combination of features by leveraging the aggregation of the fusion strategies described before. 
 
 Having said that, here we distinguish three levels of hybrid fusion (aside from the use of single features, or SF henceforth, independently) that we employ in our experiments during the Chapter \ref{chap:wsd}. 
 
  \begin{enumerate}
-\item \textbf{First Degree Fusion (1F)}: we  consider the  three elementary fusion techniques described before (early fusion, late fusion, cross fusion) by themselves.  This level of fusion serve as the baseline we set to surpass in order to show the efficacy of the representation feature space found through fusion techniques.
+\item \textbf{First Degree Fusion (1F)}\index{{First Degree Fusion (1F)}}: we  consider the  three elementary fusion techniques described before (early fusion, late fusion, cross fusion) by themselves.  This level of fusion serve as the baseline we set to surpass in order to show the efficacy of the representation feature space found through fusion techniques.
 As an example, we may obtain a first degree representation matrix by performing an early fusion between the lexical matrix and the syntactical features matrix: $E(M^{L}, M^{S})$. 
 
-We note that we distinguish two types of cross fusion operators: \textbf{Cross Feature Fusion} ($X_F$) and \textbf{Cross Similarity Fusion} ($X_S$). The former combines a similarity matrix with a feature matrix, e.g., $X_F(\slex, \msyn)$. The latter joins a similarity matrix with another similarity matrix, for example $X_S(\ssyn, \slex)$. %Indeed, $X_S$ has the same configuration as the cross fusion presented before. We rename it to distinguish against the $X_F$ configuration. 
+We note that we distinguish two types of cross fusion operators: \textbf{Cross Feature Fusion}\index{Cross Feature Fusion} ($X_F$) and \textbf{Cross Similarity Fusion}\index{Cross Similarity Fusion} ($X_S$). The former combines a similarity matrix with a feature matrix, e.g., $X_F(\slex, \msyn)$. The latter joins a similarity matrix with another similarity matrix, for example $X_S(\ssyn, \slex)$. %Indeed, $X_S$ has the same configuration as the cross fusion presented before. We rename it to distinguish against the $X_F$ configuration. 
 The intuition behind cross feature fusion $X_F$ is that the rich information from the first input matrix can be transferred directly to a representation without the need of obtaining its similarity matrix beforehand. We denote them \textit{feature} and \textit{similarity} to refer to the fact that the first one uses simply a feature matrix and the second requires some knowledge from the data, in this case the similarity between terms.
 
-\item \textbf{Second Degree Fusion (2F)}: in this level we  begin with the recombination of the outputs of the previous two levels. Namely, this procedure  yields a combination of "second-degree" among fusion methods. Indeed, we introduce four types of second degree fusions employed in the following list. Each one is illustrated with an example:
+\item \textbf{Second Degree Fusion (2F)}\index{Second Degree Fusion (2F)}: in this level we  begin with the recombination of the outputs of the previous two levels. Namely, this procedure  yields a combination of "second-degree" among fusion methods. Indeed, we introduce four types of second degree fusions employed in the following list. Each one is illustrated with an example:
 
 
 \begin{enumerate}
 
-\item \textbf{Cross Feature Early Fusion} ($X_FEF$): consists on the cross feature fusion ($X_F$) of two inputs, a similarity matrix, and the output of an early fusion. For example the operation $X_F(\sstd, E(\mlex, \msyn))$ implies the $X_F$ of the similarity matrix $\sstd$ with the early fusion of matrices $\mlex$ and $\msyn$.
+\item \textbf{Cross Feature Early Fusion}\index{Cross Feature Early Fusion} ($X_FEF$): consists on the cross feature fusion ($X_F$) of two inputs, a similarity matrix, and the output of an early fusion. For example the operation $X_F(\sstd, E(\mlex, \msyn))$ implies the $X_F$ of the similarity matrix $\sstd$ with the early fusion of matrices $\mlex$ and $\msyn$.
 
 % %
-\item \textbf{Cross Feature Cross Similarity Fusion} ($X_FX_SF$): entails the cross feature fusion ($X_F$) of two elements, the output of a cross similarity fusion ($X_S$), and a term-feature matrix. For example, the operation $X_F(X_S(\sstd, \ssyn), \mstd)$ is the cross feature fusion ($X_F$) of a cross similarity fusion ($X_S$), the late having similarity matrices $\sstd$ and $\ssyn$ as inputs, and a standard features matrix $\mstd$.
+\item \textbf{Cross Feature Cross Similarity Fusion}\index{Cross Feature Cross Similarity Fusion} ($X_FX_SF$): entails the cross feature fusion ($X_F$) of two elements, the output of a cross similarity fusion ($X_S$), and a term-feature matrix. For example, the operation $X_F(X_S(\sstd, \ssyn), \mstd)$ is the cross feature fusion ($X_F$) of a cross similarity fusion ($X_S$), the late having similarity matrices $\sstd$ and $\ssyn$ as inputs, and a standard features matrix $\mstd$.
 
 %
-\item \textbf{Early Cross Feature Fusion} ($EX_FF$):  this operation consists on the early fusion of a feature matrix with the output of a cross similarity fusion. As an example, the operation $E(\mstd,X_F(\slex, \mstd))$ computes the early fusion of matrix $\mstd$ with the result of a $X_F$ with $\slex$ and $\mstd$ as operands. 
+\item \textbf{Early Cross Feature Fusion}{Early Cross Feature Fusion} ($EX_FF$):  this operation consists on the early fusion of a feature matrix with the output of a cross similarity fusion. As an example, the operation $E(\mstd,X_F(\slex, \mstd))$ computes the early fusion of matrix $\mstd$ with the result of a $X_F$ with $\slex$ and $\mstd$ as operands. 
 %
 
-\item \textbf{Late Cross Feature Fusion} ($LX_FF$): this fusion implies the late fusion of a feature matrix with the output of a cross feature fusion. For example, the fusion $L(\mstd, X_F(\sstd, \mstd))$ describes a late fusion between the feature matrix $\mstd$ and the cross feature fusion among $\sstd$ and $\mstd$.
+\item \textbf{Late Cross Feature Fusion}\index{Late Cross Feature Fusion} ($LX_FF$): this fusion implies the late fusion of a feature matrix with the output of a cross feature fusion. For example, the fusion $L(\mstd, X_F(\sstd, \mstd))$ describes a late fusion between the feature matrix $\mstd$ and the cross feature fusion among $\sstd$ and $\mstd$.
 \end{enumerate}
 
 % A second-degree fusion would be an early fusion of the lexical feature matrix with a cross fusion, expressed as $E(M^{L}, \allowbreak X(S^{T}, M^{T}))$.   
-\item \textbf{Higher-Degree Fusion (HF)}: in this last level we follow a similar approach to the previous level by combining the output of the second-degree fusion level multiple times (that is, more than two times) with other second-degree fusion outputs. In this level we test the following two fusion operations:
+\item \textbf{Higher-Degree Fusion (HF)}\index{Higher-Degree Fusion (HF)}: in this last level we follow a similar approach to the previous level by combining the output of the second-degree fusion level multiple times (that is, more than two times) with other second-degree fusion outputs. In this level we test the following two fusion operations:
 \begin{enumerate}
-\item \textbf{Early Late Cross Feature Fusion} ($ELX_FF$): As an example for this fusion, the operation $E(\mstd, \allowbreak L(\msyn, X_F(\sstd, \mstd)))$ implies the combination of three fusion operations. From left to right, first we compute the early fusion (first operation) of  matrix $\mstd$, with the result of a late fusion (second operation) between feature matrix $\msyn$ and the result of a cross feature fusion, itself having as input matrices $\sstd$ and $\mstd$. Indeed, we perform three operations, an early fusion, a late fusion and a cross feature fusion, thus the name Early Late cross feature fusion of this operator.
+\item \textbf{Early Late Cross Feature Fusion}\index{Early Late Cross Feature Fusion} ($ELX_FF$): As an example for this fusion, the operation $E(\mstd, \allowbreak L(\msyn, X_F(\sstd, \mstd)))$ implies the combination of three fusion operations. From left to right, first we compute the early fusion (first operation) of  matrix $\mstd$, with the result of a late fusion (second operation) between feature matrix $\msyn$ and the result of a cross feature fusion, itself having as input matrices $\sstd$ and $\mstd$. Indeed, we perform three operations, an early fusion, a late fusion and a cross feature fusion, thus the name Early Late cross feature fusion of this operator.
 \item \textbf{Triple Early Double Late Cross Feature Fusion\footnote{We adopted the \textit{double} and \textit{triple} notation to lighten the explicit name of this fusion operation: Early Early Early Late Cross Feature Late Cross Feature Fusion}}
+\index{Triple Early Double Late Cross Feature Fusion}
 %Early Early Early Late Cross Feature Late Cross Feature Fusion
- ($EEELX_FLX_F$): althoug it seems complex, this fusion scheme merely consists on the early fusion of the last two operators: $LX_FF$ and $ELX_FF$, with another feature matrix. As an example, the operator  $E(\mlex, E(E(\mstd,  L(\mstd, X_F(\sstd, \mstd))),\allowbreak L(\mlex, X_F(\ssyn, \mlex))))$ entails the early fusion of matrix $\mlex$ with the result of the early fusion of $ELX_FF$ with $LX_FF$.
+ ($EEELX_FLX_F$): although it seems complex, this fusion scheme merely consists on the early fusion of the last two operators: $LX_FF$ and $ELX_FF$, with another feature matrix. As an example, the operator  $E(\mlex, E(E(\mstd,  L(\mstd, X_F(\sstd, \mstd))),\allowbreak L(\mlex, X_F(\ssyn, \mlex))))$ entails the early fusion of matrix $\mlex$ with the result of the early fusion of $ELX_FF$ with $LX_FF$.
 \end{enumerate}
 
 	
@@ -620,7 +621,7 @@ As we will see in the experiments carried out in the next chapter, it is the agg
 Fusion techniques also have downsides. As said before, certain  operators densify the feature-space matrix but at the same time the number of dimensions grow considerably (with the early fusion operation). Additionally, to the increment of density, the number of features represent an important challenge computationally. 
 %We address these concerns on the following chapter.
 
-Before getting into the experimentation details, in order to make our hypergraph linguistic resource concrete, we present the process to obtain such a representation from a raw corpus, namely the English Wikipedia. In other words, we instantiate our model with a Wikipedia-based corpus in order to better understand the characteristics proposed. To get there, we first need a syntactically parsed Wikipedia corpus. In the following section, the method we describe first extracts text from the corpus and then analyses it to create a Syntactically Annotated English Wikipedia Dump (SAEWD). From there, we detail the steps we carried out to store it as the proposed language network (represented as a hypergraph incidence matrix accompanied by complementary metadata information regarding the meaning of each vertex and hyperedge). 
+Before getting into the experimentation details, in order to make our hypergraph linguistic resource concrete, we present the process to obtain such a representation from a raw corpus, namely the English Wikipedia. In other words, we instantiate our model with a Wikipedia-based corpus in order to better understand the characteristics proposed. To get there, we first need a syntactically parsed Wikipedia corpus. In the following section, the method we describe first extracts text from the corpus and then analyses it to create a Syntactically Annotated English Wikipedia Dump (SAEWD)\index{Syntactically Annotated English Wikipedia Dump (SAEWD)}. From there, we detail the steps we carried out to store it as the proposed language network (represented as a hypergraph incidence matrix accompanied by complementary metadata information regarding the meaning of each vertex and hyperedge). 
 
 
 
@@ -632,7 +633,7 @@ In order to materialize our proposed linguistic model, we need to first create a
 %\subsection{Related Parsed Dumps}
 %Today, the broad reach of Wikipedia in Text Mining (TM) and Natural Language Processing (NLP) research  is indisputable. Several recent approaches and tools have  been conducted based on the explicit and implicit knowledge contained in it. Certainly, Wikipedia provides a common ground for researchers and developers to test and compare their results.
 
-The online encyclopedia Wikipedia\footnote{\url{https://en.wikipedia.org}} has been used as a source of valuable data as well as a common background corpus to perform experiments and compare results for diverse NLP/TM related tasks. For example, concerning the first case, in the area of Information Extraction, Wikipedia's infoboxes structured information is used in \cite{Wu2010} as a valuable resource to complement and improve their open IE system. Along the same line, \cite{charton2010}  extracted metadata from Wikipedia while leveraging its internal structure in order to produce a semantically annotated corpus. Moving on to the Information Retrieval field, features extracted from Wikipedia can also help to better predict the performance of a query  \cite{katz2014} in a given  corpus.  In the second case, as a background collection for experiments, a document-aligned version of English and Italian Wikipedia has been used to determine the quality between word's translations \cite{vulic2011}.  
+The online encyclopedia Wikipedia\footnote{\url{https://en.wikipedia.org}} has been used as a source of valuable data as well as a common background corpus to perform experiments and compare results for diverse NLP/TM related tasks. For example, concerning the first case, in the area of Information Extraction, Wikipedia's infoboxes structured information is used in \cite{Wu2010} as a valuable resource to complement and improve their open information extraction system. Along the same line, \cite{charton2010}  extracted metadata from Wikipedia while leveraging its internal structure in order to produce a semantically annotated corpus. Moving on to the Information Retrieval field, features extracted from Wikipedia can also help to better predict the performance of a query  \cite{katz2014} in a given  corpus.  In the second case, as a background collection for experiments, a document-aligned version of English and Italian Wikipedia has been used to determine the quality between word's translations \cite{vulic2011}.  
 
 Wikipedia, being such a popular resource  already has various off-the-shelf parsed snapshots (or dumps). These parsed dumps allow researchers to focus more into their approaches than into the extraction and transformation of Wikipedia's data.  We briefly describe certain relevant parses found in the literature.   
 %
