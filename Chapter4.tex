@@ -39,7 +39,7 @@ At the end of the chapter we conclude by discussing the experiments performed, t
 \label{sec:ner}
 
 
- NER\index{Named Entity Recognition (NER)} goal is to automatically discover, within a text, mentions that belong to a well-defined semantic category. The classic task of NER involves detecting, within a text, entities of type Location (LOC), Organization (ORG), Person (PER), Miscellaneous (MISC), or if the term is not an even an entity, assigning them a (O) label. The task is of great importance for more complex NLP systems, e.g, relation extraction, opinion mining \cite{nadeau2007survey}.  
+ NER\index{Named Entity Recognition} goal is to automatically discover, within a text, mentions that belong to a well-defined semantic category. The classic task of NER involves detecting, within a text, entities of type Location (LOC), Organization (ORG), Person (PER), Miscellaneous (MISC), or if the term is not an even an entity, assigning them a (O) label. The task is of great importance for more complex NLP systems, e.g, relation extraction, opinion mining \cite{nadeau2007survey}.  
  
  Generally, two common solutions to NER involve the use of matching patterns, created manually or extracted in a semi-automatically fashion\cite{gupta2015distantly}; or more popularly, by training a supervised machine learning algorithm with large quantities of annotated text \cite{mining12Book}. The latter being the currently more popular solution to this task. As is usual with other NLP tasks, NER  requires textual features to represent words in order to determine their role within a phrase. We propose to build representations based on our fusion enriched hypergraph model.
 
@@ -79,7 +79,7 @@ The experiments we carry on consist in generating fusion matrices that will serv
 
 \paragraph{Representation Spaces}\index{Representation Spaces}\label{sec:rep_spaces}
 In  Chapter \ref{chap:ling_net} we presented the fusion operators to be used in our experiments. Below we detail the three types of features matrices used to generate the fusion-enriched combinations that describe the words of the corpus tested.
-\subparagraph{Lexical Matrix (L)}
+\subparagraph{Lexical Matrix (L)}\index{Lexical Matrix (L)}
 For each token in the corpus, we use a lexical window of two words to the left and two words to the right, plus the token itself. Specifically, for a target word $w$, its lexical context is $(w_{-2}, w_{-1}, w, w_{+1}, w_{+2})$. This type of context features is typical for general systems studying the surroundings of a word and in particular for the named entity recognition task \cite{Daume2006,Nothman2009,RatinovR09}. 
  We retake the example phrase from \cite{LevyG14}, the lexical-based features of the phrase \textit{Australian scientist discovers star with telescope}, are shown in Table \ref{tab:lex-contextos}.
  
@@ -102,11 +102,11 @@ telescope  &  word-2:star, word-1:with, word:telescope \\
 \label{tab:lex-contextos}
 \end{table} 
 
-\subparagraph{Syntactical Matrix (S)}
+\subparagraph{Syntactical Matrix (S)}\index{Syntactical Matrix (S)}
 Based on the syntactic features used in   \cite{LevyG14,Panchenko2017}, we derive contexts based on the syntactic relations a word participates in, as well as including the part of speech (PoS) of the arguments of these relations. Formally, for a word $w$ with modifiers $m_1, \dots, m_k$ and their corresponding PoS tags $p_{m_1}, \dots, p_{m_k}$; a head $h$ and its corresponding PoS tag $p_h$, we consider the context features $(m_1, p_{m_1}, lbl_1), \dots, \allowbreak (m_k, p_{m_k}, lbl_k), \allowbreak (h,p_h,lbl\_inv_h)$. In this case, $lbl$ and $lbl_{inv}$ indicate the label of the dependency relation and its inverse, correspondingly. Using syntactic dependencies as features should yield more specific similarities, closer to synonymy, instead of the broader topical similarity found through lexical contexts.
 
 For the phrase \textit{Australian scientist discovers start with telescope} the dependency-based context is shown in Table \ref{tab:syn-contexts}.
-\subparagraph{NER Standard Features Matrix (T)}
+\subparagraph{NER Standard Features Matrix (T)}\index{Standard Features Matrix (T)}
 The features used for NER are based roughly on the same as those used in \cite{Daume2006,Balasuriya2009}. The feature set consists of: the word itself, whether the word begins with capital letter, prefix and suffix up to three characters (also within a window of two words to the left and two words to the right), and the PoS tag of the current word. These features are considered to be standard in the literature. We note that the matrix generated with these features is exclusively used in the experiments regarding NER.	
 
 \begin{table*}
@@ -128,7 +128,7 @@ telescope  &  discovers/VBZ/nmod:with\_inv \\
 
 
 \paragraph{Learning Methods}
-NER being a supervised learning task, we use an averaged structured perceptron  \cite{Collins2002,Daume2006} (see Section \ref{sec:perceptron}) to determine the tags of the named entities. We considered logistic regression and linear SVM. For the main experiments, we chose the perceptron because of its performance and the lower training time. On the other hand, for the analysis of the results, we use a logistic regression as it is considerably easier to interpret its results, keeping in mind that our goal is to give some insights regarding the usefulness of our fusion methods.
+NER being a supervised learning task, we use an averaged structured perceptron\index{structured perceptron}  \cite{Collins2002,Daume2006} (see Section \ref{sec:perceptron}) to determine the tags of the named entities. We considered logistic regression and linear SVM. For the main experiments, we chose the perceptron because of its performance and the lower training time. On the other hand, for the analysis of the results, we use a logistic regression as it is considerably easier to interpret its results, keeping in mind that our goal is to give some insights regarding the usefulness of our fusion methods.
 
 
 
@@ -152,7 +152,7 @@ As is usual when preprocessing text before performing named entity recognition, 
 \paragraph{Features}
 The linguistic information we use is again extracted with the Stanford's CoreNLP parser. We recall that the features used for these experiments on NER are those described before: lexical, syntactic and standard features, i.e., $\mlex$, $\msyn$, and $\mstd$, respectively. 
 
-\paragraph{Test Datasets}We work with three corpus coming from different domains:
+\paragraph{Test Datasets}\index{Test Datasets}We work with three corpus coming from different domains:
 \begin{itemize}
 \item [(1)] CoNLL-2003 (CONLL): This dataset was used in the language-independent named entity recognition CoNLL-2003 shared task \cite{SangM03}. It contains selected news-wire articles from the Reuters Corpus. Each article is annotated manually. It is divided in three parts:  training (\textit{train}) and two testing sets (\textit{testa} and \textit{testb}). The training part contains 219,554 lines, while the test sets contain 55,044 and 50,350 lines, respectively. The task was evaluated on the \textit{testb} file, as in the original task.
 \item [(2)]WikiNER (WNER): A more recent dataset \cite{Nothman2009} of selected English \allowbreak Wikipedia articles, all of them annotated automatically with the author's semi-supervised \allowbreak method. In total, it contains 3.5 million words from an unspecified number of articles. 
@@ -466,7 +466,7 @@ In the next subsection we present a series of analogous experiments, this time s
 
 \section{Second Application: Word Sense Induction and Disambiguation}
 \label{sec:wsd_wsi}
-Word Sense Induction and Disambiguation entails two closely related tasks\footnote{Even though these tasks are closely related, they are independent from one another. Still,  we consider them to be a single one: WSI/WSD.}. WSI aims to automatically discover the set of possible senses for a target word given a text corpus containing several occurrences of said target word. Meanwhile, WSD takes a set of possible senses and determines the most appropriate sense for each instance of the target word according to the instance's context. WSI is usually approached as an unsupervised learning task, i.e., a cluster method is applied to the words occurring in the instances of a target word. The groups found are interpreted as the senses of the target word. The WSD task is usually solved with knowledge-based approaches, or more recently, with supervised models which require annotated data. It can be also solved reasonably well by comparing the words surrounding each target word and the words belonging to the induced senses (or clusters) found during the WSI step, as we do in this section.
+Word Sense Induction and Disambiguation\index{Word Sense Induction and Disambiguation} entails two closely related tasks\footnote{Even though these tasks are closely related, they are independent from one another. Still,  we consider them to be a single one: WSI/WSD.}. WSI aims to automatically discover the set of possible senses for a target word given a text corpus containing several occurrences of said target word. Meanwhile, WSD takes a set of possible senses and determines the most appropriate sense for each instance of the target word according to the instance's context. WSI is usually approached as an unsupervised learning task, i.e., a cluster method is applied to the words occurring in the instances of a target word. The groups found are interpreted as the senses of the target word. The WSD task is usually solved with knowledge-based approaches, or more recently, with supervised models which require annotated data. It can be also solved reasonably well by comparing the words surrounding each target word and the words belonging to the induced senses (or clusters) found during the WSI step, as we do in this section.
 
 We believe that in order to solve WSD in a truly end-to-end unsupervised way, one would need to first automatically find a list of senses for a word without the help of pre-built semantic networks. In other words, solve WSI. Word sense induction is usually solved as follows:
 
@@ -523,7 +523,7 @@ The unsupervised evaluation assumed the induced senses as clusters of examples. 
 %The first one maps the output of a system to the true senses of the target words' instances and the second one measures the quality of the correspondence between the automatically found clusters and the senses. 
 
 We consider that the number of senses found by the system is also a rather good indicator of performance: the best competition baseline assigns the Most Frequent Sense baseline (or MFS) to each test instance of each target word. In other words, each test instance is assigned the sense that occurs the most in the training set. Consequently, this baseline produces an average of one sense (cluster) per word. A system that goes near this average may be indeed not be resolving the task efficiently but finding the one cluster per word trivial solution. Consequently, to show that we do not fall in the MFS solution, we display in our results the average number of clusters. Furthermore, given this problematic situation we introduce a simple measure, the H-measure, that takes into account three factors of the performance results of a system: the supervised recall of all-words ($SR$), the unsupervised F-measure of all-words ($UF$), and the number of true senses on the corpus. The H-measure is calculated as the mean of two components. First, the harmonic mean of the $SR$ and the $UF$. Secondly, a ratio we propose that is bounded between zero and one. Zero indicates that the system produces one cluster per word, that is, the baseline. If the ratio is one, the system produces a number of average cluster per word that is close to the true gold-standard average number of senses. We call this quantity $\delta$. More formally, the H-measure is defined as:
-
+\index{H-measure}
 \begin{equation}
 \text{H-measure} = \dfrac{1}{2}\left(2*\dfrac{SR*UF}{SR+UF}+\dfrac{\delta}{\delta+|\#cl-\delta|}\right)
 \end{equation}
@@ -764,6 +764,26 @@ In the following subsection, we put aside the fusion enrichment and we focus int
 
 
 \subsection{Leveraging the Linguistic Network Structure}
+\begin{table}[]
+\centering
+\begin{tabular}{ll}
+\textbf{Notation} & \textbf{Definition}                                                                     \\
+$d$               & Document containing target words                                                        \\
+$tw$              & A target word whose sense needs to be found                                             \\
+$ct_{tw}$         & Context of target word $tw$                                                             \\
+$G_H$             & Linguistic graph built from a background corpus                                         \\
+$G_{tw}$          & Subgraph extracted from $G_H$ containing all the co-occurrent words of target word $tw$ \\
+$B_{tw}$          & Bipartite graph induced from $G_{tw}$                                                   \\
+$S_{tw}$          & Similarity matrix of the nodes in $B_tw$                                                \\
+$F_{tw}$          & Filtered nodes in $S_tw$                                                                \\
+$SoS_{tw}$        & Set of senses discovered of $tw$                                                        \\
+$th_1$, $th_2$    & Threshold values to filter out non-relevant words                                      
+\end{tabular}
+\caption{Network-based proposed method notation}
+\label{tab:proposed_notation}
+\end{table}
+
+
 Until now, we have employed the hypergraph representation in terms of leveraging the heterogeneous information to enrich and densify a feature space.
 Now, we will leverage the relations that exist within the network to identify words that, together with their neighborhood, represent a sense. Thus, we propose a network-based algorithm to solve word sense induction. 
 
@@ -788,7 +808,7 @@ With respect to the information contained in the network, we find that few appro
 \paragraph{Proposed Method}
 	
 %The cited works use a LCN as described before while other works such as \cite{2014.Tao.Qian.LexicalChainHypergraphWSI} represent the co-occurrence by means of a hypergraph schema. In short, a hypergraph structure is a graph generalization where an edge (called hyperedge) can link multiple vertices per edge and thus it is able to provide a more complete description of the interactions between several nodes.
-
+For convenience, we start by introducing in Table \ref{tab:proposed_notation} the notations we will use in the rest of our method's description.
 
 Formally, the objective of WSI/WSD is the following: given a document $d$ with a set $T$ of  target words $tw \in T$ and the set $C$ with contexts for each target word $ct_{tw}$. 
 Specifically, each paragraph represents the context  of a target word. A target word in a specific context is also called an instance.

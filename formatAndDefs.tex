@@ -7,7 +7,6 @@
 %\usepackage[babel=true]{microtype}
 \usepackage[sc,osf]{mathpazo}   % With old-style figures and real smallcaps.
 \linespread{1.025}  
-
 % Euler for math and numbers
 \usepackage[euler-digits,small]{eulervm}
 \usepackage{imakeidx}
@@ -33,12 +32,11 @@
 
 % Glossary / list of abbreviations
 \usepackage{blindtext}
-\usepackage[intoc]{nomencl}
+%\usepackage[intoc]{nomencl}
 
-\renewcommand{\nomname}{List of Abbreviations}
+%\renewcommand{\nomname}{List of Abbreviations}
 
-\makenomenclature
-
+%\makenomenclature
 % My pdf code
 
 \usepackage{ifpdf}
@@ -236,3 +234,8 @@ urlcolor=linkcol %couleur des liens pour les url
 
 \newenvironment{abstractchap}{\itshape \paragraph{Abstract.}}{}
 \makeindex
+\usepackage[nonumberlist]{glossaries}
+\makeglossaries
+\loadglsentries{glossary.tex}
+%\nomenclature{$c$}{Speed of light in a vacuum inertial frame}
+%\nomenclature{$h$}{Planck constant}

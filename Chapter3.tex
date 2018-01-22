@@ -447,9 +447,46 @@ Just as the literature approaches covered before, we aim to solve semantic tasks
                                                                                             
 \subsection{Representation Enrichment with Fusion Techniques}\label{sec:fusion}
  
+
+\begin{table}[]
+\centering
+\begin{tabular}{ll}
+\textbf{Notation}               & \textbf{Definition}                                                          \\
+$A,B$                  & Single modality representation matrices                                            \\
+$\mlex$                & Lexical representation matrix                                       \\
+$\msyn$                & Syntactic representation matrix                                     \\
+$\mstd$                & Standard features representation matrix                              \\
+$\slex$                & Lexical similarity matrix                                           \\
+$\ssyn$                & Syntactic similarity matrix                                         \\
+$\sstd$                & Standard similarity matrix                                          \\
+$E_\alpha(A,B)$        & Early fusion representation space from matrices A and B             \\
+\textbf{hstack}                 & Function that joins together two matrices column-wise               \\
+$\alpha$               & Early fusion parameter that weighs input matrices                   \\
+$L_\beta(A,B)$         & Late fusion representation spaces from matrices A and B             \\
+$\beta$                & Late fusion parameter that weighs input matrices                    \\
+$X_\gamma(A,B)$        & Cross fusion representation from matrices A and B                   \\
+$\mathbf{K}(A,\gamma)$ & Operator yielding the top $\gamma$ neighbors of similarity matrix A \\
+$\gamma$ 			   & Cross fusion parameter that determines the number of similar neighborhoods to take with the $\mathbf{K}$ function \\
+$X_F$                  & Cross Feature fusion                                                \\
+$X_S$                  & Cross Similarity fusion                                             \\
+$X_FEF$                & Cross Feature Early Fusion                                          \\
+$X_FX_SF$              & Cross Feature Cross Similarity Fusion                               \\
+$EX_FF$                & Early Cross Feature Fusion                                          \\
+$LX_FF$                & Late Cross Feature Fusion                                           \\
+$ELX_FF$               & Early Late Cross Feature Fusion                                     \\
+$EEELX_FLX_F$           & Triple Early Double Late Cross Feature Fusion                      
+\end{tabular}
+\caption{Fusion related notations and definitions}
+\label{tab:fusion_notation}
+
+\end{table}
+
+%\printnomenclature
+
 %We first describe below multimedia (or multimodal) fusion techniques  as well as relevant use cases where they have been employed. 
 %Then, we focus exclusively on fusion techniques applied to NLP tasks, which is the general domain of the two tasks (NER and WSI/WSD) we focus on.                   
-The second part of our proposed method deals with the fusion of textual features. Namely, we combine the features that describe terms into a single representation space. This new space aims to address two issues that arise while working with textual data: effectively using information coming from different linguistic levels (e.g., lexical, syntactic, semantic) while alleviating the sparsity typical of textual representations.
+
+The second part of our proposed method deals with the fusion of textual features. For convenience, we start by introducing in Table \ref{tab:fusion_notation} the notations we use in the description of our fusion approaches. Specifically, by using fusion operators, we combine the features that describe terms into a single representation space. This new space aims to address two issues that arise while working with textual data: effectively using information coming from different linguistic levels (e.g., lexical, syntactic, semantic) while alleviating the sparsity typical of textual representations.
 
 Multimodal fusion \index{Multimodal fusion} entails set of popular techniques used in multimedia analysis tasks. These methods integrate multiple media features, the affinities among these attributes or the decisions obtained from systems trained with said features, to obtain rich insights about the data being used and thus to solve a given analysis  task \cite{AtreyHEK10}. We note that these techniques come at the price of augmenting the complexity of a given system by increasing or reducing the sparsity of a given feature matrix.
 
@@ -504,7 +541,7 @@ In contrast to early fusion, in late fusion the combination of multimodal featur
 The methods used to combine preliminary decisions usually involve one of two types: rule-based (where modalities are combined according to domain-specific knowledge) or linear fusion (e.g., weighting and then adding or multiplying both matrices together). This particular type of fusion is very close to machine learning  ensemble methods.
 %
 
-Indeed, late fusion combines both modalities in the same semantic space. In that sense,  we may also combine modalities via an affinity representation instead of final decision sets. In other words, we may combine two modalities  by means of their respective similarity matrices. In this case, a  representation is  obtained by adding  two similarity matrices, as in Figure \ref{fig:lf2}. In the figure, we use the equal-sized matrices $A\prime$ and $B\prime$, which in this case are the similarity matrices of inputs $A$ and $B$. Both matrices are then summed to produce a single $n \times n$ weighted matrix (determined by a parameter $\beta$). 
+Indeed, late fusion combines both modalities in the same semantic space. In that sense,  we may also combine modalities via an affinity representation instead of final decision sets. In other words, we may combine two modalities  by means of their respective similarity matrices. In this case, a  representation is  obtained by adding  two similarity matrices, as in Figure \ref{fig:lf2}. In the figure, we use the equal-sized matrices $S^L$ and $S^S$, which in this case are the similarity matrices of matrices $\mlex$ and $\msyn$. Both matrices are then summed to produce a single $n \times n$ weighted matrix (determined by a parameter $\beta$). 
 %
 
 More formally, we define the late fusion function as:
